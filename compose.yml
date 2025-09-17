@@ -1,0 +1,19 @@
+services:
+  web:
+    build: apps/web
+    ports:
+      - "4321:4321"
+    volumes:
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    develop:
+      watch:
+        - action: sync
+          path: apps/web/
+          target: /app
+          ignore: node_modules
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: pnpm-lock.yaml
