@@ -6,9 +6,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "biome check . && prettier --check src/**/*.astro",
+    "format": "biome format . --write && prettier --write src/**/*.astro"
   },
   "dependencies": {
     "astro": "^5.13.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }
