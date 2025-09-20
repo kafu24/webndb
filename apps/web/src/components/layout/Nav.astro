@@ -42,22 +42,42 @@ import Copy from "@tabler/icons/outline/copy.svg";
         </Avatar>
       </DropdownTrigger>
       <DropdownContent align="end">
-        <!-- TODO: icon+link -->
-        <DropdownItem>
-          <Copy />
-          Sign In
-        </DropdownItem>
-        <!-- TODO: icon+link -->
-        <DropdownItem>
-          <Copy />
-          Register
-        </DropdownItem>
+        <!-- TODO: avatar+fallback+link -->
+        <div class="flex gap-0.5 p-2">
+        <Button
+          variant="ghost"
+          class="flex flex-col items-center gap-2 p-4 w-full h-auto font-normal"
+        >
+          <Avatar size="lg" class="cursor-pointer">
+            <AvatarImage
+              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+              alt="John Doe"
+            />
+            <AvatarFallback>JD</AvatarFallback>
+          </Avatar>
+          <p>Guest</p>
+        </Button>
+      </div>
         <DropdownSeparator />
-        <!-- TODO: icon+link -->
-        <DropdownItem>
-          <Copy />
-          Settings
-        </DropdownItem>
+        <div class="flex gap-0.5 p-2">
+          <Button variant="ghost">
+            <Copy />
+            Settings
+          </Button>
+          <!-- TODO: disabled if not signed in  -->
+          <Button disabled variant="ghost">
+            <Copy />
+            Theme
+          </Button>
+        </div>
+        <div class="flex flex-col gap-0.5 p-2">
+          <!-- TODO: link, signout if signed in -->
+          <Button class="justify-center w-full font-semibold"> Sign In </Button>
+          <!-- TODO: link, only show if not signed in-->
+          <Button variant="ghost" class="justify-center w-full font-semibold">
+            Register
+          </Button>
+        </div>
       </DropdownContent>
     </Dropdown>
   </div>
