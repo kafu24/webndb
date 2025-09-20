@@ -11,7 +11,14 @@
     "format": "biome format . --write && prettier --write src/**/*.astro"
   },
   "dependencies": {
-    "astro": "^5.13.7"
+    "@tabler/icons": "^3.35.0",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/vite": "^4.1.13",
+    "astro": "^5.13.7",
+    "tailwind-merge": "^3.3.1",
+    "tailwind-variants": "^2.1.0",
+    "tailwindcss": "^4.1.13",
+    "tw-animate-css": "^1.3.8"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
