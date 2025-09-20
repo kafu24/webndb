@@ -12,6 +12,7 @@ type Props = HTMLAttributes<"div"> & {
    */
   closeDelay?: number;
 
+  // biome-ignore lint/suspicious/noExplicitAny: Astro component requires any for children
   children: any;
 };
 
@@ -315,8 +316,6 @@ const {
 
       // Reset focus index when opening
       this.currentFocusIndex = -1;
-
-      this.positionContent();
     }
 
     private closeDropdown() {
@@ -371,17 +370,6 @@ const {
         window.clearTimeout(this.closeTimerRef);
         this.closeTimerRef = null;
       }
-    }
-
-    private positionContent() {
-      if (!this.content || !this.trigger) return;
-
-      // Set content width to match trigger width
-      this.content.style.width = "var(--starwind-dropdown-trigger-width)";
-      this.content.style.setProperty(
-        "--starwind-dropdown-trigger-width",
-        `${this.trigger.offsetWidth}px`,
-      );
     }
   }
 
