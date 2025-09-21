@@ -4,6 +4,7 @@ import "@/styles/starwind.css";
 
 // components
 import Nav from "@/components/layout/Nav.astro";
+import ThemeScript from "@/components/layout/ThemeScript.astro";
 ---
 
 <html lang="en">
@@ -13,6 +14,7 @@ import Nav from "@/components/layout/Nav.astro";
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>title</title>
+    <ThemeScript />
   </head>
   <body>
     <Nav />

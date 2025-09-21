@@ -1,0 +1,38 @@
+<script is:inline>
+  (() => {
+    function getStoredTheme() {
+      try {
+        // TODO: not sure if we want cross-device sync, would need db storage
+        const stored = localStorage.getItem("theme");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (["light", "dark", "system"].includes(parsed)) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.log("Error reading stored theme:", e);
+      }
+      return "system";
+    }
+
+    function applyTheme(theme) {
+      const root = document.documentElement;
+      let appliedTheme;
+
+      if (theme === "system") {
+        appliedTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      } else {
+        appliedTheme = theme;
+      }
+
+      root.setAttribute("data-theme", appliedTheme);
+      root.classList.toggle("dark", appliedTheme === "dark");
+    }
+
+    // Apply theme immediately to prevent flash
+    applyTheme(getStoredTheme());
+  })();
+</script>

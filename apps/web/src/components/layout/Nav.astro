@@ -1,18 +1,15 @@
 ---
 import Copy from "@tabler/icons/outline/copy.svg";
+import DropdownMenu from "@/components/nav/DropdownMenu.astro";
 import Sidebar from "@/components/nav/Sidebar.astro";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/starwind/avatar";
-import { Button } from "@/components/starwind/button";
 import {
   Dropdown,
   DropdownContent,
-  DropdownItem,
-  DropdownLabel,
-  DropdownSeparator,
   DropdownTrigger,
 } from "@/components/starwind/dropdown";
 import { Input } from "@/components/starwind/input";
@@ -43,42 +40,7 @@ import { Input } from "@/components/starwind/input";
         </Avatar>
       </DropdownTrigger>
       <DropdownContent align="end">
-        <!-- TODO: avatar+fallback+link -->
-        <div class="flex gap-0.5 p-2">
-          <Button
-            variant="ghost"
-            class="flex flex-col items-center gap-2 p-4 w-full h-auto font-normal"
-          >
-            <Avatar size="lg" class="cursor-pointer">
-              <AvatarImage
-                src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
-                alt="John Doe"
-              />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <p>Guest</p>
-          </Button>
-        </div>
-        <DropdownSeparator />
-        <div class="flex gap-0.5 p-2">
-          <Button variant="ghost">
-            <Copy />
-            Settings
-          </Button>
-          <!-- TODO: disabled if not signed in  -->
-          <Button disabled variant="ghost">
-            <Copy />
-            Theme
-          </Button>
-        </div>
-        <div class="flex flex-col gap-0.5 p-2">
-          <!-- TODO: link, signout if signed in -->
-          <Button class="justify-center w-full font-semibold"> Sign In </Button>
-          <!-- TODO: link, only show if not signed in-->
-          <Button variant="ghost" class="justify-center w-full font-semibold">
-            Register
-          </Button>
-        </div>
+        <DropdownMenu />
       </DropdownContent>
     </Dropdown>
   </div>
