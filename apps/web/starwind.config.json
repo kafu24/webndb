@@ -22,6 +22,14 @@
     {
       "name": "input",
       "version": "1.2.0"
+    },
+    {
+      "name": "dialog",
+      "version": "1.3.0"
+    },
+    {
+      "name": "sheet",
+      "version": "1.0.0"
     }
   ]
 }
