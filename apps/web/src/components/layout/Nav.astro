@@ -1,25 +1,26 @@
 ---
-import { Input } from "@/components/starwind/input";
+import Copy from "@tabler/icons/outline/copy.svg";
+import Sidebar from "@/components/nav/Sidebar.astro";
 import {
   Avatar,
-  AvatarImage,
   AvatarFallback,
+  AvatarImage,
 } from "@/components/starwind/avatar";
+import { Button } from "@/components/starwind/button";
 import {
   Dropdown,
-  DropdownTrigger,
   DropdownContent,
   DropdownItem,
   DropdownLabel,
   DropdownSeparator,
+  DropdownTrigger,
 } from "@/components/starwind/dropdown";
-import { Button } from "@/components/starwind/button";
-import Copy from "@tabler/icons/outline/copy.svg";
+import { Input } from "@/components/starwind/input";
 ---
 
 <div class="flex items-center justify-between px-4 py-2 border-b">
   <div class="flex gap-4">
-    <Button />
+    <Sidebar />
     <a href="/" class="flex items-center gap-2 text-3xl"><Copy /> WebNDB</a>
   </div>
   <div class="flex items-center gap-4">
@@ -44,20 +45,20 @@ import Copy from "@tabler/icons/outline/copy.svg";
       <DropdownContent align="end">
         <!-- TODO: avatar+fallback+link -->
         <div class="flex gap-0.5 p-2">
-        <Button
-          variant="ghost"
-          class="flex flex-col items-center gap-2 p-4 w-full h-auto font-normal"
-        >
-          <Avatar size="lg" class="cursor-pointer">
-            <AvatarImage
-              src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
-              alt="John Doe"
-            />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-          <p>Guest</p>
-        </Button>
-      </div>
+          <Button
+            variant="ghost"
+            class="flex flex-col items-center gap-2 p-4 w-full h-auto font-normal"
+          >
+            <Avatar size="lg" class="cursor-pointer">
+              <AvatarImage
+                src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+                alt="John Doe"
+              />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+            <p>Guest</p>
+          </Button>
+        </div>
         <DropdownSeparator />
         <div class="flex gap-0.5 p-2">
           <Button variant="ghost">
