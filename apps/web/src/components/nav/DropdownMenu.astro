@@ -1,0 +1,186 @@
+---
+import Copy from "@tabler/icons/outline/copy.svg";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/starwind/avatar";
+import { Button } from "@/components/starwind/button";
+import {
+  DropdownLabel,
+  DropdownSeparator,
+} from "@/components/starwind/dropdown";
+---
+
+<div id="menu-container" class="w-64">
+  <div id="main-menu">
+    <!-- TODO: avatar+fallback+link -->
+    <div class="flex gap-0.5 p-2">
+      <Button
+        variant="ghost"
+        class="flex flex-col items-center gap-2 p-4 w-full h-auto font-normal"
+      >
+        <Avatar size="lg" class="cursor-pointer">
+          <AvatarImage
+            src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+            alt="John Doe"
+          />
+          <AvatarFallback>JD</AvatarFallback>
+        </Avatar>
+        <span>Guest</span>
+      </Button>
+    </div>
+    <DropdownSeparator />
+    <div class="flex gap-0.5 p-2">
+      <Button variant="ghost" class="flex-1">
+        <Copy />
+        Settings
+      </Button>
+      <Button id="theme-button" variant="ghost" class="flex-1">
+        <Copy />
+        Theme
+      </Button>
+    </div>
+    <div class="flex flex-col gap-0.5 p-2">
+      <!-- TODO: link, signout if signed in -->
+      <Button class="justify-center w-full font-semibold"> Sign In </Button>
+      <!-- TODO: link, only show if not signed in-->
+      <Button variant="ghost" class="justify-center w-full font-semibold">
+        Register
+      </Button>
+    </div>
+  </div>
+
+  <div id="theme-menu" class="hidden">
+    <DropdownLabel class="flex items-center gap-2 p-2">
+      <Button id="back-button" variant="ghost" class="p-2">
+        <!-- TODO: replace with svg -->
+        <span>←</span>
+      </Button>
+      <h3>Choose a theme</h3>
+    </DropdownLabel>
+    <!-- TODO: replace copy with svgs -->
+    <div class="flex flex-col gap-0.5 p-2">
+      <Button
+        variant="ghost"
+        class="theme-option justify-start"
+        data-theme="light"
+      >
+        <Copy />
+        <span>Light</span>
+      </Button>
+      <Button
+        variant="ghost"
+        class="theme-option justify-start"
+        data-theme="dark"
+      >
+        <Copy />
+        <span>Dark</span>
+      </Button>
+      <Button
+        variant="ghost"
+        class="theme-option justify-start"
+        data-theme="system"
+      >
+        <Copy />
+        <div class="flex flex-col items-start">
+          <span>System</span>
+          <span class="text-xs text-muted-foreground"
+            >Follow system preference</span
+          >
+        </div>
+      </Button>
+      <Button
+        variant="ghost"
+        class="theme-option justify-start"
+        data-theme="custom"
+      >
+        <Copy />
+        <div class="flex flex-col items-start">
+          <span>Custom</span>
+          <span class="text-xs text-muted-foreground"
+            >Create a custom theme</span
+          >
+        </div>
+      </Button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { themeManager, type Theme } from "@/utils/theme";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const menuContainer = document.getElementById("menu-container");
+    const mainMenu = document.getElementById("main-menu");
+    const themeMenu = document.getElementById("theme-menu");
+    const themeButton = document.getElementById("theme-button");
+    const backButton = document.getElementById("back-button");
+    const themeOptions = document.querySelectorAll(".theme-option");
+
+    const showThemeMenu = () => {
+      mainMenu?.classList.add("hidden");
+      themeMenu?.classList.remove("hidden");
+      updateSelectedTheme();
+    };
+
+    const showMainMenu = () => {
+      themeMenu?.classList.add("hidden");
+      mainMenu?.classList.remove("hidden");
+    };
+
+    const updateSelectedTheme = () => {
+      const currentTheme = themeManager.getTheme();
+      const oldCheck = document.getElementById("theme-check");
+      oldCheck?.remove();
+      themeOptions.forEach((btn) => {
+        const isActive = (btn as HTMLElement).dataset.theme === currentTheme;
+        if (isActive) {
+          btn.classList.add("pointer-events-none", "opacity-50");
+          const check = document.createElement("span");
+          check.id = "theme-check";
+          check.className = "theme-check ml-auto text-primary font-bold";
+          // TODO: replace with svg
+          check.innerHTML = "✓";
+          btn.appendChild(check);
+        } else {
+          btn.classList.remove("pointer-events-none", "opacity-50");
+        }
+      });
+    };
+
+    themeButton?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showThemeMenu();
+    });
+
+    backButton?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      showMainMenu();
+    });
+
+    themeOptions.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const theme = (e.currentTarget as HTMLElement).dataset.theme as Theme;
+        if (theme) {
+          themeManager.setTheme(theme);
+          updateSelectedTheme();
+        }
+      });
+    });
+
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (menuContainer && !menuContainer.contains(target)) {
+        setTimeout(() => {
+          showMainMenu();
+        }, 300);
+      }
+    });
+
+    menuContainer?.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+  });
+</script>
