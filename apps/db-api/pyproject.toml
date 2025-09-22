@@ -8,6 +8,7 @@ dependencies = [
     "asyncpg>=0.30.0",
     "litestar[sqlalchemy,standard]>=2.17.0",
     "psycopg[binary]>=3.2.10",
+    "sqlakeyset>=2.0.1746777265",
     "sqlalchemy>=2.0.43",
     "sqlalchemy-utils>=0.42.0",
 ]
