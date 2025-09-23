@@ -14,9 +14,9 @@ services:
           target: /app
           ignore: node_modules
         - action: rebuild
-          path: package.json
+          path: apps/web/package.json
         - action: rebuild
-          path: pnpm-lock.yaml
+          path: apps/web/pnpm-lock.yaml
   db-api:
     # Build the image from the Dockerfile in the db-api directory
     build: apps/db-api/
