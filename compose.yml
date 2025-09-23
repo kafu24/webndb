@@ -18,32 +18,21 @@ services:
         - action: rebuild
           path: apps/web/pnpm-lock.yaml
   db-api:
-    # Build the image from the Dockerfile in the db-api directory
     build: apps/db-api/
-
-    # Host the Litestar application on port 8000
     ports:
       - "8000:8000"
-
     env_file:
       - .env
-
     develop:
-      # Create a `watch` configuration to update the app
-      # https://docs.docker.com/compose/file-watch/#compose-watch-versus-bind-mounts
       watch:
-        # Sync the working directory with the `/app` directory in the container
         - action: sync
           path: apps/db-api/
           target: /app
-          # Exclude the project virtual environment — it could be for a
-          # different platform in the container
           ignore:
             - .venv/
-
-        # Rebuild the image if dependencies change by checking uv.lock
         - action: rebuild
           path: apps/db-api/uv.lock
+    depends_on: [master]
   master:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}-master"
     image: "citusdata/citus:13.0.3"
