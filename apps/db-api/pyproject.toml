@@ -12,6 +12,7 @@ dependencies = [
     "sqlakeyset>=2.0.1746777265",
     "sqlalchemy>=2.0.43",
     "sqlalchemy-utils>=0.42.0",
+    "structlog>=25.4.0",
 ]
 
 [dependency-groups]
