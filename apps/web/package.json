@@ -11,7 +11,6 @@
     "format": "biome format . --write && prettier --write src/**/*.astro"
   },
   "dependencies": {
-    "@astrojs/preact": "^4.1.1",
     "@astrojs/react": "^4.3.1",
     "@nanostores/persistent": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.15",
