@@ -11,6 +11,7 @@
     "format": "biome format . --write && prettier --write src/**/*.astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.9",
     "@astrojs/preact": "^4.1.1",
     "@nanostores/persistent": "^1.1.0",
     "@tabler/icons": "^3.35.0",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "prettier": "^3.6.2",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "wrangler": "^4.40.0"
   }
 }
