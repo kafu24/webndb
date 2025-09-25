@@ -40,18 +40,4 @@ export const themeManager = {
     root.classList.toggle("dark", appliedTheme === "dark");
     $appliedTheme.set(appliedTheme);
   },
-
-  initTheme() {
-    if (typeof window === "undefined") return;
-
-    const currentTheme = $theme.get();
-    this.applyTheme(currentTheme);
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    mediaQuery.addEventListener("change", () => {
-      if ($theme.get() === "system") {
-        this.applyTheme("system");
-      }
-    });
-  },
 };
