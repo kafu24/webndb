@@ -22,6 +22,10 @@
     {
       "name": "input",
       "version": "1.2.0"
+    },
+    {
+      "name": "pagination",
+      "version": "2.1.0"
     }
   ]
 }
