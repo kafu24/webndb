@@ -1,10 +1,11 @@
 ---
-// styles
+import HeaderActions from "@/components/nav/Header/HeaderActions.astro";
+import Sidebar from "@/components/nav/Sidebar/Sidebar.tsx";
 import "@/styles/starwind.css";
-
-// components
-import Nav from "@/components/layout/Nav.astro";
-import ThemeScript from "@/components/layout/ThemeScript.astro";
+import ThemeScript from "@/utils/ThemeScript.astro";
+import Copy from "@tabler/icons/outline/copy.svg";
+import { ClientRouter } from "astro:transitions";
+const currentPath = Astro.url.pathname;
 ---
 
 <html lang="en">
@@ -15,9 +16,35 @@ import ThemeScript from "@/components/layout/ThemeScript.astro";
     <meta name="generator" content={Astro.generator} />
     <title>title</title>
     <ThemeScript />
+    <ClientRouter />
   </head>
   <body>
-    <Nav />
-    <div class="grid gap-6 px-4"><slot /></div>
+    <div class="flex">
+      <div>
+        <Sidebar
+          client:only="react"
+          transition:persist
+          currentPath={currentPath}
+        >
+          <div slot="fallback">Loading</div>
+        </Sidebar>
+      </div>
+      <main class="flex flex-col w-full">
+        <header
+          class="flex h-16 shrink-0 items-center justify-between gap-2 border-b pl-10 pr-4"
+        >
+          <a
+            id="nav-header"
+            href="/"
+            class="flex items-center gap-2 text-3xl font-bold"
+          >
+            <Copy />
+            WebNDB
+          </a>
+          <HeaderActions />
+        </header>
+        <div class="grid gap-6 px-4"><slot /></div>
+      </main>
+    </div>
   </body>
 </html>

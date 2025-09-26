@@ -111,7 +111,7 @@ import Copy from "@tabler/icons/outline/copy.svg";
 <script>
   import { themeManager, type Theme } from "@/stores/theme";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("astro:page-load", () => {
     const menuContainer = document.getElementById("menu-container");
     const mainMenu = document.getElementById("main-menu");
     const themeMenu = document.getElementById("theme-menu");
