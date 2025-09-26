@@ -1,10 +1,13 @@
 ---
 import HeaderActions from "@/components/nav/Header/HeaderActions.astro";
 import Sidebar from "@/components/nav/Sidebar/Sidebar.tsx";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import "@/styles/starwind.css";
 import ThemeScript from "@/utils/ThemeScript.astro";
 import Copy from "@tabler/icons/outline/copy.svg";
 import { ClientRouter } from "astro:transitions";
+import { PanelLeftIcon } from "lucide-react";
 const currentPath = Astro.url.pathname;
 ---
 
@@ -26,7 +29,17 @@ const currentPath = Astro.url.pathname;
           transition:persist
           currentPath={currentPath}
         >
-          <div slot="fallback">Loading</div>
+          <!-- TODO: icon -->
+          <div slot="fallback">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("size-7 absolute top-4 left-2 z-50")}
+            >
+              <PanelLeftIcon />
+              <span class="sr-only">Toggle Sidebar</span>
+            </Button>
+          </div>
         </Sidebar>
       </div>
       <main class="flex flex-col w-full">
