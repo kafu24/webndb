@@ -1,0 +1,49 @@
+---
+import SearchGroupItems from "@/components/search/SearchGroupItems";
+import SearchGroupList from "@/components/search/SearchGroupList";
+import SearchGroupToggle from "@/components/search/SearchGroupToggle";
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownTrigger,
+} from "@/components/starwind/dropdown";
+import { Input } from "@/components/starwind/input";
+import Copy from "@tabler/icons/outline/copy.svg";
+
+interface Props {
+  group: "Authors" | "Publishers" | "Translators";
+}
+const { group }: Props = Astro.props;
+
+const items = [
+  "item1",
+  "item2",
+  "itemitem3",
+  "itemitemitem4",
+  "item5",
+  "item6",
+  "item7",
+  "item8",
+  "item9",
+  "item10",
+];
+---
+
+<div class="flex flex-col flex-1 gap-2 relative">
+  <span>{group}</span>
+  <Dropdown>
+    <DropdownTrigger asChild class="w-72">
+      <SearchGroupToggle group={group} client:only="react" />
+    </DropdownTrigger>
+    <DropdownContent class="w-72 p-1 max-h-60 overflow-y-auto">
+      <div class="relative p-1">
+        <Copy
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 pointer-events-none"
+        />
+        <Input size="sm" placeholder="Search" class="pl-9 bg-accent" />
+      </div>
+      <SearchGroupItems group={group} client:only="react" />
+      <SearchGroupList group={group} items={items} client:only="react" />
+    </DropdownContent>
+  </Dropdown>
+</div>
