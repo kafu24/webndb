@@ -26,35 +26,21 @@ interface Props {
 }
 
 // TODO: replace with actual icons and links
-const followsMenuItems = [
-  { label: "Updates", icon: IconHome, href: "/updates" },
-  { label: "Reading History", icon: IconHome, href: "/reading-history" },
-];
-const titlesMenuItems = [
+const menuItems = [
+  { label: "Home", icon: IconHome, href: "/" },
   { label: "Novels", icon: IconHome, href: "/novels" },
-  { label: "Series", icon: IconHome, href: "/series" },
-  { label: "Releases", icon: IconHome, href: "/releases" },
-  { label: "Releases Calendar", icon: IconHome, href: "/releases/calendar" },
-];
-const communityMenuItems = [
-  { label: "Forums", icon: IconHome, href: "/forums" },
-  { label: "Staff", icon: IconHome, href: "/staff" },
-  { label: "Publishers", icon: IconHome, href: "/publishers" },
   { label: "Tags", icon: IconHome, href: "/tags" },
-  { label: "Users", icon: IconHome, href: "/users" },
-];
-const databaseMenuItems = [
+  { label: "Publishers", icon: IconHome, href: "/publishers" },
+  { label: "Staff", icon: IconHome, href: "/staff" },
+  // { label: "Users", icon: IconHome, href: "/users" },
+  { label: "Forums", icon: IconHome, href: "/forums" },
   { label: "Recent Changes", icon: IconHome, href: "/history" },
-  { label: "Add to Database", icon: IconHome, href: "/add" },
-  { label: "Editing Guidelines", icon: IconHome, href: "/editing-guidelines" },
 ];
-
-const menuSections = [
-  { title: "Follows", items: followsMenuItems },
-  { title: "Titles", items: titlesMenuItems },
-  { title: "Community", items: communityMenuItems },
-  { title: "Database", items: databaseMenuItems },
-];
+// TODO: show with auth
+// const hiddenMenuItems = [
+//   { label: "Reading History", icon: IconHome, href: "/reading-history" },
+//   { label: "Add to Database", icon: IconHome, href: "/add" },
+// ];
 
 export default function AppSidebar({ currentPath }: Props) {
   const isMobile = useIsMobile();
@@ -85,51 +71,30 @@ export default function AppSidebar({ currentPath }: Props) {
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={currentPath === "/"}
-                  className="text-md"
-                  asChild
-                >
-                  <a href="/">
-                    <IconHome />
-                    <span>Home</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {menuSections.map((section) => (
-                <SidebarMenuItem key={section.title}>
-                  <SidebarGroupLabel className="text-md font-semibold">
-                    {section.title}
-                  </SidebarGroupLabel>
-                  <SidebarMenuSub>
-                    {section.items.map((item) => (
-                      <SidebarMenuSubItem key={item.href}>
-                        <SidebarMenuSubButton
+                    {menuItems.map((item) => (
+                      <SidebarMenuItem key={item.href}>
+                        <SidebarMenuButton
                           isActive={currentPath === item.href}
-                          className="text-md"
+                          className="text-lg"
                           asChild
                         >
                           <a href={item.href}>
                             <item.icon />
                             <span>{item.label}</span>
                           </a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
                     ))}
-                  </SidebarMenuSub>
-                </SidebarMenuItem>
-              ))}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="items-center text-xs gap-0.5">
+        <SidebarFooter className="items-center text-md gap-0.5">
           <div className="flex gap-8 justify-center">
             <a href="/about">About</a>
             <a href="/api">API</a>
           </div>
           <a href="/compliance">Terms & Policies</a>
-          <span className="text-xs">© 2025 WebNDB</span>
+          <span>© 2025 WebNDB</span>
         </SidebarFooter>
       </Sidebar>
       <SidebarRail />
