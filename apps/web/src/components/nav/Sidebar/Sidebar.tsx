@@ -6,13 +6,9 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarProvider,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-  SidebarMenuSubButton,
   SidebarMenuButton,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarGroupLabel,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { IconHome } from "@tabler/icons-react";
@@ -20,6 +16,8 @@ import { CollapsedSidebarTrigger } from "@/components/nav/Sidebar/CollapsedSideb
 import { ExpandedSidebarTrigger } from "@/components/nav/Sidebar/ExpandedSidebarTrigger";
 import { useIsMobile } from "@/hooks/use-mobile";
 import * as React from "react";
+
+const LG_VIEWPORT = 1024;
 
 interface Props {
   currentPath?: string;
@@ -45,6 +43,7 @@ const menuItems = [
 export default function AppSidebar({ currentPath }: Props) {
   const isMobile = useIsMobile();
   const [key, setKey] = React.useState(0);
+  const defaultOpen = window.innerWidth >= LG_VIEWPORT;
 
   if (isMobile) {
     document.addEventListener("astro:after-swap", () => {
@@ -53,7 +52,7 @@ export default function AppSidebar({ currentPath }: Props) {
   }
 
   return (
-    <SidebarProvider key={key} defaultOpen={false}>
+    <SidebarProvider key={key} defaultOpen={defaultOpen}>
       <SidebarInset>
         <CollapsedSidebarTrigger />
       </SidebarInset>
@@ -71,20 +70,20 @@ export default function AppSidebar({ currentPath }: Props) {
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-                    {menuItems.map((item) => (
-                      <SidebarMenuItem key={item.href}>
-                        <SidebarMenuButton
-                          isActive={currentPath === item.href}
-                          className="text-lg"
-                          asChild
-                        >
-                          <a href={item.href}>
-                            <item.icon />
-                            <span>{item.label}</span>
-                          </a>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+              {menuItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    isActive={currentPath === item.href}
+                    className="text-lg"
+                    asChild
+                  >
+                    <a href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>

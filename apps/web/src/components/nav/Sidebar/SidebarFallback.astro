@@ -1,0 +1,226 @@
+---
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { PanelLeftIcon } from "lucide-react";
+---
+
+<Button
+  id="fallback-closed"
+  variant="ghost"
+  size="icon"
+  className={cn("size-7 absolute top-4 left-3.5 z-50 hidden")}
+>
+  <PanelLeftIcon />
+  <span class="sr-only">Toggle Sidebar</span>
+</Button>
+<div id="fallback-open" class="bg-sidebar">
+  <div class="flex h-screen w-64 flex-col shadow-sm border-r">
+    <div class="flex gap-2 p-2 flex-row justify-between items-center h-16 pl-2">
+      <a href="/" class="flex items-center gap-2 text-3xl font-bold">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+        </svg>
+        WebNDB
+      </a>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all h-8 rounded-md px-3 hover:bg-sidebar-accent"
+      >
+        x
+      </button>
+    </div>
+    <div class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto">
+      <div class="relative flex w-full min-w-0 flex-col p-2">
+        <ul class="flex w-full min-w-0 flex-col gap-1">
+          <li class="group relative">
+            <a
+              href="/"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Home</span>
+            </a>
+          </li>
+          <li class="group relative">
+            <a
+              href="/novels"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Novels</span>
+            </a>
+          </li>
+          <li class="group relative">
+            <a
+              href="/tags"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Tags</span>
+            </a>
+          </li>
+          <li class="group relative">
+            <a
+              href="/publishers"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Publishers</span>
+            </a>
+          </li>
+          <li class="group relative">
+            <a
+              href="/staff"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Staff</span>
+            </a>
+          </li>
+          <li class="group relative">
+            <a
+              href="/forums"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Forums</span>
+            </a>
+          </li>
+          <li class="group relative">
+            <a
+              href="/history"
+              class="flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left h-8 text-lg hover:bg-sidebar-accent"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-4 h-4 shrink-0"
+              >
+                <path d="M5 12l-2 0l9 -9l9 9l-2 0"></path>
+                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path>
+                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path>
+              </svg>
+              <span>Recent Changes</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="flex flex-col p-2 items-center text-md gap-0.5">
+      <div class="flex gap-8 justify-center">
+        <a href="/about" class="hover:underline">About</a>
+        <a href="/api" class="hover:underline">API</a>
+      </div>
+      <a href="/compliance" class="hover:underline">Terms &amp; Policies</a>
+      <span>© 2025 WebNDB</span>
+    </div>
+  </div>
+</div>
