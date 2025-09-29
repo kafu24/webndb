@@ -1,0 +1,40 @@
+---
+import DropdownMenu from "@/components/nav/header/DropdownMenu.astro";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/starwind/avatar";
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownTrigger,
+} from "@/components/starwind/dropdown";
+import { Input } from "@/components/starwind/input";
+import Copy from "@tabler/icons/outline/copy.svg";
+---
+
+<div class="flex items-center gap-4">
+  <div class="relative">
+    <!-- TODO: svg -->
+    <Copy
+      class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 pointer-events-none"
+    />
+    <Input size="md" placeholder="Search" class="pl-10 primary" />
+  </div>
+  <Dropdown>
+    <DropdownTrigger asChild>
+      <Avatar size="md" class="cursor-pointer">
+        <!-- TODO: avatar+fallback -->
+        <AvatarImage
+          src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+          alt="John Doe"
+        />
+        <AvatarFallback>JD</AvatarFallback>
+      </Avatar>
+    </DropdownTrigger>
+    <DropdownContent align="end">
+      <DropdownMenu />
+    </DropdownContent>
+  </Dropdown>
+</div>

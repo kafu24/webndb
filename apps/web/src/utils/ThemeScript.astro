@@ -32,7 +32,10 @@
       root.classList.toggle("dark", appliedTheme === "dark");
     }
 
-    // Apply theme immediately to prevent flash
+    document.addEventListener("astro:page-load", () => {
+      applyTheme(getStoredTheme());
+    });
+
     applyTheme(getStoredTheme());
   })();
 </script>
