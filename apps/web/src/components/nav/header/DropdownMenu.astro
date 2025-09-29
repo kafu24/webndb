@@ -1,5 +1,4 @@
 ---
-import Copy from "@tabler/icons/outline/copy.svg";
 import {
   Avatar,
   AvatarFallback,
@@ -10,6 +9,7 @@ import {
   DropdownLabel,
   DropdownSeparator,
 } from "@/components/starwind/dropdown";
+import Copy from "@tabler/icons/outline/copy.svg";
 ---
 
 <div id="menu-container" class="w-64">
@@ -59,6 +59,7 @@ import {
       </Button>
       <h3>Choose a theme</h3>
     </DropdownLabel>
+    <DropdownSeparator />
     <!-- TODO: replace copy with svgs -->
     <div class="flex flex-col gap-0.5 p-2">
       <Button
@@ -108,9 +109,9 @@ import {
 </div>
 
 <script>
-  import { themeManager, type Theme } from "@/utils/theme";
+  import { themeManager, type Theme } from "@/stores/theme";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("astro:page-load", () => {
     const menuContainer = document.getElementById("menu-container");
     const mainMenu = document.getElementById("main-menu");
     const themeMenu = document.getElementById("theme-menu");
