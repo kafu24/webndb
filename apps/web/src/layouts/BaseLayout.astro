@@ -1,10 +1,23 @@
 ---
-// styles
 import "@/styles/starwind.css";
+import Copy from "@tabler/icons/outline/copy.svg";
+import ThemeScript from "@/utils/ThemeScript.astro";
+import Sidebar from "@/components/nav/sidebar/Sidebar.astro";
+import SheetSidebar from "@/components/nav/sidebar/SheetSidebar.astro";
+import HeaderActions from "@/components/nav/header/HeaderActions.astro";
+import { Button } from "@/components/starwind/button";
+import { ClientRouter } from "astro:transitions";
 
-// components
-import Nav from "@/components/layout/Nav.astro";
-import ThemeScript from "@/components/layout/ThemeScript.astro";
+const menuItems = [
+  { label: "Home", icon: Copy, href: "/" },
+  { label: "Novels", icon: Copy, href: "/novels" },
+  { label: "Tags", icon: Copy, href: "/tags" },
+  { label: "Publishers", icon: Copy, href: "/publishers" },
+  { label: "Staff", icon: Copy, href: "/staff" },
+  // { label: "Users", icon: Copy, href: "/users" },
+  { label: "Forums", icon: Copy, href: "/forums" },
+  { label: "Recent Changes", icon: Copy, href: "/history" },
+];
 ---
 
 <html lang="en">
@@ -15,9 +28,97 @@ import ThemeScript from "@/components/layout/ThemeScript.astro";
     <meta name="generator" content={Astro.generator} />
     <title>title</title>
     <ThemeScript />
+    <ClientRouter />
   </head>
   <body>
-    <Nav />
-    <div class="grid gap-6 px-4"><slot /></div>
+    <div class="flex">
+      <Sidebar menuItems={menuItems} transition:persist />
+      <main class="flex flex-col w-full">
+        <header
+          class="flex h-16 shrink-0 items-center justify-between gap-2 border-b pr-4"
+        >
+          <SheetSidebar menuItems={menuItems} />
+          <nav class="flex flex-1 gap-2">
+            <Button
+              id="sidebar-open-button"
+              variant="ghost"
+              size="sm"
+              class="icon rounded-full mx-1 hidden"
+              ><Copy />
+            </Button>
+            <a
+              id="nav-header"
+              href="/"
+              class="flex items-center gap-2 text-3xl font-bold invisible"
+            >
+              <Copy />
+              WebNDB
+            </a>
+          </nav>
+          <HeaderActions />
+        </header>
+        <div class="w-full max-w-370 mx-auto p-4"><slot /></div>
+      </main>
+    </div>
   </body>
 </html>
+
+<script>
+  import { $sidebarState } from "@/stores/sidebar";
+
+  document.addEventListener("astro:page-load", () => {
+    const sidebar = document.getElementById("sidebar");
+    const sidebarOpenButton = document.getElementById("sidebar-open-button");
+    const sidebarCloseButton = document.getElementById("sidebar-close-button");
+    const sheetSidebar = document.getElementById("sheet-sidebar");
+    const sheetSidebarCloseButton = document.getElementById(
+      "sheet-sidebar-close-button",
+    );
+    const navHeader = document.getElementById("nav-header");
+    const smallScreenQuery = window.matchMedia("(max-width: 640px)");
+
+    const handleScreenChange = (e) => {
+      if (e.matches) {
+        sidebarOpenButton.style.display = "none";
+        sheetSidebar.style.display = "block";
+        navHeader.style.visibility = "visible";
+      } else {
+        sheetSidebarCloseButton.click();
+        sheetSidebar.style.display = "none";
+        if ($sidebarState.get() === "collapsed") {
+          sidebarOpenButton.style.display = "block";
+        } else {
+          navHeader.style.visibility = "hidden";
+        }
+      }
+    };
+
+    sidebarOpenButton.addEventListener("click", () => {
+      sidebar.style.display = "";
+      sidebar.style.width = "256px";
+      sidebarOpenButton.style.display = "none";
+      navHeader.style.visibility = "hidden";
+      $sidebarState.set("expanded");
+    });
+    sidebarCloseButton.addEventListener("click", () => {
+      sidebar.style.width = "0px";
+      sidebarOpenButton.style.display = "block";
+      navHeader.style.visibility = "visible";
+      $sidebarState.set("collapsed");
+    });
+
+    if ($sidebarState.get() === "collapsed") {
+      sidebar.style.display = "none";
+      sidebar.style.width = "0px";
+      sidebarOpenButton.style.display = "block";
+      navHeader.style.visibility = "visible";
+    }
+
+    if (smallScreenQuery.matches) {
+      sidebarOpenButton.style.display = "none";
+      navHeader.style.visibility = "visible";
+    }
+
+    smallScreenQuery.addEventListener("change", handleScreenChange);
+  });
+</script>
