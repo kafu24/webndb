@@ -47,6 +47,9 @@ importers:
       nanostores:
         specifier: ^1.0.1
         version: 1.0.1
+      prettier-plugin-astro-organize-imports:
+        specifier: ^0.4.11
+        version: 0.4.11(prettier-plugin-astro@0.14.1)(prettier@3.6.2)
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -2005,6 +2008,18 @@ packages:
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
+
+  prettier-plugin-astro-organize-imports@0.4.11:
+    resolution: {integrity: sha512-qJQZ7qgnTVmk8ALe1SXpCVGa2QNanhsKn6ivfGQqWH8SCgQY1/poxLVras0Q4fqRBugR3xPRGxovODk1tmkbwA==}
+    peerDependencies:
+      prettier: ^3.0
+      prettier-plugin-astro: '*'
+      prettier-plugin-tailwindcss: '*'
+    peerDependenciesMeta:
+      prettier-plugin-astro:
+        optional: true
+      prettier-plugin-tailwindcss:
+        optional: true
 
   prettier-plugin-astro@0.14.1:
     resolution: {integrity: sha512-RiBETaaP9veVstE4vUwSIcdATj6dKmXljouXc/DDNwBSPTp8FRkLGDSGFClKsAFeeg+13SB0Z1JZvbD76bigJw==}
@@ -4545,6 +4560,14 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  prettier-plugin-astro-organize-imports@0.4.11(prettier-plugin-astro@0.14.1)(prettier@3.6.2):
+    dependencies:
+      '@astrojs/compiler': 2.13.0
+      prettier: 3.6.2
+      typescript: 5.9.2
+    optionalDependencies:
+      prettier-plugin-astro: 0.14.1
 
   prettier-plugin-astro@0.14.1:
     dependencies:
