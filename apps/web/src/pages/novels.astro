@@ -1,4 +1,5 @@
 ---
+import Pagination from "@/components/search/SearchPagination.astro";
 import { Button } from "@/components/starwind/button";
 import { Input } from "@/components/starwind/input";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -38,7 +39,7 @@ import Copy from "@tabler/icons/outline/copy.svg";
       </div>
     </div>
     <!-- TODO: results -->
-    <!-- TODO: pagination -->
+    <Pagination />
   </div>
 </BaseLayout>
 
