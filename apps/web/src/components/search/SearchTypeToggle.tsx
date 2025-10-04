@@ -5,7 +5,7 @@ import { IconHome } from "@tabler/icons-react";
 import { filterMap } from "@/stores/search";
 
 interface Props {
-  type: keyof typeof filterMap
+  type: keyof typeof filterMap;
 }
 
 const SearchTypeToggle = React.forwardRef<HTMLButtonElement, Props>(
