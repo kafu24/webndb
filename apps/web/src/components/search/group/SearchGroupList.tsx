@@ -18,7 +18,7 @@ export default function SearchGroupItems({ group, items }: Props) {
   const selectedItems = useStore(selectedAtom) ?? [];
 
   return (
-    <div id={`${group}-items`} className="flex flex-col gap-2 p-2">
+    <div className="flex flex-col gap-2 p-2">
       {items.map((item, index) => (
         <div key={item} className="flex items-center gap-1.5">
           <Checkbox

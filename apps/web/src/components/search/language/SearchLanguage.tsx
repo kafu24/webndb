@@ -1,6 +1,5 @@
-import SearchGroupItems from "@/components/search/group/SearchGroupItems";
-import SearchGroupList from "@/components/search/group/SearchGroupList";
-import SearchGroupToggle from "@/components/search/SearchTypeToggle";
+import { Separator } from "@/components/ui/separator";
+import SearchTypeToggle from "@/components/search/SearchTypeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,28 +7,56 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { IconHome } from "@tabler/icons-react";
-import { supportedLanguages, type Language} from "@/components/search/language/languages.ts"
+import { supportedLanguages } from "@/components/search/language/languages.ts"
+import { useStore } from "@nanostores/react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  filterMap,
+  addToAtom,
+  removeFromAtom,
+} from "@/stores/search";
+
 
 interface Props {
-  type: "available" | "original";
+  type: "Original" | "Available";
 }
 
 export default function SearchLanguage({ type }: Props) {
+  console.log(supportedLanguages)
+  const selectedAtom = filterMap[type];
+  const selectedItems = useStore(selectedAtom) ?? [];
+
   return (
     <div className="flex flex-col flex-1 gap-2 relative">
-      <span>{type}</span>
+      <span>{type} Languages</span>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <SearchGroupToggle group={group} />
+          <SearchTypeToggle type={type} />
         </DropdownMenuTrigger>
-
-        <DropdownMenuContent className="w-72 p-1 max-h-60 overflow-y-auto">
+        <DropdownMenuContent align="start" className="w-144 p-1 max-h-60 overflow-y-auto">
           <div className="relative p-1">
             <IconHome className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 pointer-events-none" />
             <Input placeholder="Search" className="pl-9 bg-accent" />
           </div>
-          <SearchGroupItems group={group} />
-          <SearchGroupList group={group} items={items} />
+         <div className="flex flex-wrap gap-2 p-2">
+  {supportedLanguages.map((lang) => (
+    <div key={lang.name} className="flex items-center gap-1.5 w-[calc(25%-0.375rem)]">
+      <Checkbox
+        id={`search-${lang.name}`}
+        checked={selectedItems.includes(lang.name)}
+        onCheckedChange={(checked: boolean) => {
+          if (checked) addToAtom(selectedAtom, lang.name);
+          else removeFromAtom(selectedAtom, lang.name);
+        }}
+      />
+      <Label htmlFor={`search-${lang.name}`} className="flex-1 cursor-pointer text-md">
+        <lang.flag />
+        {lang.name}
+      </Label>
+    </div>
+  ))}
+</div>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
