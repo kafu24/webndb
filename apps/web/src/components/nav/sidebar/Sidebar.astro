@@ -1,7 +1,6 @@
 ---
 import { Button } from "@/components/starwind/button";
 import Copy from "@tabler/icons/outline/copy.svg";
-import { $sidebarState } from "@/stores/sidebar";
 const { menuItems } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
@@ -36,7 +35,7 @@ const currentPath = Astro.url.pathname;
                 href={item.href}
                 variant="ghost"
                 size="sm"
-                class={`${item.href === currentPath ? "bg-foreground/10" : ""} rounded-lg justify-start font-normal text-lg`}
+                class={`${item.href === currentPath ? "bg-foreground/10" : ""} rounded-lg justify-start font-normal !text-lg`}
               >
                 <item.icon />
                 <span>{item.label}</span>
