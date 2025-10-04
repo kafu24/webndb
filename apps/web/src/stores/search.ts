@@ -1,6 +1,7 @@
 import { atom, type PreinitializedWritableAtom } from "nanostores";
 import { type Language } from "@/components/search/language/languages.ts";
 import { type Tag, type TagState } from "@/components/search/tag/tags.ts";
+import { type Status } from "@/components/search/status/statuses";
 
 export const $selectedOriginalLanguages = atom<Language[]>([]);
 export const $selectedAvailableLanguages = atom<Language[]>([]);
@@ -12,6 +13,8 @@ export const $selectedTags = atom<TagState>({
   included: new Set(),
   excluded: new Set(),
 });
+
+export const $selectedStatuses = atom<Status[]>([]);
 
 export const filterMap = {
   Original: $selectedOriginalLanguages,
