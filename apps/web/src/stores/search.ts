@@ -1,33 +1,29 @@
-import { atom } from "nanostores";
+import { atom, type PreinitializedWritableAtom } from "nanostores";
 
+export const $selectedOriginalLanguages = atom<string[]>([]);
+export const $selectedAvailableLanguages = atom<string[]>([]);
 export const $selectedPublishers = atom<string[]>([]);
 export const $selectedStaff = atom<string[]>([]);
 
-export function addPublisher(publisher: string) {
-  const current = $selectedPublishers.get();
-  if (!current.includes(publisher)) {
-    $selectedPublishers.set([...current, publisher]);
+export const filterMap = {
+  "Original Languages": $selectedOriginalLanguages,
+  "Available Languages": $selectedAvailableLanguages,
+  Publishers: $selectedPublishers,
+  Staff: $selectedStaff,
+};
+
+export function addToAtom(atom: PreinitializedWritableAtom<string[]>, item: string) {
+  const current = atom.get();
+  if (!current.includes(item)) {
+    atom.set([...current, item]);
   }
 }
 
-export function removePublisher(publisher: string) {
-  const current = $selectedPublishers.get();
-  $selectedPublishers.set(current.filter((p) => p !== publisher));
+export function removeFromAtom(atom: PreinitializedWritableAtom<string[]>, item: string) {
+  const current = atom.get();
+  atom.set(current.filter((i) => i !== item));
 }
 
-export function addStaff(staff: string) {
-  const current = $selectedStaff.get();
-  if (!current.includes(staff)) {
-    $selectedStaff.set([...current, staff]);
-  }
-}
-
-export function removeStaff(staff: string) {
-  const current = $selectedStaff.get();
-  $selectedStaff.set(current.filter((t) => t !== staff));
-}
-
-export function resetFilters() {
-  $selectedPublishers.set([]);
-  $selectedStaff.set([]);
+export function resetAllFilters() {
+  Object.values(filterMap).forEach((atom) => atom.set([]));
 }

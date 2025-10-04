@@ -2,20 +2,22 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@nanostores/react";
 import { IconHome } from "@tabler/icons-react";
-import { $selectedPublishers, $selectedStaff } from "@/stores/search";
-
-interface Props {
-  group: "Publishers" | "Staff";
-}
+import { $selectedOriginalLanguages, $selectedAvailableLanguages, $selectedPublishers, $selectedStaff } from "@/stores/search";
 
 const filterMap = {
+  "Original Languages": $selectedOriginalLanguages,
+  "Available Languages": $selectedAvailableLanguages,
   Publishers: $selectedPublishers,
   Staff: $selectedStaff,
 };
 
-const SearchGroupToggle = React.forwardRef<HTMLButtonElement, Props>(
-  ({ group, ...rest }, ref) => {
-    const selected = useStore(filterMap[group]);
+interface Props {
+  type: keyof typeof filterMap
+}
+
+const SearchTypeToggle = React.forwardRef<HTMLButtonElement, Props>(
+  ({ type, ...rest }, ref) => {
+    const selected = useStore(filterMap[type]);
     const displayText = selected.length === 0 ? "Any" : selected.join(", ");
 
     return (
@@ -32,4 +34,4 @@ const SearchGroupToggle = React.forwardRef<HTMLButtonElement, Props>(
   },
 );
 
-export default SearchGroupToggle;
+export default SearchTypeToggle;
