@@ -1,5 +1,6 @@
 ---
-import SearchGroup from "@/components/search/SearchGroup.tsx";
+import SearchGroup from "@/components/search/group/SearchGroup";
+import SearchLanguage from "@/components/search/language/SearchLanguage";
 ---
 
 <div
@@ -8,8 +9,10 @@ import SearchGroup from "@/components/search/SearchGroup.tsx";
 >
   <div class="flex flex-col p-2 mt-2 overflow-visible">
     <div class="flex gap-8">
-      <SearchGroup group={"Publishers"} client:only="react" />
-      <SearchGroup group={"Staff"} client:only="react" />
+      <SearchLanguage type="Original" client:only="react" />
+      <SearchLanguage type="Available" client:only="react" />
+      <SearchGroup group="Publishers" client:only="react" />
+      <SearchGroup group="Staff" client:only="react" />
     </div>
     <!-- TODO -->
     <span>original language, translated languages, status, release year</span>

@@ -2,14 +2,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@nanostores/react";
 import { IconHome } from "@tabler/icons-react";
-import { $selectedOriginalLanguages, $selectedAvailableLanguages, $selectedPublishers, $selectedStaff } from "@/stores/search";
-
-const filterMap = {
-  "Original Languages": $selectedOriginalLanguages,
-  "Available Languages": $selectedAvailableLanguages,
-  Publishers: $selectedPublishers,
-  Staff: $selectedStaff,
-};
+import { filterMap } from "@/stores/search";
 
 interface Props {
   type: keyof typeof filterMap
