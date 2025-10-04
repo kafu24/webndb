@@ -1,15 +1,16 @@
 import { atom, type PreinitializedWritableAtom } from "nanostores";
+import { type Language} from "@/components/search/language/languages.ts"
 
-export const $selectedOriginalLanguages = atom<string[]>([]);
-export const $selectedAvailableLanguages = atom<string[]>([]);
+export const $selectedOriginalLanguages = atom<Language[]>([]);
+export const $selectedAvailableLanguages = atom<Language[]>([]);
 export const $selectedPublishers = atom<string[]>([]);
 export const $selectedStaff = atom<string[]>([]);
 
 export const filterMap = {
-  "Original Languages": $selectedOriginalLanguages,
-  "Available Languages": $selectedAvailableLanguages,
-  Publishers: $selectedPublishers,
-  Staff: $selectedStaff,
+  "Original": $selectedOriginalLanguages,
+  "Available": $selectedAvailableLanguages,
+  "Publishers": $selectedPublishers,
+  "Staff": $selectedStaff,
 };
 
 export function addToAtom(atom: PreinitializedWritableAtom<string[]>, item: string) {
