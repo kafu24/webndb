@@ -3,48 +3,32 @@ import { Separator } from "@/components/ui/separator";
 import { IconX } from "@tabler/icons-react";
 
 import {
-  removePublisher,
-  removeStaff,
-  $selectedPublishers,
-  $selectedStaff,
+  filterMap,
+  removeFromAtom,
 } from "@/stores/search";
 
 interface Props {
   group: "Publishers" | "Staff";
 }
 
-const filterMap = {
-  Publishers: {
-    selected: $selectedPublishers,
-    remove: removePublisher,
-  },
-  Staff: {
-    selected: $selectedStaff,
-    remove: removeStaff,
-  },
-};
+export default function SearchGroupPills({ group }: Props) {
+  const selectedAtom = filterMap[group];
+  const selectedItems = useStore(selectedAtom) ?? [];
 
-export default function SearchGroupPills(props: Props) {
-  const { selected, remove } = filterMap[props.group];
-  const $selected = useStore(selected);
-  const selectedItems = $selected ?? [];
-
-  if (selectedItems.length === 0) {
-    return null;
-  }
+  if (selectedItems.length === 0) return null;
 
   return (
     <>
       <div className="flex flex-wrap max-w-full gap-2 p-2">
-        {selectedItems.map((item: string) => (
+        {selectedItems.map((item) => (
           <button
             key={item}
             className="flex items-center gap-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
             data-remove-item={item}
-            data-group={props.group}
+            data-group={group}
             onClick={(e) => {
               e.stopPropagation();
-              remove(item);
+              removeFromAtom(selectedAtom, item);
             }}
           >
             <span>{item}</span>
