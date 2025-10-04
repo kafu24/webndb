@@ -2,10 +2,7 @@ import { useStore } from "@nanostores/react";
 import { Separator } from "@/components/ui/separator";
 import { IconX } from "@tabler/icons-react";
 
-import {
-  filterMap,
-  removeFromAtom,
-} from "@/stores/search";
+import { filterMap, removeFromAtom } from "@/stores/search";
 
 interface Props {
   group: "Publishers" | "Staff";

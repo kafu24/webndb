@@ -2,11 +2,7 @@ import { useStore } from "@nanostores/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-import {
-  filterMap,
-  addToAtom,
-  removeFromAtom,
-} from "@/stores/search";
+import { filterMap, addToAtom, removeFromAtom } from "@/stores/search";
 
 interface Props {
   group: "Publishers" | "Staff";
@@ -29,7 +25,10 @@ export default function SearchGroupItems({ group, items }: Props) {
               else removeFromAtom(selectedAtom, item);
             }}
           />
-          <Label htmlFor={`${group}-${index}`} className="flex-1 cursor-pointer text-md">
+          <Label
+            htmlFor={`${group}-${index}`}
+            className="flex-1 cursor-pointer text-md"
+          >
             {item}
           </Label>
         </div>
