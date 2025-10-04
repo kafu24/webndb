@@ -1,6 +1,7 @@
 ---
 import SearchGroup from "@/components/search/group/SearchGroup";
 import SearchLanguage from "@/components/search/language/SearchLanguage";
+import SearchStatus from "@/components/search/status/SearchStatus";
 import SearchTag from "@/components/search/tag/SearchTag";
 ---
 
@@ -14,7 +15,10 @@ import SearchTag from "@/components/search/tag/SearchTag";
       <SearchLanguage type="Available" client:only="react" />
       <SearchGroup group="Publishers" client:only="react" />
       <SearchGroup group="Staff" client:only="react" />
+    </div>
+    <div class="flex gap-8">
       <SearchTag client:only="react" />
+      <SearchStatus client:only="react" />
     </div>
     <!-- TODO -->
     <span>original language, translated languages, status, release year</span>
