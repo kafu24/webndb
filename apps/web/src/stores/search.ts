@@ -2,7 +2,8 @@ import { atom, type PreinitializedWritableAtom } from "nanostores";
 import { type Language } from "@/components/search/language/languages.ts";
 import { type Tag, type TagState } from "@/components/search/tag/tags.ts";
 import { type Status } from "@/components/search/status/statuses";
-import { type minMaxState } from "@/components/search/minMax/minMax";
+import { type MinMaxState } from "@/components/search/minMax/minMax";
+import { type SortBy } from "@/components/search/sortBy/sortBy";
 
 export const $selectedOriginalLanguages = atom<Language[]>([]);
 export const $selectedAvailableLanguages = atom<Language[]>([]);
@@ -17,13 +18,15 @@ export const $selectedTags = atom<TagState>({
 
 export const $selectedStatuses = atom<Status[]>([]);
 
-export const $selectedMinMax = atom<minMaxState>({
+export const $selectedMinMax = atom<MinMaxState>({
   Chapters: { type: "min", value: 0 },
   Readers: { type: "min", value: 0 },
   Rating: { type: "min", value: 0 },
   "# Ratings": { type: "min", value: 0 },
   Reviews: { type: "min", value: 0 },
 });
+
+export const $selectedSortBy = atom<SortBy>("Latest Update");
 
 export const filterMap = {
   Original: $selectedOriginalLanguages,
@@ -65,7 +68,7 @@ export function updateTagState(tag: Tag) {
   $selectedTags.set({ included: included, excluded: excluded });
 }
 
-export function toggleMinMax(type: keyof minMaxState) {
+export function toggleMinMax(type: keyof MinMaxState) {
   const current = $selectedMinMax.get();
   const currentValue = current[type];
   $selectedMinMax.set({
@@ -87,4 +90,5 @@ export function resetAllFilters() {
     "# Ratings": { type: "min", value: 0 },
     Reviews: { type: "min", value: 0 },
   });
+  $selectedSortBy.set("Latest Update");
 }
