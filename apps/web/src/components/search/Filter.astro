@@ -1,10 +1,15 @@
 ---
 import SearchGroup from "@/components/search/group/SearchGroup";
 import SearchLanguage from "@/components/search/language/SearchLanguage";
+import SearchMinMax from "@/components/search/minMax/SearchMinMax";
 import SearchStatus from "@/components/search/status/SearchStatus";
 import SearchTag from "@/components/search/tag/SearchTag";
 ---
 
+<!-- TODO: ui,
+refactor duplicate code (if only used in element, have const = ()
+move data to /data
+support other viewports -->
 <div
   id="filter"
   class="h-0 overflow-hidden transition-[height] duration-150 ease-linear"
@@ -19,11 +24,16 @@ import SearchTag from "@/components/search/tag/SearchTag";
     <div class="flex gap-8">
       <SearchTag client:only="react" />
       <SearchStatus client:only="react" />
+      <!-- TODO: dates -->
+    </div>
+    <div class="flex gap-8">
+      <SearchMinMax type="Chapters" client:only="react" />
+      <SearchMinMax type="Readers" client:only="react" />
+      <SearchMinMax type="Rating" client:only="react" />
+      <SearchMinMax type="# Ratings" client:only="react" />
+      <SearchMinMax type="Reviews" client:only="react" />
     </div>
     <!-- TODO -->
-    <span>original language, translated languages, status, release year</span>
-    <span>tags, readinglist</span>
-    <span>chapters, rating, # ratings, readers, reviews</span>
-    <span>sort by</span>
+    <span>sort by, reading list</span>
   </div>
 </div>
