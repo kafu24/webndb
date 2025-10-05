@@ -6,7 +6,7 @@ export const supportedMinMax = [
   "Reviews",
 ] as const;
 
-export type minMaxState = {
+export type MinMaxState = {
   [K in (typeof supportedMinMax)[number]]: {
     type: "min" | "max";
     value: number;
