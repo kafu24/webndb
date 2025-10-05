@@ -2,6 +2,7 @@
 import SearchGroup from "@/components/search/group/SearchGroup";
 import SearchLanguage from "@/components/search/language/SearchLanguage";
 import SearchMinMax from "@/components/search/minMax/SearchMinMax";
+import SearchSortBy from "@/components/search/sortBy/SearchSortBy";
 import SearchStatus from "@/components/search/status/SearchStatus";
 import SearchTag from "@/components/search/tag/SearchTag";
 ---
@@ -33,7 +34,9 @@ support other viewports -->
       <SearchMinMax type="# Ratings" client:only="react" />
       <SearchMinMax type="Reviews" client:only="react" />
     </div>
-    <!-- TODO -->
-    <span>sort by, reading list</span>
+    <div class="flex gap-8">
+      <SearchSortBy client:only="react" />
+      <!-- <SearchReadingList client:only="react" /> -->
+    </div>
   </div>
 </div>
