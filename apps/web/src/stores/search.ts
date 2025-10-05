@@ -1,9 +1,9 @@
 import { atom, type PreinitializedWritableAtom } from "nanostores";
-import { type Language } from "@/components/search/language/languages.ts";
-import { type Tag, type TagState } from "@/components/search/tag/tags.ts";
-import { type Status } from "@/components/search/status/statuses";
-import { type MinMaxState } from "@/components/search/minMax/minMax";
-import { type SortBy } from "@/components/search/sortBy/sortBy";
+import { type Language } from "@/components/search/data/languages";
+import { type Tag, type TagState } from "@/components/search/data/tags";
+import { type Status } from "@/components/search/data/statuses";
+import { type MinMaxState } from "@/components/search/data/minMax";
+import { type SortBy } from "@/components/search/data/sortBy";
 
 export const $selectedOriginalLanguages = atom<Language[]>([]);
 export const $selectedAvailableLanguages = atom<Language[]>([]);

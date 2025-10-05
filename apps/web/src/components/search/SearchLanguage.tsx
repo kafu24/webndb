@@ -1,13 +1,12 @@
-import { Separator } from "@/components/ui/separator";
-import SearchTypeToggle from "@/components/search/SearchTypeToggle";
+import SearchTypeToggle from "@/components/search/subcomponents/SearchTypeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
+import DropdownSearch from "@/components/search/subcomponents/DropdownSearch";
 import { IconHome } from "@tabler/icons-react";
-import { supportedLanguages } from "@/components/search/language/languages.ts";
+import { supportedLanguages } from "@/components/search/data/languages";
 import { useStore } from "@nanostores/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -19,7 +18,6 @@ interface Props {
 }
 
 export default function SearchLanguage({ type }: Props) {
-  console.log(supportedLanguages);
   const selectedAtom = filterMap[type];
   const selectedItems = useStore(selectedAtom) ?? [];
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -37,15 +35,11 @@ export default function SearchLanguage({ type }: Props) {
           align="start"
           className="w-144 p-1 max-h-60 overflow-y-auto"
         >
-          <div className="relative p-1">
-            <IconHome className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 pointer-events-none" />
-            <Input
-              placeholder="Search"
-              className="pl-9 bg-accent"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          <DropdownSearch
+            placeholder="Search languages"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <div className="flex flex-wrap gap-2 p-2">
             {searchedLanguages.map((lang) => (
               <div
