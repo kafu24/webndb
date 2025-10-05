@@ -1,5 +1,5 @@
 ---
-import Filter from "@/components/search/Filter.astro";
+import SearchFilter from "@/components/search/SearchFilter";
 import Pagination from "@/components/search/SearchPagination.astro";
 import { Button } from "@/components/starwind/button";
 import { Input } from "@/components/starwind/input";
@@ -22,34 +22,16 @@ import Copy from "@tabler/icons/outline/copy.svg";
       <Input size="lg" placeholder="Search" class="pl-11 bg-accent" />
       <Button>Search</Button>
       <!-- TODO: icon -->
-      <Button id="filter-toggle" class="flex">
-        <span id="filter-toggle-text"> Show Filters </span>
+      <Button id="search-filter-toggle" class="flex">
+        <span id="search-filter-toggle-text"> Show Filters </span>
         <Copy
-          id="filter-toggle-icon"
+          id="search-filter-toggle-icon"
           class="transition-transform duration-150"
         />
       </Button>
     </div>
-    <Filter />
+    <SearchFilter client:only="react" />
     <!-- TODO: results -->
     <Pagination />
   </div>
 </BaseLayout>
-
-<script>
-  document.addEventListener("astro:page-load", () => {
-    const filterToggle = document.getElementById("filter-toggle");
-    const filterToggleText = document.getElementById("filter-toggle-text");
-    const filterToggleIcon = document.getElementById("filter-toggle-icon");
-    const filter = document.getElementById("filter");
-
-    filterToggle!.addEventListener("click", () => {
-      filter!.classList.toggle("h-0");
-      filter!.classList.toggle("h-96");
-      filterToggleIcon?.classList.toggle("rotate-180");
-      filterToggleText!.textContent = filter!.classList.contains("h-96")
-        ? "Hide Filters"
-        : "Show Filters";
-    });
-  });
-</script>

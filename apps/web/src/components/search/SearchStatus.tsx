@@ -3,7 +3,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { supportedStatuses } from "@/components/search/status/statuses.ts";
+import { supportedStatuses } from "@/components/search/data/statuses";
 import { useStore } from "@nanostores/react";
 import { Button } from "@/components/ui/button";
 import { $selectedStatuses, addToAtom, removeFromAtom } from "@/stores/search";
@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 
 export default function SearchStatus() {
   const selectedStatuses = useStore($selectedStatuses) ?? [];
+
   const SearchStatusesToggle = React.forwardRef<HTMLButtonElement>(
     ({ ...rest }, ref) => {
       let displayText = "Any";
