@@ -1,5 +1,5 @@
 import { $selectedSortBy } from "@/stores/search";
-import { supportedSortBy } from "@/components/search/sortBy/sortBy";
+import { supportedSortBy } from "@/components/search/data/sortBy";
 import { useStore } from "@nanostores/react";
 import {
   DropdownMenu,

@@ -3,13 +3,13 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { supportedTags } from "@/components/search/tag/tags.ts";
+import { supportedTags } from "@/components/search/data/tags";
 import { useStore } from "@nanostores/react";
 import { Button } from "@/components/ui/button";
 import { $selectedTags, updateTagState } from "@/stores/search";
 import * as React from "react";
 import { IconHome } from "@tabler/icons-react";
-import { Input } from "@/components/ui/input";
+import DropdownSearch from "@/components/search/subcomponents/DropdownSearch";
 
 export default function SearchTag() {
   const selectedTags = useStore($selectedTags) ?? [];
@@ -62,15 +62,11 @@ export default function SearchTag() {
           align="start"
           className="w-144 p-1 max-h-60 overflow-y-auto"
         >
-          <div className="relative p-1">
-            <IconHome className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 pointer-events-none" />
-            <Input
-              placeholder="Search tags"
-              className="pl-9 bg-accent"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          <DropdownSearch
+            placeholder="Search tags"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           {filteredTags.length > 0 ? (
             filteredTags.map((tagGroup) => (
               <div key={`search-${tagGroup.name}`} className="flex flex-col">

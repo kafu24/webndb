@@ -1,5 +1,5 @@
 import { $selectedMinMax, toggleMinMax } from "@/stores/search";
-import { supportedMinMax } from "@/components/search/minMax/minMax";
+import { supportedMinMax } from "@/components/search/data/minMax";
 import { useStore } from "@nanostores/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
