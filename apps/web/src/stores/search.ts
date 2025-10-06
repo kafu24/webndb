@@ -28,6 +28,15 @@ export const $selectedMinMax = atom<MinMaxState>({
 
 export const $selectedSortBy = atom<SortBy>("Latest Update");
 
+type ReleaseDates = {
+  oldest?: Date;
+  latest?: Date;
+};
+export const $selectedReleaseDates = atom<ReleaseDates>({
+  oldest: undefined,
+  latest: undefined,
+});
+
 export const filterMap = {
   Original: $selectedOriginalLanguages,
   Available: $selectedAvailableLanguages,
@@ -80,6 +89,30 @@ export function toggleMinMax(type: keyof MinMaxState) {
   });
 }
 
+export const updateOldestDate = (date: Date | undefined): boolean => {
+  const releaseDates = $selectedReleaseDates.get();
+
+  if (date && releaseDates.latest && date > releaseDates.latest) return false;
+
+  $selectedReleaseDates.set({
+    ...releaseDates,
+    oldest: date,
+  });
+  return true;
+};
+export const updateLatestDate = (date: Date | undefined): boolean => {
+  const releaseDates = $selectedReleaseDates.get();
+
+  if (date && releaseDates.oldest && date < releaseDates.oldest) return false;
+
+  $selectedReleaseDates.set({
+    ...releaseDates,
+    latest: date,
+  });
+  return true;
+};
+
+
 export function resetAllFilters() {
   Object.values(filterMap).forEach((atom) => atom.set([]));
   $selectedTags.set({ included: new Set(), excluded: new Set() });
@@ -91,4 +124,8 @@ export function resetAllFilters() {
     Reviews: { type: "min", value: 0 },
   });
   $selectedSortBy.set("Latest Update");
+  $selectedReleaseDates.set({
+    oldest: undefined,
+    latest: undefined,
+  });
 }
