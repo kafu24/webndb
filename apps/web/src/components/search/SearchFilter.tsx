@@ -4,6 +4,7 @@ import SearchMinMax from "@/components/search/SearchMinMax";
 import SearchSortBy from "@/components/search/SearchSortBy";
 import SearchStatus from "@/components/search/SearchStatus";
 import SearchTag from "@/components/search/SearchTag";
+import SearchReleaseDate from "@/components/search/SearchReleaseDate";
 import * as React from "react";
 
 export default function SearchFilter() {
@@ -51,6 +52,7 @@ export default function SearchFilter() {
           <SearchTag />
           <SearchStatus />
           {/* TODO: dates */}
+          <SearchReleaseDate />
         </div>
         <div className="flex gap-8">
           <SearchMinMax type="Chapters" />
