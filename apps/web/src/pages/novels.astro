@@ -1,4 +1,5 @@
 ---
+import NovelResults from "@/components/display/NovelResults.astro";
 import SearchFilter from "@/components/search/SearchFilter";
 import Pagination from "@/components/search/SearchPagination.astro";
 import { Button } from "@/components/starwind/button";
@@ -30,8 +31,8 @@ import Copy from "@tabler/icons/outline/copy.svg";
         />
       </Button>
     </div>
-    <SearchFilter client:load/>
-    <!-- TODO: results -->
+    <SearchFilter client:load />
+    <NovelResults />
     <Pagination />
   </div>
 </BaseLayout>

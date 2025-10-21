@@ -1,0 +1,29 @@
+---
+  const items = [
+    {title: "title1 title1 title1title1 title1title1title1 title1title1title1 title1", description: "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description ", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+    {title: "title1", description: "description", image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg"},
+  ]
+---
+<div class="grid grid-cols-[repeat(auto-fit,_minmax(192px,_1fr))] gap-2 pt-4">
+  {items.map((item) => (
+    <div class="relative">
+      <a  href={`/${item.title}`}>
+  <div class="aspect-[5/7] overflow-hidden">
+    <img src={item.image}/>
+  </div>
+  <div class="absolute left-0 top-0 flex aspect-[5/7] w-full bg-black/80 opacity-0 hover:opacity-100">
+    <span class="p-2 overflow-auto text-white">{item.description}</span>
+  </div>
+  <span class="line-clamp-2 text-ellipsis">{item.title}</span>
+  </a>
+  </div>
+  ))
+  }
+</div>
