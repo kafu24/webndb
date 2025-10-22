@@ -1,8 +1,14 @@
 from enum import StrEnum
 
-from sqlalchemy import Identity, MetaData, PrimaryKeyConstraint, event, text
+from sqlalchemy import (
+    ForeignKey,
+    Identity,
+    MetaData,
+    PrimaryKeyConstraint,
+    event,
+    text,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.schema import ForeignKey
 from sqlalchemy.types import BigInteger, Boolean, Enum, Text
 
 
@@ -45,48 +51,48 @@ class Base(DeclarativeBase):
         )
 
 
-class WebNovel(Base):
-    __tablename__ = 'web_novel'
+class Novel(Base):
+    __tablename__ = 'novel'
 
-    web_novel_id: Mapped[int] = mapped_column(
+    novel_id: Mapped[int] = mapped_column(
         BigInteger, Identity(always=True), primary_key=True
     )
     original_language: Mapped[Language | None]
     description: Mapped[str | None] = mapped_column(Text)
 
-    titles: Mapped[list['WebNovelTitle']] = relationship(
-        back_populates='web_novel',
+    titles: Mapped[list['NovelTitle']] = relationship(
+        back_populates='novel',
         cascade='all, delete-orphan',
         passive_deletes=True,
-        order_by='WebNovelTitle.official',
+        order_by='NovelTitle.official',
     )
 
-
-@event.listens_for(WebNovel.__table__, 'after_create')
-def distribute_web_novel(target, connection, **kw):
-    connection.execute(
-        text("SELECT create_distributed_table('web_novel', 'web_novel_id')")
-    )
+@event.listens_for(Novel.__table__, 'after_create')
+def distribute_novel(target, connection, **kw):
+    connection.execute(text("SELECT create_distributed_table('novel', 'novel_id')"))
 
 
-class WebNovelTitle(Base):
-    __tablename__ = 'web_novel_title'
+class NovelTitle(Base):
+    __tablename__ = 'novel_title'
 
-    web_novel_id: Mapped[int] = mapped_column(
-        ForeignKey('web_novel.web_novel_id', ondelete='CASCADE')
+    novel_id: Mapped[int] = mapped_column(
+        ForeignKey('novel.novel_id', ondelete='CASCADE')
     )
     language: Mapped[Language]
     official: Mapped[bool] = mapped_column(Boolean)
     title: Mapped[str] = mapped_column(Text)
     latin: Mapped[str | None] = mapped_column(Text)
 
-    web_novel: Mapped[WebNovel] = relationship(back_populates='titles')
+    novel: Mapped[Novel] = relationship(back_populates='titles')
 
-    __table_args__ = (PrimaryKeyConstraint('web_novel_id', 'language'),)
+    __table_args__ = (PrimaryKeyConstraint('novel_id', 'language'),)
 
 
-@event.listens_for(WebNovelTitle.__table__, 'after_create')
-def distribute_web_novel_title(target, connection, **kw):
+@event.listens_for(NovelTitle.__table__, 'after_create')
+def distribute_novel_title(target, connection, **kw):
     connection.execute(
-        text("SELECT create_distributed_table('web_novel_title', 'web_novel_id')")
+        text(
+            'SELECT create_distributed_table('
+            "'novel_title', 'novel_id', colocate_with => 'novel')"
+        )
     )
