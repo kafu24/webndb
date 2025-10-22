@@ -2,22 +2,46 @@
 import CardNovelResults from "@/components/display/CardNovelResults.astro";
 import CompactNovelResults from "@/components/display/CompactNovelResults.astro";
 import GridNovelResults from "@/components/display/GridNovelResults.astro";
-import { Button } from "@/components/starwind/button";
+import { $novelResultsView } from "@/stores/novelResultsView";
+import { IconLayoutGrid, IconList, IconListDetails } from "@tabler/icons-react";
 ---
 
 <div>
-  <div class="flex justify-end pt-4 gap-2">
-    <Button id="compact-view-btn" size="icon" variant="outline"> C </Button>
-    <Button id="card-view-btn" size="icon" variant="outline"> D </Button>
-    <Button id="grid-view-btn" size="icon" variant="outline"> G </Button>
+  <div class="flex justify-end pt-4">
+    <div class="flex rounded-lg bg-foreground relative overflow-hidden">
+      <div
+        id="slider"
+        class="absolute w-10 h-10 opacity-20 bg-background transition-all duration-200 ease-out"
+      >
+      </div>
+      <button
+        data-view="compact"
+        class="relative z-10 p-2 transition-colors text-background"
+      >
+        <IconList className="w-6 h-6" />
+      </button>
+      <button
+        data-view="card"
+        class="relative z-10 p-2 transition-colors text-background"
+      >
+        <IconListDetails className="w-6 h-6" />
+      </button>
+      <button
+        data-view="grid"
+        class="relative z-10 p-2 transition-colors text-background"
+      >
+        <IconLayoutGrid className="w-6 h-6" />
+      </button>
+    </div>
   </div>
-  <div id="compact-view" class="hidden">
+
+  <div data-view-content="compact" class="hidden">
     <CompactNovelResults />
   </div>
-  <div id="card-view" class="hidden">
+  <div data-view-content="card" class="hidden">
     <CardNovelResults />
   </div>
-  <div id="grid-view" class="hidden">
+  <div data-view-content="grid" class="hidden">
     <GridNovelResults />
   </div>
 </div>
@@ -25,41 +49,29 @@ import { Button } from "@/components/starwind/button";
 <script>
   import { $novelResultsView } from "@/stores/novelResultsView";
 
-  const compactViewBtn = document.getElementById("compact-view-btn");
-  const gridViewBtn = document.getElementById("grid-view-btn");
-  const cardViewBtn = document.getElementById("card-view-btn");
-  const compactView = document.getElementById("compact-view");
-  const gridView = document.getElementById("grid-view");
-  const cardView = document.getElementById("card-view");
+  document.addEventListener("astro:page-load", () => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>("[data-view]");
+    const slider = document.getElementById("slider");
+    const views = document.querySelectorAll<HTMLElement>("[data-view-content]");
 
-  const showView = (view: string) => {
-    compactView?.classList.add("hidden");
-    cardView?.classList.add("hidden");
-    gridView?.classList.add("hidden");
+    const updateView = (view: string) => {
+      const button = Array.from(buttons).find(
+        (btn) => btn.dataset.view === view,
+      );
+      slider.style.transform = `translateX(${button.offsetLeft}px)`;
 
-    compactViewBtn?.classList.remove("pointer-events-none", "opacity-50");
-    cardViewBtn?.classList.remove("pointer-events-none", "opacity-50");
-    gridViewBtn?.classList.remove("pointer-events-none", "opacity-50");
+      views.forEach((v) => {
+        v.classList.toggle("hidden", v.dataset.viewContent !== view);
+      });
+    };
 
-    if (view === "compact") {
-      compactView?.classList.remove("hidden");
-      compactViewBtn?.classList.add("pointer-events-none", "opacity-50");
-    } else if (view === "card") {
-      cardView?.classList.remove("hidden");
-      cardViewBtn?.classList.add("pointer-events-none", "opacity-50");
-    } else {
-      gridView?.classList.remove("hidden");
-      gridViewBtn?.classList.add("pointer-events-none", "opacity-50");
-    }
-  };
+    updateView($novelResultsView.get());
+    $novelResultsView.subscribe(updateView);
 
-  showView($novelResultsView.get());
-
-  $novelResultsView.subscribe(showView);
-
-  compactViewBtn?.addEventListener("click", () =>
-    $novelResultsView.set("compact"),
-  );
-  cardViewBtn?.addEventListener("click", () => $novelResultsView.set("card"));
-  gridViewBtn?.addEventListener("click", () => $novelResultsView.set("grid"));
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        $novelResultsView.set(btn.dataset.view);
+      });
+    });
+  });
 </script>
