@@ -9,15 +9,15 @@ dependencies = [
     "litestar-granian>=0.14.2",
     "litestar[sqlalchemy,standard]>=2.18.0",
     "meilisearch-python-sdk>=5.2.0",
-    "psycopg[binary]>=3.2.10",
-    "sqlalchemy>=2.0.43",
+    "psycopg[binary]>=3.2.11",
+    "sqlalchemy>=2.0.44",
     "sqlalchemy-utils>=0.42.0",
     "structlog>=25.4.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.13.0",
+    "ruff>=0.14.1",
 ]
 
 [tool.ruff.format]
