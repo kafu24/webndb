@@ -32,7 +32,15 @@ services:
             - .venv/
         - action: rebuild
           path: apps/db-api/uv.lock
-    depends_on: [master]
+    depends_on:
+      - master
+      - meili
+  meili:
+    image: getmeili/meilisearch:v1.23.0
+    ports:
+      - "7700:7700"
+    depends_on:
+      - master
   master:
     container_name: "${COMPOSE_PROJECT_NAME:-citus}-master"
     image: "citusdata/citus:13.0.3"
