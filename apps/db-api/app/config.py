@@ -44,6 +44,9 @@ SQLALCHEMY_DATABASE_URI_SYNC = URL.create(
     database=POSTGRES_DB,
 )
 
+MEILI_URL = os.getenv('MEILI_URL', 'http://meili:7700')
+MEILI_MASTER_KEY = os.getenv('MEILI_MASTER_KEY')
+
 
 def remove_module_pathname_add_logger(
     _, __, event_dict: structlog.typing.EventDict

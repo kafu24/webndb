@@ -10,6 +10,7 @@ from .api.problem_details import problem_details_plugin
 from .api.schemas import JSONNull, bigint, bigint_enc_hook, jsonnull_enc_hook
 from .config import log_config
 from .database import async_engine, do_init_db
+from .meili import meilisearch_client
 from .openapi import openapi_config
 
 
@@ -33,5 +34,6 @@ def create_app() -> Litestar:
             GranianPlugin(),
         ],
         on_startup=[do_init_db],
+        lifespan=[meilisearch_client],
         type_encoders={JSONNull: jsonnull_enc_hook, bigint: bigint_enc_hook},
     )
