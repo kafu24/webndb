@@ -6,6 +6,7 @@ from litestar.plugins.structlog import StructlogPlugin
 from litestar_granian import GranianPlugin
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .api import api_router
 from .api.problem_details import problem_details_plugin
 from .api.schemas import JSONNull, bigint, bigint_enc_hook, jsonnull_enc_hook
 from .config import log_config
@@ -36,4 +37,5 @@ def create_app() -> Litestar:
         on_startup=[do_init_db],
         lifespan=[meilisearch_client],
         type_encoders={JSONNull: jsonnull_enc_hook, bigint: bigint_enc_hook},
+        route_handlers=[api_router],
     )
