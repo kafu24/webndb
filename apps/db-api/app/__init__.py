@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .config import log_config
 from .database import async_engine, do_init_db
+from .openapi import openapi_config
 
 
 async def provide_transaction(
@@ -22,6 +23,7 @@ def create_app() -> Litestar:
 
     return Litestar(
         dependencies={'transaction': provide_transaction},
+        openapi_config=openapi_config,
         plugins=[
             SQLAlchemyInitPlugin(alchemy_config),
             StructlogPlugin(config=log_config),
