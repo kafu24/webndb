@@ -1,35 +1,18 @@
 ---
 import CardNovelResults from "@/components/display/CardNovelResults.astro";
+import CompactNovelResults from "@/components/display/CompactNovelResults.astro";
 import GridNovelResults from "@/components/display/GridNovelResults.astro";
 import { Button } from "@/components/starwind/button";
 ---
 
 <div>
   <div class="flex justify-end pt-4 gap-2">
-    <Button
-      id="compact-view-btn"
-      size="icon"
-      variant="outline"
-    >
-      C
-    </Button>
-    <Button
-      id="card-view-btn"
-      size="icon"
-      variant="outline"
-    >
-      D
-    </Button>
-    <Button
-      id="grid-view-btn"
-      size="icon"
-      variant="outline"
-    >
-      G
-    </Button>
+    <Button id="compact-view-btn" size="icon" variant="outline"> C </Button>
+    <Button id="card-view-btn" size="icon" variant="outline"> D </Button>
+    <Button id="grid-view-btn" size="icon" variant="outline"> G </Button>
   </div>
   <div id="compact-view" class="hidden">
-    <!-- <CompactNovelResults /> -->
+    <CompactNovelResults />
   </div>
   <div id="card-view" class="hidden">
     <CardNovelResults />
@@ -74,7 +57,9 @@ import { Button } from "@/components/starwind/button";
 
   $novelResultsView.subscribe(showView);
 
-  compactViewBtn?.addEventListener("click", () => $novelResultsView.set("compact"));
+  compactViewBtn?.addEventListener("click", () =>
+    $novelResultsView.set("compact"),
+  );
   cardViewBtn?.addEventListener("click", () => $novelResultsView.set("card"));
   gridViewBtn?.addEventListener("click", () => $novelResultsView.set("grid"));
 </script>
