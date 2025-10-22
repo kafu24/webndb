@@ -8,6 +8,7 @@ dependencies = [
     "asyncpg>=0.30.0",
     "litestar-granian>=0.14.2",
     "litestar[sqlalchemy,standard]>=2.18.0",
+    "meilisearch-python-sdk>=5.2.0",
     "psycopg[binary]>=3.2.10",
     "sqlalchemy>=2.0.43",
     "sqlalchemy-utils>=0.42.0",
