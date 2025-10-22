@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 from sqlalchemy import (
+    CheckConstraint,
     ForeignKey,
     Identity,
     MetaData,
@@ -10,6 +11,11 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import BigInteger, Boolean, Enum, Text
+
+from .const import (
+    NOVEL_DESCRIPTION_MAX,
+    NOVEL_TITLE_MAX,
+)
 
 
 class Language(StrEnum):
@@ -58,7 +64,13 @@ class Novel(Base):
         BigInteger, Identity(always=True), primary_key=True
     )
     original_language: Mapped[Language | None]
-    description: Mapped[str | None] = mapped_column(Text)
+    description: Mapped[str | None] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'description IS NULL OR char_length(description) <= {NOVEL_DESCRIPTION_MAX}',
+            name='novel_description_length',
+        ),
+    )
 
     titles: Mapped[list['NovelTitle']] = relationship(
         back_populates='novel',
@@ -80,8 +92,19 @@ class NovelTitle(Base):
     )
     lang: Mapped[Language]
     official: Mapped[bool] = mapped_column(Boolean)
-    title: Mapped[str] = mapped_column(Text)
-    latin: Mapped[str | None] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'char_length(title) <= {NOVEL_TITLE_MAX}', name='novel_title_length'
+        ),
+    )
+    latin: Mapped[str | None] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'latin IS NULL OR char_length(latin) <= {NOVEL_TITLE_MAX}',
+            name='novel_title_latin_length',
+        ),
+    )
 
     novel: Mapped[Novel] = relationship(back_populates='titles')
 
