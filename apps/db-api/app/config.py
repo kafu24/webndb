@@ -22,6 +22,20 @@ from sqlalchemy import URL
 
 load_dotenv()
 
+for req_envvar in (
+    'POSTGRES_DB',
+    'POSTGRES_PORT',
+    'POSTGRES_USER',
+    'POSTGRES_PASSWORD',
+    'POSTGRES_SERVER',
+    'MEILI_MASTER_KEY',
+):
+    try:
+        os.environ[req_envvar]
+    except KeyError:
+        raise RuntimeError(f'Required environment variable {req_envvar} is not set')
+
+
 DEFAULT_PAGE_SIZE = int(os.getenv('DEFAULT_PAGE_SIZE', 20))
 MAX_PAGE_SIZE = int(os.getenv('MAX_PAGE_SIZE', 1000))
 
