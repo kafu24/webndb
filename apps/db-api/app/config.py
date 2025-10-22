@@ -22,6 +22,9 @@ from sqlalchemy import URL
 
 load_dotenv()
 
+DEFAULT_PAGE_SIZE = int(os.getenv('DEFAULT_PAGE_SIZE', 20))
+MAX_PAGE_SIZE = int(os.getenv('MAX_PAGE_SIZE', 1000))
+
 POSTGRES_DB = os.getenv('POSTGRES_DB')
 POSTGRES_PORT = os.getenv('POSTGRES_PORT')
 POSTGRES_USER = os.getenv('POSTGRES_USER')
