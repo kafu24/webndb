@@ -78,14 +78,14 @@ class NovelTitle(Base):
     novel_id: Mapped[int] = mapped_column(
         ForeignKey('novel.novel_id', ondelete='CASCADE')
     )
-    language: Mapped[Language]
+    lang: Mapped[Language]
     official: Mapped[bool] = mapped_column(Boolean)
     title: Mapped[str] = mapped_column(Text)
     latin: Mapped[str | None] = mapped_column(Text)
 
     novel: Mapped[Novel] = relationship(back_populates='titles')
 
-    __table_args__ = (PrimaryKeyConstraint('novel_id', 'language'),)
+    __table_args__ = (PrimaryKeyConstraint('novel_id', 'lang'),)
 
 
 @event.listens_for(NovelTitle.__table__, 'after_create')
