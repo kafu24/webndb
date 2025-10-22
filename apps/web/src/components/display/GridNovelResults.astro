@@ -1,0 +1,72 @@
+---
+const items = [
+  {
+    title:
+      "title1 title1 title1title1 title1title1title1 title1title1title1 title1",
+    description:
+      "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description ",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+];
+---
+
+<div class="grid grid-cols-[repeat(auto-fit,_minmax(192px,_1fr))] gap-2 pt-2">
+  {
+    items.map((item) => (
+      <a href={`/${item.title}`} class="relative hover:underline">
+        <img src={item.image} class="aspect-[5/7] overflow-hidden" />
+        <p
+          class="absolute left-0 top-0 flex aspect-[5/7] w-full p-2 overflow-auto break-words text-white
+              bg-black/80 opacity-0 hover:opacity-100 [&::-webkit-scrollbar]:w-1
+                [&::-webkit-scrollbar-track]:bg-transparent
+                [&::-webkit-scrollbar-thumb]:bg-transparent
+                hover:[&::-webkit-scrollbar-track]:bg-gray-100
+                hover:[&::-webkit-scrollbar-thumb]:bg-gray-300"
+        >
+          {item.description}
+        </p>
+        <span class="text-center line-clamp-2 text-ellipsis">{item.title}</span>
+      </a>
+    ))
+  }
+</div>

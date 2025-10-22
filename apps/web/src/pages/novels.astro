@@ -1,5 +1,6 @@
 ---
-import NovelResults from "@/components/display/NovelResults.astro";
+import CardNovelResults from "@/components/display/CardNovelResults.astro";
+import GridNovelResults from "@/components/display/GridNovelResults.astro";
 import SearchFilter from "@/components/search/SearchFilter";
 import Pagination from "@/components/search/SearchPagination.astro";
 import { Button } from "@/components/starwind/button";
@@ -32,7 +33,13 @@ import Copy from "@tabler/icons/outline/copy.svg";
       </Button>
     </div>
     <SearchFilter client:load />
-    <NovelResults />
+    <div class="flex justify-end pt-4 gap-2">
+      <Button size="icon">G</Button>
+      <Button size="icon">C</Button>
+    </div>
+    <CardNovelResults />
+    <!-- <GridNovelResults /> -->
+
     <Pagination />
   </div>
 </BaseLayout>
