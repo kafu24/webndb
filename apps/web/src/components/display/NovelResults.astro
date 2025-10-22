@@ -2,8 +2,73 @@
 import CardNovelResults from "@/components/display/CardNovelResults.astro";
 import CompactNovelResults from "@/components/display/CompactNovelResults.astro";
 import GridNovelResults from "@/components/display/GridNovelResults.astro";
-import { $novelResultsView } from "@/stores/novelResultsView";
 import { IconLayoutGrid, IconList, IconListDetails } from "@tabler/icons-react";
+
+const novels = [
+  {
+    novel_id: "0123",
+    title: "title1 title1 title1 title1 title1 title1title1title1",
+    description:
+      "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+    original_language: "jp",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+    status: "Ongoing",
+    genres: [
+      "genre1",
+      "genre1",
+      "genre1",
+      "genre1",
+      "genre1",
+      "genre1",
+      "genre1",
+      "genre1",
+    ],
+    rating: "4.5",
+    num_ratings: "520",
+    num_reviews: "102",
+    readers: "10,003",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+  {
+    title: "title1",
+    description: "description",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  },
+];
 ---
 
 <div>
@@ -36,13 +101,13 @@ import { IconLayoutGrid, IconList, IconListDetails } from "@tabler/icons-react";
   </div>
 
   <div data-view-content="compact" class="hidden">
-    <CompactNovelResults />
+    <CompactNovelResults novels={novels} />
   </div>
   <div data-view-content="card" class="hidden">
-    <CardNovelResults />
+    <CardNovelResults novels={novels} />
   </div>
   <div data-view-content="grid" class="hidden">
-    <GridNovelResults />
+    <GridNovelResults novels={novels} />
   </div>
 </div>
 
