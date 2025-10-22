@@ -6,6 +6,8 @@ from litestar.plugins.structlog import StructlogPlugin
 from litestar_granian import GranianPlugin
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .api.problem_details import problem_details_plugin
+from .api.schemas import JSONNull, bigint, bigint_enc_hook, jsonnull_enc_hook
 from .config import log_config
 from .database import async_engine, do_init_db
 from .openapi import openapi_config
@@ -25,9 +27,11 @@ def create_app() -> Litestar:
         dependencies={'transaction': provide_transaction},
         openapi_config=openapi_config,
         plugins=[
+            problem_details_plugin,
             SQLAlchemyInitPlugin(alchemy_config),
             StructlogPlugin(config=log_config),
             GranianPlugin(),
         ],
         on_startup=[do_init_db],
+        type_encoders={JSONNull: jsonnull_enc_hook, bigint: bigint_enc_hook},
     )
