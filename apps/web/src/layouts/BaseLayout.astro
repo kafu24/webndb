@@ -33,12 +33,18 @@ const menuItems = [
   <body>
     <div class="flex">
       <Sidebar menuItems={menuItems} transition:persist />
-      <div class="flex flex-col flex-1 min-w-0 md:ml-64">
+      <div
+        id="page-content"
+        class="flex flex-col flex-1 min-w-0 md:ml-64 transition-[margin] duration-200 ease-in-out"
+      >
         <header
-          class="fixed top-0 right-0 left-0 md:left-64 flex h-16 shrink-0 items-center justify-between gap-2 border-b pr-4 bg-background z-30"
+          class="fixed top-0 right-0 left-0 flex h-16 shrink-0 items-center justify-between gap-2 border-b pr-4 bg-background z-30"
         >
           <SheetSidebar menuItems={menuItems} />
-          <nav class="flex flex-1 gap-2">
+          <nav
+            id="nav"
+            class="flex flex-1 gap-2 md:ml-64 transition-[margin] duration-200 ease-in-out"
+          >
             <Button
               id="sidebar-open-button"
               variant="ghost"
@@ -58,7 +64,7 @@ const menuItems = [
           </nav>
           <HeaderActions />
         </header>
-        <main class="mt-16 w-full max-w-370 mx-auto p-4">
+        <main class="mt-16 w-full max-w-370 mx-auto p-4 overflow-x-hidden">
           <slot />
         </main>
       </div>
@@ -71,6 +77,8 @@ const menuItems = [
 
   document.addEventListener("astro:page-load", () => {
     const sidebar = document.getElementById("sidebar");
+    const nav = document.getElementById("nav");
+    const pageContent = document.getElementById("page-content");
     const sidebarOpenButton = document.getElementById("sidebar-open-button");
     const sidebarCloseButton = document.getElementById("sidebar-close-button");
     const sheetSidebar = document.getElementById("sheet-sidebar");
@@ -99,12 +107,16 @@ const menuItems = [
     sidebarOpenButton.addEventListener("click", () => {
       sidebar.style.display = "";
       sidebar.style.width = "256px";
+      pageContent.style.marginLeft = "256px";
+      nav.style.marginLeft = "256px";
       sidebarOpenButton.style.display = "none";
       navHeader.style.visibility = "hidden";
       $sidebarState.set("expanded");
     });
     sidebarCloseButton.addEventListener("click", () => {
       sidebar.style.width = "0px";
+      pageContent.style.marginLeft = "0px";
+      nav.style.marginLeft = "0px";
       sidebarOpenButton.style.display = "block";
       navHeader.style.visibility = "visible";
       $sidebarState.set("collapsed");
