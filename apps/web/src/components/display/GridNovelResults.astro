@@ -16,7 +16,7 @@ const { novels } = Astro.props;
     novels.map((novel) => (
       <a
         href={`/novel/${novel.novel_id}`}
-        class="relative group overflow-hidden rounded"
+        class="relative group overflow-hidden rounded-md"
       >
         <img src={novel.image} class="aspect-[5/7] w-full object-cover" />
         <div class="absolute top-1 left-1 text-[10px] text-white z-10">
@@ -37,8 +37,8 @@ const { novels } = Astro.props;
         </div>
         <div
           class="absolute left-0 top-0 flex flex-col aspect-[5/7] w-full p-2 gap-1 overflow-auto break-words text-white
-              leading-tight rounded bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity z-20
-              [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full
+              leading-tight rounded-md bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity z-20
+              [&::-webkit-scrollbar]:w-1
               [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-transparent
               group-hover:[&::-webkit-scrollbar-track]:bg-neutral-50 group-hover:[&::-webkit-scrollbar-thumb]:bg-neutral-950/40"
         >

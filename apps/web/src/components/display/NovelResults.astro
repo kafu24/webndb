@@ -21,7 +21,6 @@ const novels = [
       "genre1",
       "genre1",
       "genre1",
-      "genre1",
     ],
     rating: "4.5",
     num_ratings: "520",
@@ -76,24 +75,24 @@ const novels = [
     <div class="flex rounded-lg bg-foreground relative overflow-hidden">
       <div
         id="slider"
-        class="absolute w-10 h-10 opacity-20 bg-background transition-all duration-200 ease-out"
+        class="absolute w-10 h-10 z-20 opacity-20 bg-background transition-all duration-200 ease-out hidden"
       >
       </div>
       <button
         data-view="compact"
-        class="relative z-10 p-2 transition-colors text-background"
+        class="relative z-10 p-2 transition-colors text-background hover:bg-foreground/90"
       >
         <IconList className="w-6 h-6" />
       </button>
       <button
         data-view="card"
-        class="relative z-10 p-2 transition-colors text-background"
+        class="relative z-10 p-2 transition-colors text-background hover:bg-foreground/90"
       >
         <IconListDetails className="w-6 h-6" />
       </button>
       <button
         data-view="grid"
-        class="relative z-10 p-2 transition-colors text-background"
+        class="relative z-10 p-2 transition-colors text-background hover:bg-foreground/90"
       >
         <IconLayoutGrid className="w-6 h-6" />
       </button>
@@ -131,6 +130,7 @@ const novels = [
     };
 
     updateView($novelResultsView.get());
+    slider.classList.remove("hidden");
     $novelResultsView.subscribe(updateView);
 
     buttons.forEach((btn) => {
