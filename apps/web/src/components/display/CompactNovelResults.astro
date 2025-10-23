@@ -1,78 +1,110 @@
 ---
-const items = [
-  {
-    title:
-      "title1 title1 title1title1 title1title1title1 title1title1title1 title1",
-    description:
-      "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-];
+import {
+  IconChevronCompactDown,
+  IconCircleDot,
+  IconMessage,
+  IconStar,
+  IconUserPlus,
+} from "@tabler/icons-react";
+import { JP } from "country-flag-icons/react/3x2";
+
+const { novels } = Astro.props;
 ---
 
 <div class="flex flex-col gap-2 pt-2">
   {
-    items.map((item) => (
-      <div class="flex border-1 h-[160px] p-2 gap-2">
-        <img src={item.image} class="h-full aspect-[5/7]" />
-        <div class="flex flex-col">
-          <div class="flex justify-between">
+    novels.map((novel) => (
+      <div
+        data-row
+        class="border-2 rounded h-[160px] p-2 overflow-hidden relative"
+      >
+        <a href={`/novel/${novel.novel_id}`}>
+          <img
+            src={novel.image}
+            class="h-[140px] aspect-[5/7] rounded shadow float-left mr-2 object-cover"
+          />
+        </a>
+        <div>
+          <span class="float-right flex items-center gap-0.5 lg:gap-1 text-green-400 pl-2 bg-foreground/10 rounded py-0.5 pr-2 text-sm lg:text-md font-semibold shadow">
+            <IconCircleDot className="w-3 h-3 lg:w-4 lg:h-4" />
+            {novel.status}
+          </span>
+          <div class="pb-1 lg:pb-1.5">
+            <JP className="w-6 lg:w-7 h-auto inline align-middle shadow mr-1" />
             <a
-              href={`/${item.title}`}
-              class="line-clamp-3 text-lg font-bold hover:underline"
+              href={`/novel/${novel.novel_id}`}
+              class="lg:text-lg font-bold hover:underline leading-tight lg:leading-snug"
             >
-              {item.title}
+              {novel.title}
             </a>
-            <div class="flex justify-between">
-              <span>rating</span>
-              <span>reviews</span>
-              <span>readers</span>
-            </div>
           </div>
-          <div>Genres</div>
-          <p class="overflow-hidden">{item.description}</p>
         </div>
+        <div>
+          <div class="flex gap-4 lg:gap-8 text-sm lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 lg:pt-1">
+            <span class="flex items-center gap-1">
+              <IconStar className="w-3 h-3 lg:w-4 lg:h-4" />
+              {novel.rating}/{novel.num_ratings}
+            </span>
+            <span class="flex items-center gap-0.5">
+              <IconMessage className="w-3 h-3 lg:w-4 lg:h-4" />
+              {novel.num_reviews}
+            </span>
+            <span class="flex items-center gap-0.5">
+              <IconUserPlus className="w-3 h-3 lg:w-4 lg:h-4" />
+              {novel.readers}
+            </span>
+          </div>
+          <div class="inline">
+            {novel.genres?.map((genre) => (
+              <a
+                href={`/genre/${genre}`}
+                class="inline-flex px-1 py-0.5 lg:py-1 mr-1 mb-1 bg-foreground/10 hover:bg-foreground/20 font-semibold rounded text-xs lg:text-sm transition-colors shadow"
+              >
+                {genre}
+              </a>
+            ))}
+          </div>
+        </div>
+        <p class="text-xs lg:text-sm leading-tight lg:leading-snug">
+          {novel.description}
+        </p>
+        <button
+          data-expand-btn
+          class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent"
+        >
+          <IconChevronCompactDown className="pt-0.5 w-full" />
+        </button>
       </div>
     ))
   }
 </div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const rows = document.querySelectorAll<HTMLElement>("[data-row]");
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        const row = entry.target as HTMLElement;
+        const btn = row.querySelector<HTMLButtonElement>("[data-expand-btn]");
+        btn.style.display = row.scrollHeight > row.clientHeight ? "" : "none";
+      });
+    });
+
+    rows.forEach((row) => {
+      const btn = row.querySelector<HTMLButtonElement>("[data-expand-btn]");
+
+      if (row.scrollHeight <= row.clientHeight) {
+        btn.style.display = "none";
+      }
+
+      resizeObserver.observe(row);
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        btn.style.display = "none";
+        row.style.height = "auto";
+      });
+    });
+  });
+</script>
