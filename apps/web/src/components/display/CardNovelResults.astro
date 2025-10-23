@@ -1,98 +1,90 @@
 ---
 import { Button } from "@/components/starwind/button";
+import {
+  IconCircleDot,
+  IconMessage,
+  IconShare,
+  IconStar,
+  IconUserPlus,
+} from "@tabler/icons-react";
+import { JP } from "country-flag-icons/react/3x2";
 
-const items = [
-  {
-    title:
-      "title1 title1 title1title1 title1title1title1 title1title1title1 title1 title1title1title1",
-    description:
-      "description description description description descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription description description description description description description description description description description description description description description description description description description description description description description description description description description description description description ",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-  {
-    title: "title1",
-    description: "description",
-    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
-  },
-];
+const { novels } = Astro.props;
 ---
 
 <div class="grid grid-cols-[repeat(auto-fit,_minmax(384px,_1fr))] gap-2 pt-2">
   {
-    items.map((item) => (
-      <div class="flex flex-col border-1 h-[384px] p-2">
-        <div class="flex flex-col justify-center p-2 text-center text-ellipsis h-20">
+    novels.map((novel) => (
+      <div class="flex flex-col border-2 h-[384px] p-2 rounded-md">
+        <div class="flex flex-col pb-1 text-ellipsis">
+          <div>
+            <span class="flex float-right items-center gap-1 text-green-400 bg-foreground/10 rounded-md px-2 text-md font-semibold shadow ml-2">
+              <IconCircleDot className="w-4 h-4" />
+              {novel.status}
+            </span>
+            <div>
+              <JP className="w-7 h-auto inline shadow mr-1" />
+              <a
+                href={`/novel/${novel.novel_id}`}
+                class="text-lg font-bold hover:underline leading-snug"
+              >
+                {novel.title}
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-8 text-md pb-1">
+          <span class="flex items-center gap-1">
+            <IconStar className="w-4 h-4" />
+            {novel.rating}/{novel.num_ratings}
+          </span>
+          <span class="flex items-center gap-0.5">
+            <IconMessage className="w-4 h-4" />
+            {novel.num_reviews}
+          </span>
+          <span class="flex items-center gap-0.5">
+            <IconUserPlus className="w-4 h-4" />
+            {novel.readers}
+          </span>
+        </div>
+        <div>
+          {novel.genres?.map((genre) => (
+            <a
+              href={`/genre/${genre}`}
+              class="inline-flex px-2 py-1 mr-1 mb-1 bg-foreground/10 hover:bg-foreground/20 font-semibold rounded-md text-sm transition-colors shadow"
+            >
+              {genre}
+            </a>
+          ))}
+        </div>
+        <div class="flex gap-2 pt-1 min-h-0 flex-1">
           <a
-            href={`/${item.title}`}
-            class="line-clamp-2 text-lg font-bold leading-tight hover:underline"
+            href={`/novel/${novel.novel_id}`}
+            class="inline-flex max-w-[180px]"
           >
-            {item.title}
+            <img
+              src={novel.image}
+              class="aspect-[5/7] object-cover rounded-md"
+            />
           </a>
-          <span class="line-clamp-1 text-sm">orig title</span>
-        </div>
-        <div class="flex justify-between px-8 border-t-2">
-          <span>rating</span>
-          <span>reviews</span>
-          <span>readers</span>
-        </div>
-        <div class="border-b-2">Genres</div>
-        <div class="flex gap-2 pt-2 min-h-0 flex-1">
-          <img src={item.image} class="aspect-[5/7] object-cover" />
           <div class="flex flex-col flex-1 justify-between min-w-0">
             <div
-              class="flex flex-col overflow-auto text-xs min-h-0
-                    [&::-webkit-scrollbar]:w-1
-                    [&::-webkit-scrollbar-track]:bg-transparent
-                    [&::-webkit-scrollbar-thumb]:bg-transparent
-                    hover:[&::-webkit-scrollbar-track]:bg-gray-100
-                    hover:[&::-webkit-scrollbar-thumb]:bg-gray-300"
+              class="flex flex-col overflow-auto min-h-0 text-sm leading-snug
+                    [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-foreground/10 [&::-webkit-scrollbar-thumb]:bg-foreground/30"
             >
-              <p class="break-words">{item.description}</p>
+              <p class="break-words">{novel.description}</p>
               <span>author</span>
               <span>more info</span>
               <div>tags</div>
             </div>
             <div class="flex justify-between gap-2 pt-2">
               <Button size="sm" class="flex-1">
-                Add to reading list
+                Add to Reading List
               </Button>
               {/* share */}
-              <Button size="sm">s</Button>
+              <Button size="sm">
+                <IconShare />
+              </Button>
             </div>
           </div>
         </div>
