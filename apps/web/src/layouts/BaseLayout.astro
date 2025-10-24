@@ -33,18 +33,12 @@ const menuItems = [
   <body>
     <div class="flex">
       <Sidebar menuItems={menuItems} transition:persist />
-      <div
-        id="page-content"
-        class="flex flex-col flex-1 min-w-0 md:ml-64 transition-[margin] duration-200 ease-in-out"
-      >
+      <div id="page-content" class="flex flex-col flex-1 min-w-0 md:ml-64">
         <header
           class="fixed top-0 right-0 left-0 flex h-16 shrink-0 items-center justify-between gap-2 border-b pr-4 bg-background z-30"
         >
           <SheetSidebar menuItems={menuItems} />
-          <nav
-            id="nav"
-            class="flex flex-1 gap-2 md:ml-64 transition-[margin] duration-200 ease-in-out"
-          >
+          <nav id="nav" class="flex flex-1 gap-2 md:ml-64">
             <Button
               id="sidebar-open-button"
               variant="ghost"
@@ -86,21 +80,27 @@ const menuItems = [
       "sheet-sidebar-close-button",
     );
     const navHeader = document.getElementById("nav-header");
-    const smallScreenQuery = window.matchMedia("(max-width: 768px)");
+    const largeScreenQuery = window.matchMedia("(min-width: 768px)");
 
     const handleScreenChange = (e) => {
       if (e.matches) {
-        sidebarOpenButton.style.display = "none";
-        sheetSidebar.style.display = "block";
-        navHeader.style.visibility = "visible";
-      } else {
         sheetSidebarCloseButton.click();
         sheetSidebar.style.display = "none";
         if ($sidebarState.get() === "collapsed") {
           sidebarOpenButton.style.display = "block";
+          pageContent.style.marginLeft = "0px";
+          nav.style.marginLeft = "0px";
         } else {
+          pageContent.style.marginLeft = "256px";
+          nav.style.marginLeft = "256px";
           navHeader.style.visibility = "hidden";
         }
+      } else {
+        sidebarOpenButton.style.display = "none";
+        sheetSidebar.style.display = "block";
+        pageContent.style.marginLeft = "0px";
+        nav.style.marginLeft = "0px";
+        navHeader.style.visibility = "visible";
       }
     };
 
@@ -125,15 +125,27 @@ const menuItems = [
     if ($sidebarState.get() === "collapsed") {
       sidebar.style.display = "none";
       sidebar.style.width = "0px";
+      pageContent.style.marginLeft = "0px";
+      nav.style.marginLeft = "0px";
       sidebarOpenButton.style.display = "block";
       navHeader.style.visibility = "visible";
     }
 
-    if (smallScreenQuery.matches) {
+    if (largeScreenQuery.matches) {
+    } else {
       sidebarOpenButton.style.display = "none";
       navHeader.style.visibility = "visible";
     }
 
-    smallScreenQuery.addEventListener("change", handleScreenChange);
+    largeScreenQuery.addEventListener("change", handleScreenChange);
+
+    requestAnimationFrame(() => {
+      pageContent.classList.add(
+        "transition-[margin]",
+        "duration-200",
+        "ease-in-out",
+      );
+      nav.classList.add("transition-[margin]", "duration-200", "ease-in-out");
+    });
   });
 </script>
