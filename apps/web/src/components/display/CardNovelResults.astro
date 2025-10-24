@@ -13,7 +13,7 @@ const { novels } = Astro.props;
       <div class="flex flex-col border-2 h-[384px] p-2 rounded-md">
         <div class="flex flex-col pb-1 text-ellipsis">
           <div>
-            <span class="flex float-right items-center gap-1 text-green-400 bg-foreground/10 rounded px-2 text-md font-semibold shadow ml-2">
+            <span class="flex float-right items-center gap-1 text-green-400 bg-accent rounded px-2 text-md font-semibold shadow ml-2">
               <Icon name="tabler:circle-dot" class="w-4 h-4" />
               {novel.status}
             </span>
@@ -46,7 +46,7 @@ const { novels } = Astro.props;
           {novel.genres?.map((genre) => (
             <a
               href={`/genre/${genre}`}
-              class="inline-flex px-2 py-1 mr-1 mb-1 bg-foreground/10 hover:bg-foreground/20 font-semibold rounded text-sm transition-colors shadow"
+              class="inline-flex px-2 py-1 mr-1 mb-1 bg-accent hover:bg-accent/80 font-semibold rounded text-sm transition-colors shadow"
             >
               {genre}
             </a>
