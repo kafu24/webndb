@@ -1,7 +1,6 @@
 ---
 import { Button } from "@/components/starwind/button";
 import { Icon } from "astro-icon/components";
-import { JP } from "country-flag-icons/react/3x2";
 
 const { novels } = Astro.props;
 ---
@@ -19,7 +18,7 @@ const { novels } = Astro.props;
               {novel.status}
             </span>
             <div>
-              <JP className="w-7 h-auto inline shadow mr-1" />
+              <Icon name="flag:jp-4x3" class="w-7 h-auto inline shadow mr-1" />
               <a
                 href={`/novel/${novel.novel_id}`}
                 class="text-lg font-bold hover:underline leading-snug"

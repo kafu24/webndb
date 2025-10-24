@@ -13,6 +13,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.9",
     "@astrojs/react": "^4.4.0",
+    "@iconify-json/flag": "^1.2.9",
     "@iconify-json/tabler": "^1.2.23",
     "@nanostores/persistent": "^1.1.0",
     "@nanostores/react": "^1.0.0",
