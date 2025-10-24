@@ -1,6 +1,5 @@
 ---
 import { Icon } from "astro-icon/components";
-import { JP } from "country-flag-icons/react/3x2";
 
 const { novels } = Astro.props;
 ---
@@ -24,7 +23,10 @@ const { novels } = Astro.props;
             {novel.status}
           </span>
           <div class="pb-1 lg:pb-1.5">
-            <JP className="w-6 lg:w-7 h-auto inline shadow mr-1" />
+            <Icon
+              name="flag:jp-4x3"
+              class="w-6 lg:w-7 h-auto inline shadow mr-1"
+            />
             <a
               href={`/novel/${novel.novel_id}`}
               class="lg:text-lg font-bold hover:underline leading-tight lg:leading-snug"
