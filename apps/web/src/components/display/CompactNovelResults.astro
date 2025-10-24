@@ -1,5 +1,5 @@
 ---
-import { Icon } from 'astro-icon/components'
+import { Icon } from "astro-icon/components";
 import { JP } from "country-flag-icons/react/3x2";
 
 const { novels } = Astro.props;
@@ -10,7 +10,7 @@ const { novels } = Astro.props;
     novels.map((novel) => (
       <div
         data-row
-        class="border-2 rounded-md h-[160px] p-2 overflow-hidden relative"
+        class="@container border-2 rounded-md h-[160px] p-2 overflow-hidden relative"
       >
         <a href={`/novel/${novel.novel_id}`}>
           <img
@@ -34,7 +34,10 @@ const { novels } = Astro.props;
           </div>
         </div>
         <div>
-          <div class="flex gap-4 lg:gap-8 text-sm lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 lg:pt-1">
+          <div
+            class="flex flex-col @[300px]:flex-row pb-0.5 @[300px]:gap-4 @[300px]:lg:gap-8
+              text-sm @[300px]:lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 @[300px]:lg:pt-1"
+          >
             <span class="flex items-center gap-1">
               <Icon name="tabler:star" class="w-3 h-3 lg:w-4 lg:h-4" />
               {novel.rating}/{novel.num_ratings}
