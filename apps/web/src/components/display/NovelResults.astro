@@ -2,7 +2,7 @@
 import CardNovelResults from "@/components/display/CardNovelResults.astro";
 import CompactNovelResults from "@/components/display/CompactNovelResults.astro";
 import GridNovelResults from "@/components/display/GridNovelResults.astro";
-import { IconLayoutGrid, IconList, IconListDetails } from "@tabler/icons-react";
+import { Icon } from 'astro-icon/components'
 
 const novels = [
   {
@@ -82,19 +82,19 @@ const novels = [
         data-view="compact"
         class="relative z-10 p-2 transition-colors text-background hover:bg-foreground/90"
       >
-        <IconList className="w-6 h-6" />
+        <Icon name="tabler:list" class="w-6 h-6" />
       </button>
       <button
         data-view="card"
         class="relative z-10 p-2 transition-colors text-background hover:bg-foreground/90"
       >
-        <IconListDetails className="w-6 h-6" />
+        <Icon name="tabler:layout-grid" class="w-6 h-6" />
       </button>
       <button
         data-view="grid"
         class="relative z-10 p-2 transition-colors text-background hover:bg-foreground/90"
       >
-        <IconLayoutGrid className="w-6 h-6" />
+        <Icon name="tabler:list-details" class="w-6 h-6" />
       </button>
     </div>
   </div>
