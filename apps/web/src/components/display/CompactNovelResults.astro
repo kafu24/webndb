@@ -1,11 +1,5 @@
 ---
-import {
-  IconChevronCompactDown,
-  IconCircleDot,
-  IconMessage,
-  IconStar,
-  IconUserPlus,
-} from "@tabler/icons-react";
+import { Icon } from 'astro-icon/components'
 import { JP } from "country-flag-icons/react/3x2";
 
 const { novels } = Astro.props;
@@ -26,7 +20,7 @@ const { novels } = Astro.props;
         </a>
         <div>
           <span class="float-right flex items-center gap-0.5 lg:gap-1 text-green-400 pl-2 bg-foreground/10 rounded py-0.5 pr-2 text-sm lg:text-md font-semibold shadow ml-2">
-            <IconCircleDot className="w-3 h-3 lg:w-4 lg:h-4" />
+            <Icon name="tabler:circle-dot" class="w-3 h-3 lg:w-4 lg:h-4" />
             {novel.status}
           </span>
           <div class="pb-1 lg:pb-1.5">
@@ -42,15 +36,15 @@ const { novels } = Astro.props;
         <div>
           <div class="flex gap-4 lg:gap-8 text-sm lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 lg:pt-1">
             <span class="flex items-center gap-1">
-              <IconStar className="w-3 h-3 lg:w-4 lg:h-4" />
+              <Icon name="tabler:star" class="w-3 h-3 lg:w-4 lg:h-4" />
               {novel.rating}/{novel.num_ratings}
             </span>
             <span class="flex items-center gap-0.5">
-              <IconMessage className="w-3 h-3 lg:w-4 lg:h-4" />
+              <Icon name="tabler:message" class="w-3 h-3 lg:w-4 lg:h-4" />
               {novel.num_reviews}
             </span>
             <span class="flex items-center gap-0.5">
-              <IconUserPlus className="w-3 h-3 lg:w-4 lg:h-4" />
+              <Icon name="tabler:user-plus" class="w-3 h-3 lg:w-4 lg:h-4" />
               {novel.readers}
             </span>
           </div>
@@ -72,7 +66,7 @@ const { novels } = Astro.props;
           data-expand-btn
           class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent"
         >
-          <IconChevronCompactDown className="pt-0.5 w-full" />
+          <Icon name="tabler:chevron-compact-down" class="pt-0.5 w-full" />
         </button>
       </div>
     ))
