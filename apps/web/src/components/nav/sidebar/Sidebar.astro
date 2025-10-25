@@ -1,45 +1,43 @@
 ---
-import { Button } from "@/components/starwind/button";
-import Copy from "@tabler/icons/outline/copy.svg";
+import { Icon } from "astro-icon/components";
+
 const { menuItems } = Astro.props;
 const currentPath = Astro.url.pathname;
 ---
 
 <aside
   id="sidebar"
-  class={`hidden md:flex fixed left-0 top-0 z-100 w-64 transition-[width] duration-200 ease-in-out`}
+  class="hidden md:flex fixed left-0 top-0 z-100 w-64 transition-[width] duration-200 ease-in-out bg-popover"
 >
   <div
-    class="flex flex-col h-screen w-64 overflow-y-auto overflow-x-hidden text-nowrap border-r"
+    class="flex flex-col h-screen w-64 overflow-y-auto overflow-x-hidden text-nowrap"
   >
     <div>
-      <div class="flex flex-row justify-between items-center h-16 pl-2">
-        <a href="/" class="flex items-center gap-2 text-3xl font-bold">
-          <Copy />
+      <div class="flex flex-row justify-between items-center h-16 p-2">
+        <a href="/" class="flex items-center p-2 gap-2 text-3xl font-bold">
+          <!-- TODO: logo -->
+          <Icon name="tabler:home" />
           WebNDB
         </a>
-        <Button
+        <button
           id="sidebar-close-button"
-          variant="ghost"
-          size="sm"
-          class="rounded-full mx-1"
+          class="rounded-full p-2 hover:bg-foreground/10"
         >
-          x
-        </Button>
+          <Icon name={`tabler:x`} class="w-5 h-5" />
+        </button>
       </div>
-      <ul class="flex flex-1 flex-col min-w-0 min-h-0 p-2 gap-2">
+      <ul class="flex flex-1 flex-col min-w-0 min-h-0 p-2">
         <li class="flex w-full min-w-0 flex-col gap-1">
           {
             menuItems.map((item) => (
-              <Button
-                href={item.href}
-                variant="ghost"
-                size="sm"
-                class={`${item.href === currentPath ? "bg-foreground/10" : ""} rounded-lg justify-start font-normal !text-lg`}
-              >
-                <item.icon />
-                <span>{item.label}</span>
-              </Button>
+              <a href={item.href}>
+                <button
+                  class={`${item.href === currentPath ? "bg-foreground/5 pointer-events-none" : "hover:bg-foreground/8"} flex w-full items-center rounded px-4 py-1.5 gap-2 font-normal !text-lg`}
+                >
+                  <Icon name={`tabler:${item.icon}`} class="w-6 h-6" />
+                  <span>{item.label}</span>
+                </button>
+              </a>
             ))
           }
         </li>
