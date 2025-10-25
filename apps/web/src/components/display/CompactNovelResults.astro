@@ -9,7 +9,7 @@ const { novels } = Astro.props;
     novels.map((novel) => (
       <div
         data-row
-        class="@container border-2 rounded-md h-[160px] p-2 overflow-hidden relative"
+        class="@container border-2 rounded-md h-[160px] p-2 overflow-hidden relative bg-popover"
       >
         <a href={`/novel/${novel.novel_id}`}>
           <img
@@ -41,7 +41,7 @@ const { novels } = Astro.props;
               text-sm @[300px]:lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 @[300px]:lg:pt-1"
           >
             <span class="flex items-center gap-1">
-              <Icon name="tabler:star" class="w-3 h-3 lg:w-4 lg:h-4" />
+              <Icon name="tabler:bookmark" class="w-3 h-3 lg:w-4 lg:h-4" />
               {novel.rating}/{novel.num_ratings}
             </span>
             <span class="flex items-center gap-0.5">
