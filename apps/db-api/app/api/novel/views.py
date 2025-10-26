@@ -1,19 +1,38 @@
+from typing import Annotated
+
 import structlog
-from litestar import Router
-from litestar import get as _get
+from litestar import Response, Router, get
 from litestar.datastructures import State
 from litestar.di import Provide
+from litestar.exceptions import (
+    NotFoundException,
+)
 from meilisearch_python_sdk import AsyncClient, AsyncIndex
 from meilisearch_python_sdk.errors import MeilisearchApiError
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..problem_details import create_400_response_spec
+from app.const import INVALID_WEBNDB_ID
+
+from ..problem_details import (
+    create_400_response_spec,
+    create_404_response_spec,
+)
 from ..schemas import (
     GENERIC_RESPONSE_DESCRIPTION,
     QueryResponse,
     create_sort_pattern,
 )
 from .meili import filterable_attributes, searchable_attributes, sortable_attributes
-from .schemas import NovelQueryRequest, NovelSchema
+from .schemas import (
+    NovelIDMeta,
+    NovelIDParam,
+    NovelQueryRequest,
+    NovelSchema,
+    to_novel_schema,
+)
+from .service import (
+    select_novel,
+)
 
 PATH = '/novels'
 logger = structlog.stdlib.get_logger()
@@ -40,7 +59,7 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
     return index
 
 
-@_get(
+@get(
     path='/',
     dependencies={'query_request': Provide(NovelQueryRequest, sync_to_thread=True)},
     tags=['novels'],
@@ -95,8 +114,44 @@ async def query_novels(
     )
 
 
+@get(
+    path='/{novel_id:str}',
+    tags=['novels'],
+    summary='Get novel',
+    description='Retrieve a novel by its WebNDB novel ID.',
+    response_description=GENERIC_RESPONSE_DESCRIPTION,
+    responses={
+        400: create_400_response_spec(
+            description='Bad request syntax or validation error',
+            include_validation_error=True,
+            validation_detail_example=(
+                f'Validation failed for GET /novels/{INVALID_WEBNDB_ID}'
+            ),
+            validation_message_example=(
+                f'Expected `str` of length <= {NovelIDMeta.max_length}'
+            ),
+            validation_key_example='novel_id',
+            validation_source_example='path',
+        ),
+        404: create_404_response_spec(
+            description='Novel ID in path parameter is not associated with a novel',
+            detail_example='Could not find a novel identified by novel ID 0',
+        ),
+    },
+)
+async def get_novel(
+    transaction: AsyncSession, novel_id: Annotated[str, NovelIDParam]
+) -> NovelSchema:
+    novel = await select_novel(transaction, novel_id)
+    if novel is None:
+        raise NotFoundException(
+            f'Could not find a novel identified by novel ID {novel_id}'
+        )
+    return to_novel_schema(novel)
+
+
 novel_router = Router(
     path=PATH,
     dependencies={'meili_index': Provide(get_meili_novel_index)},
-    route_handlers=[query_novels],
+    route_handlers=[query_novels, get_novel],
 )
