@@ -74,12 +74,8 @@ const { novels } = Astro.props;
             </div>
             <div class="flex justify-between gap-2 pt-2">
               <Button size="sm" class="@container flex-1">
-                <span class="hidden @[120px]:flex items-center gap-1">
-                  <Icon name="tabler:bookmark" /> Add to List
-                </span>
-                <span class="@[120px]:hidden">
-                  <Icon name="tabler:bookmark" />
-                </span>
+                <Icon name="tabler:bookmark" />
+                <span class="hidden @[120px]:inline">Add to List</span>
               </Button>
               <Button size="sm">
                 <Icon name="tabler:share" />
