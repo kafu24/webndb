@@ -14,6 +14,7 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import BigInteger, Boolean, Enum, SmallInteger, Text
 
@@ -37,7 +38,7 @@ class Language(StrEnum):
     JA = 'ja'  # Japanese
 
 
-class Base(DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
     metadata = MetaData(
         naming_convention={
             'ix': 'ix_%(table_name)s_%(column_0_N_label)s',
