@@ -15,6 +15,7 @@ from msgspec import UNSET
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.const import INVALID_WEBNDB_ID, NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX
+from app.meili import format_meili_api_error
 
 from ..problem_details import (
     create_400_response_spec,
@@ -97,36 +98,41 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
 async def query_novels(
     meili_index: AsyncIndex, query_request: NovelQueryRequest
 ) -> QueryResponse[NovelSchema]:
-    if query_request.q != '':
-        meili_results = await meili_index.search(
-            query=query_request.q,
+    try:
+        if query_request.q != '':
+            meili_results = await meili_index.search(
+                query=query_request.q,
+                offset=query_request.offset,
+                limit=query_request.limit,
+                filter=query_request.filter,
+                attributes_to_retrieve=query_request.fields,
+                sort=query_request.sort,
+            )
+            return QueryResponse(
+                items=meili_results.hits,
+                query=meili_results.query,
+                offset=meili_results.offset,
+                limit=meili_results.limit,
+            )
+        meili_results = await meili_index.get_documents(
             offset=query_request.offset,
             limit=query_request.limit,
+            fields=None if '*' in query_request.fields else query_request.fields,
             filter=query_request.filter,
-            attributes_to_retrieve=query_request.fields,
-            sort=query_request.sort,
+            # Need to convert `sort` to CSV string for now until SDK converts it
+            # to a CSV string when using GET to fetch documents.
+            sort=','.join(query_request.sort),
         )
         return QueryResponse(
-            items=meili_results.hits,
-            query=meili_results.query,
+            items=meili_results.results,
+            query=query_request.q,
             offset=meili_results.offset,
             limit=meili_results.limit,
         )
-    meili_results = await meili_index.get_documents(
-        offset=query_request.offset,
-        limit=query_request.limit,
-        fields=None if '*' in query_request.fields else query_request.fields,
-        filter=query_request.filter,
-        # Need to convert `sort` to CSV string for now until SDK converts it
-        # to a CSV string when using GET to fetch documents.
-        sort=','.join(query_request.sort),
-    )
-    return QueryResponse(
-        items=meili_results.results,
-        query=query_request.q,
-        offset=meili_results.offset,
-        limit=meili_results.limit,
-    )
+    except MeilisearchApiError as e:
+        raise format_meili_api_error(e)
+    except Exception:
+        raise InternalServerException
 
 
 @get(

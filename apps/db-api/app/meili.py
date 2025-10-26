@@ -5,9 +5,12 @@ from typing import Any
 import msgspec
 import structlog
 from litestar import Litestar
-from litestar.exceptions import InternalServerException
+from litestar.exceptions import ClientException, InternalServerException
 from meilisearch_python_sdk import AsyncClient
-from meilisearch_python_sdk.errors import MeilisearchCommunicationError
+from meilisearch_python_sdk.errors import (
+    MeilisearchApiError,
+    MeilisearchCommunicationError,
+)
 from meilisearch_python_sdk.json_handler import _JsonHandler
 
 from .config import MEILI_MASTER_KEY, MEILI_URL
@@ -50,3 +53,7 @@ async def meilisearch_client(app: Litestar) -> AsyncGenerator[None, None]:
         yield
     finally:
         await meili_client.aclose()
+
+
+def format_meili_api_error(e: MeilisearchApiError) -> ClientException:
+    return ClientException(e.message.lstrip('Error message: '))
