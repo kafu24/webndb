@@ -8,8 +8,11 @@ from io import StringIO
 import litestar.concurrency
 import litestar.middleware
 import litestar.routes
+import msgspec
 import structlog
 from dotenv import load_dotenv
+from litestar.config.cors import CORSConfig
+from litestar.config.csrf import CSRFConfig
 from litestar.exceptions import ClientException
 from litestar.logging.config import (
     LoggingConfig,
@@ -23,6 +26,7 @@ from sqlalchemy import URL
 load_dotenv()
 
 for req_envvar in (
+    'SECRET_KEY',
     'POSTGRES_DB',
     'POSTGRES_PORT',
     'POSTGRES_USER',
@@ -35,6 +39,9 @@ for req_envvar in (
     except KeyError:
         raise RuntimeError(f'Required environment variable {req_envvar} is not set')
 
+# TODO: instead of reading from envvar, consider reading from file since that
+# jives better w/ Compose secrets.
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEFAULT_PAGE_SIZE = int(os.getenv('DEFAULT_PAGE_SIZE', 20))
 MAX_PAGE_SIZE = int(os.getenv('MAX_PAGE_SIZE', 1000))
@@ -63,6 +70,23 @@ SQLALCHEMY_DATABASE_URI_SYNC = URL.create(
 
 MEILI_URL = os.getenv('MEILI_URL', 'http://meili:7700')
 MEILI_MASTER_KEY = os.getenv('MEILI_MASTER_KEY')
+
+ALLOWED_CORS_ORIGIN: list[str] | str = os.getenv('ALLOWED_CORS_ORIGIN', ['*'])
+# https://github.com/litestar-org/litestar-fullstack/blob/e4dd330917e3c500e73f68a6b4f9d1d2f71cc75f/src/app/config/base.py#L409
+# Check if the ALLOWED_CORS_ORIGINS is a string.
+if isinstance(ALLOWED_CORS_ORIGIN, str):
+    # Check if the string starts with "[" and "]", indicating a list.
+    if ALLOWED_CORS_ORIGIN.startswith('[') and ALLOWED_CORS_ORIGIN.endswith(']'):
+        ALLOWED_CORS_ORIGIN = msgspec.json.decode(ALLOWED_CORS_ORIGIN, type=list[str])
+    else:
+        # Split the string by commas into a list if it is not meant to be a list
+        # representation.
+        ALLOWED_CORS_ORIGIN = [host.strip() for host in ALLOWED_CORS_ORIGIN.split(',')]
+cors_config = CORSConfig(allow_origins=ALLOWED_CORS_ORIGIN)
+
+csrf_config = CSRFConfig(
+    secret=SECRET_KEY, cookie_name='XSRF-TOKEN', header_name='X-XSRF-TOKEN'
+)
 
 
 def remove_module_pathname_add_logger(

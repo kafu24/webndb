@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .api import api_router
 from .api.problem_details import problem_details_plugin
 from .api.schemas import JSONNull, bigint, bigint_enc_hook, jsonnull_enc_hook
-from .config import log_config
+from .config import cors_config, csrf_config, log_config
 from .database import async_engine, do_init_db
 from .meili import meilisearch_client
 from .openapi import openapi_config
@@ -26,6 +26,8 @@ def create_app() -> Litestar:
     alchemy_config = SQLAlchemyAsyncConfig(engine_instance=async_engine)
 
     return Litestar(
+        cors_config=cors_config,
+        csrf_config=csrf_config,
         dependencies={'transaction': provide_transaction},
         openapi_config=openapi_config,
         plugins=[
