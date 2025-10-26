@@ -126,6 +126,8 @@ class NovelTitle(Base):
             name='novel_title_latin_length',
         ),
     )
+    # TODO: consider a check constraint so that `latin` is NULL if `lang`
+    # doesn't have a romanized form.
 
     novel: Mapped[Novel] = relationship(back_populates='titles')
 
@@ -140,6 +142,10 @@ def distribute_novel_title(target, connection, **kw):
             "'novel_title', 'novel_id', colocate_with => 'novel')"
         )
     )
+
+
+# TODO: constraint trigger or something to ensure that a novel always has
+# at least one title
 
 
 # TODO: volume_ordering_hist table, references novel
