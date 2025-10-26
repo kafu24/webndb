@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Annotated
 
+from litestar.params import Parameter
 from msgspec import UNSET, Meta
 
-from app.const import NOVEL_ID_MAX
+from app.const import WEBNDB_ID_MAX_LEN
 from app.models import Language
 
 from ..schemas import (
@@ -19,11 +20,16 @@ if TYPE_CHECKING:
     from app.models import Novel, NovelTitle
 
 NovelIDMeta = Meta(
-    ge=0,
-    le=NOVEL_ID_MAX,
+    max_length=WEBNDB_ID_MAX_LEN,
     title='Novel ID',
     description='WebNDB identifier for a web novel',
     examples=['1'],
+)
+
+NovelIDParam = Parameter(
+    max_length=WEBNDB_ID_MAX_LEN,
+    title=NovelIDMeta.title,
+    description=NovelIDMeta.description,
 )
 
 NovelIDResponseType = Annotated[
@@ -141,12 +147,16 @@ class NovelSchema(BaseStruct):
     ] = UNSET
 
 
-def to_novel_schema(novel: 'Novel') -> NovelSchema:
+async def to_novel_schema(
+    novel: 'Novel', titles: list['NovelTitle'] = None
+) -> NovelSchema:
+    if titles is None:
+        titles = await novel.awaitable_attrs.titles
     return NovelSchema(
         novel_id=str(novel.novel_id),
         original_language=novel.original_language,
         description=novel.description,
-        titles=[to_novel_title_schema(t) for t in novel.titles],
+        titles=[to_novel_title_schema(t) for t in titles],
     )
 
 
