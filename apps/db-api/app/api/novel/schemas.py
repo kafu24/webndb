@@ -189,3 +189,11 @@ class NovelCreateSchema(BaseStruct):
     titles: Annotated[list[NovelTitleWriteSchema], NovelTitlesMeta]
     original_language: NovelOlangType = None
     description: NovelDescriptionType = None
+
+
+class NovelUpdateSchema(BaseStruct):
+    """Specifies the request body for updating a novel."""
+
+    titles: Annotated[list[NovelTitleWriteSchema], NovelTitlesMeta] = UNSET
+    original_language: NovelOlangType = UNSET
+    description: NovelDescriptionType = UNSET

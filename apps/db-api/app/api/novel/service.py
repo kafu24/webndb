@@ -1,7 +1,7 @@
 from typing import Sequence
 
 import structlog
-from sqlalchemy import Text, cast, exc, select
+from sqlalchemy import Text, cast, delete, exc, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -50,6 +50,31 @@ async def insert_novel(
     return novel
 
 
+async def update_novel(
+    db_session: AsyncSession,
+    novel_id: str,
+    original_language: Language | None,
+    description: str | None,
+) -> Novel:
+    """Updates the novel identified by `novel_id`."""
+    try:
+        stmt = (
+            update(Novel)
+            .where(cast(Novel.novel_id, Text) == novel_id)
+            .values(original_language=original_language, description=description)
+        )
+        novel = await db_session.scalar(
+            stmt.returning(Novel), execution_options={'populate_existing': True}
+        )
+    except exc.SQLAlchemyError as e:
+        logger.exception(e._message())
+        raise
+    except Exception:
+        logger.exception('Unexpected error')
+        raise
+    return novel
+
+
 async def upsert_novel_titles(
     db_session: AsyncSession, novel_id: str, title: list[NovelTitleWriteSchema]
 ) -> Sequence[NovelTitle]:
@@ -88,3 +113,16 @@ async def upsert_novel_titles(
         logger.exception('Unexpected error')
         raise
     return titles
+
+
+async def clear_novel_titles(db_session: AsyncSession, novel_id: str):
+    try:
+        await db_session.execute(
+            delete(NovelTitle).where(cast(NovelTitle.novel_id, Text) == novel_id)
+        )
+    except exc.SQLAlchemyError as e:
+        logger.exception(e._message())
+        raise
+    except Exception:
+        logger.exception('Unexpected error')
+        raise
