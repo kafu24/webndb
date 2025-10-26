@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Annotated
 from litestar.params import Parameter
 from msgspec import UNSET, Meta
 
-from app.const import WEBNDB_ID_MAX_LEN
+from app.const import NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX, WEBNDB_ID_MAX_LEN
 from app.models import Language
 
 from ..schemas import (
@@ -13,6 +13,7 @@ from ..schemas import (
     create_q_param,
     create_sort_parameter,
     create_sort_pattern,
+    string_or_null_extra_json_schema,
 )
 from .meili import filterable_attributes, searchable_attributes, sortable_attributes
 
@@ -53,7 +54,7 @@ NovelOlangType = Annotated[
 ]
 
 NovelDescriptionType = Annotated[
-    str | None,
+    Annotated[str, Meta(max_length=NOVEL_DESCRIPTION_MAX)] | None,
     Meta(
         title='Web Novel Description',
         description=(
@@ -64,22 +65,25 @@ NovelDescriptionType = Annotated[
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod'
             ' tempor incididunt ut labore et dolore magna aliqua.'
         ],
+        extra_json_schema=string_or_null_extra_json_schema(NOVEL_DESCRIPTION_MAX),
     ),
 ]
 
 NovelTitleType = Annotated[
     str,
     Meta(
+        max_length=NOVEL_TITLE_MAX,
         title='Web Novel Title',
-        description='Title of a web novel in the origianl script',
+        description='Title of a web novel in the original script',
     ),
 ]
 
 NovelTitleLatinType = Annotated[
-    str | None,
+    Annotated[str, Meta(max_length=NOVEL_TITLE_MAX)] | None,
     Meta(
         title='Latin Title',
         description="Romanized version of a web novel's title",
+        extra_json_schema=string_or_null_extra_json_schema(NOVEL_TITLE_MAX),
     ),
 ]
 
@@ -110,41 +114,50 @@ def to_novel_title_schema(title: 'NovelTitle') -> NovelTitleSchema:
     )
 
 
+class NovelTitleWriteSchema(BaseStruct):
+    lang: Language
+    title: NovelTitleType
+    official: NovelTitleOfficialType
+    latin: NovelTitleLatinType = None
+
+
+NovelTitlesMeta = Meta(
+    min_length=1,
+    title='Web Novel Titles',
+    description='Array of titles associated with the web novel',
+    examples=[
+        [
+            NovelTitleSchema(
+                lang=Language.EN,
+                title='My Web Novel',
+                latin=None,
+                official=True,
+            ),
+            NovelTitleSchema(
+                lang=Language.ZH_HANS,
+                title='我的网络小说',
+                latin='Wo de wangluo xiaoshuo',
+                official=False,
+            ),
+            NovelTitleSchema(
+                lang=Language.KO,
+                title='나의 웹소설',
+                latin='Naui wepsoseol',
+                official=False,
+            ),
+        ]
+    ],
+    extra_json_schema={'extra': {'minItems': 1}},
+)
+
+
 class NovelSchema(BaseStruct):
     """Representation of a web novel in responses."""
 
     novel_id: NovelIDResponseType = UNSET
     original_language: NovelOlangType = UNSET
     description: NovelDescriptionType = UNSET
-    titles: Annotated[
-        list[NovelTitleSchema],
-        Meta(
-            title='Web Novel Titles',
-            description='Array of titles associated with the web novel',
-            examples=[
-                [
-                    NovelTitleSchema(
-                        lang=Language.EN,
-                        title='My Web Novel',
-                        latin=None,
-                        official=True,
-                    ),
-                    NovelTitleSchema(
-                        lang=Language.ZH_HANS,
-                        title='我的网络小说',
-                        latin='Wo de wangluo xiaoshuo',
-                        official=False,
-                    ),
-                    NovelTitleSchema(
-                        lang=Language.KO,
-                        title='나의 웹소설',
-                        latin='Naui wepsoseol',
-                        official=False,
-                    ),
-                ]
-            ],
-        ),
-    ] = UNSET
+    titles: Annotated[list[NovelTitleSchema], NovelTitlesMeta] = UNSET
 
 
 async def to_novel_schema(
@@ -168,3 +181,11 @@ class NovelQueryRequest(QueryRequest):
         | None,
         create_sort_parameter(sortable_attributes),
     ] = None
+
+
+class NovelCreateSchema(BaseStruct):
+    """Specifies the request body for creating a novel."""
+
+    titles: Annotated[list[NovelTitleWriteSchema], NovelTitlesMeta]
+    original_language: NovelOlangType = None
+    description: NovelDescriptionType = None
