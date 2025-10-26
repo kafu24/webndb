@@ -1,14 +1,17 @@
 import json
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeVar
 
 import msgspec
-from litestar.openapi.spec.enums import OpenAPIType
+from litestar.datastructures import ResponseHeader
+from litestar.openapi.spec import OpenAPIType, Operation
 from litestar.params import Parameter
 from msgspec import Meta, Struct
 
 from app.config import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import Any
 
 GENERIC_RESPONSE_DESCRIPTION = 'Request fulfilled, representation follows'
@@ -49,6 +52,92 @@ def bigint_enc_hook(obj):
     if isinstance(obj, bigint):
         return str(obj)
     raise TypeError(f'Cannot encode objects of type {type(obj)}')
+
+
+def string_or_null_extra_json_schema(max_length: int = None) -> dict:
+    """Pass this as the `extra_json_schema` value of `msgspec.Meta` to
+    set an OpenAPI property to have
+
+    ```
+    type: ['string', 'null']
+    maxLength: {max_length}
+    ```
+
+    maxLength is omitted if `max_length` is None (default). The oneOf
+    value is also omitted.
+
+    This does not affect validation; it only affects documentation.
+    """
+    return {
+        'extra': {
+            'type': [OpenAPIType.STRING, OpenAPIType.NULL],
+            'maxLength': max_length,
+            # Since this is used in Annotated[str | None, Meta(...)], Litestar
+            # will set oneOf like:
+            # oneOf:
+            #   - type: 'string'
+            #   - type: 'null'
+            # which is redundant because of the `type` we set above.
+            'oneOf': None,
+        }
+    }
+
+
+LocationHeader = ResponseHeader(
+    name='Location',
+    value='',  # Need a str value so type is added
+    description='URI of newly created resource',
+    documentation_only=True,
+)
+
+ContentLocationHeader = ResponseHeader(
+    name='Content-Location',
+    value='',  # Need a str value so type is added
+    description='URI of resource corresponding to representation in payload',
+    documentation_only=True,
+)
+
+
+def custom_reqbody(
+    description: str | None = None, required: bool = False
+) -> 'Callable[[Operation], None]':
+    """Pass the return value of this function to `custom_operation`
+    to modify the `description` and `required` fields of the generated
+    OpenAPI Request Body Object.
+
+    If you pass `True` for `required`, then you should also use
+    `app.api.problem_details.required_request_body_guard` in the
+    decorator's `guards` argument so that the error message for missing
+    or empty request bodies is more informative.
+    """
+
+    def _f(op: Operation) -> None:
+        op.request_body.description = description
+        op.request_body.required = required
+
+    return _f
+
+
+def custom_operation(*args: 'Callable[[Operation], None]') -> Operation:
+    """Pass functions in `args` to modify the generated OpenAPI schema
+    for a Operation.
+
+    Pass the return value of this function to a route handler
+    decorator's `operation_class` argument to modify the generated
+    OpenAPI schema of the operation.
+
+    `args` are functions that take in an
+    `litestar.openapi.spec.Operation` and perform changes on the
+    Operation.
+    """
+
+    @dataclass
+    class CustomOperation(Operation):
+        def __post_init__(self) -> None:
+            for f in args:
+                f(self)
+
+    return CustomOperation
 
 
 class BaseStruct(Struct):

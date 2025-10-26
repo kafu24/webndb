@@ -1,29 +1,37 @@
 from typing import Annotated
 
 import structlog
-from litestar import Response, Router, get
+from litestar import Response, Router, get, post
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.exceptions import (
+    ClientException,
+    InternalServerException,
     NotFoundException,
 )
 from meilisearch_python_sdk import AsyncClient, AsyncIndex
 from meilisearch_python_sdk.errors import MeilisearchApiError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.const import INVALID_WEBNDB_ID
+from app.const import INVALID_WEBNDB_ID, NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX
 
 from ..problem_details import (
     create_400_response_spec,
     create_404_response_spec,
+    required_request_body_guard,
 )
 from ..schemas import (
     GENERIC_RESPONSE_DESCRIPTION,
+    ContentLocationHeader,
+    LocationHeader,
     QueryResponse,
     create_sort_pattern,
+    custom_operation,
+    custom_reqbody,
 )
 from .meili import filterable_attributes, searchable_attributes, sortable_attributes
 from .schemas import (
+    NovelCreateSchema,
     NovelIDMeta,
     NovelIDParam,
     NovelQueryRequest,
@@ -31,7 +39,10 @@ from .schemas import (
     to_novel_schema,
 )
 from .service import (
+    find_repeated_lang_titles,
+    insert_novel,
     select_novel,
+    upsert_novel_titles,
 )
 
 PATH = '/novels'
@@ -150,8 +161,74 @@ async def get_novel(
     return to_novel_schema(novel)
 
 
+@post(
+    path='/',
+    guards=[required_request_body_guard],
+    tags=['novels'],
+    summary='Create novel',
+    description='Create a new web novel entry.',
+    operation_class=custom_operation(
+        custom_reqbody(
+            description=(
+                f'Descriptions are limited to {NOVEL_DESCRIPTION_MAX} characters.'
+                f' Titles are limited to {NOVEL_TITLE_MAX} characters.\n'
+                '\n'
+                'A novel must have at least one title.'
+                ' There can only be one title per language.'
+            ),
+            required=True,
+        )
+    ),
+    response_headers=[LocationHeader, ContentLocationHeader],
+    response_description='Novel created, representation follows',
+    responses={
+        400: create_400_response_spec(
+            description=(
+                'Bad request syntax, validation error, or more than one title'
+                ' per language'
+            ),
+            client_error_detail_example=(
+                "Language 'en' is used by more than one title"
+                ' but only one title per language is allowed'
+            ),
+            include_validation_error=True,
+            validation_detail_example='Validation failed for POST /novels',
+            validation_message_example="Invalid enum value 'eng'",
+            validation_key_example='titles[0].lang',
+            validation_source_example='body',
+        )
+    },
+)
+async def create_novel(
+    transaction: AsyncSession, meili_index: AsyncIndex, data: NovelCreateSchema
+) -> Response[NovelSchema]:
+    rep_lang = find_repeated_lang_titles(data.titles)
+    if rep_lang:
+        raise ClientException(
+            f"Language '{rep_lang}' is used by more than one title"
+            ' but only one title per language is allowed'
+        )
+
+    try:
+        novel = await insert_novel(
+            transaction, data.original_language, data.description
+        )
+        titles = await upsert_novel_titles(transaction, novel.novel_id, data.titles)
+        res = await to_novel_schema(novel, titles)
+        await meili_index.add_documents([res])
+    except Exception:
+        raise InternalServerException
+    return Response(
+        content=res,
+        headers={
+            'Location': f'/novels/{novel.novel_id}',
+            'Content-Location': f'/novels/{novel.novel_id}',
+        },
+    )
+
+
 novel_router = Router(
     path=PATH,
     dependencies={'meili_index': Provide(get_meili_novel_index)},
-    route_handlers=[query_novels, get_novel],
+    route_handlers=[query_novels, get_novel, create_novel],
 )
