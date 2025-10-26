@@ -104,6 +104,7 @@ def create_400_response_spec(
             ),
         )
     return ResponseSpec(
+        generate_examples=False,
         data_container=ProblemDetailsExceptionSchema,
         description=description,
         media_type=ProblemDetailsException._PROBLEM_DETAILS_MEDIA_TYPE,
@@ -120,6 +121,7 @@ def create_404_response_spec(
     # than specifying a description in the example (an "example" description
     # is not the same as the actual description)
     return ResponseSpec(
+        generate_examples=False,
         data_container=ProblemDetailsExceptionSchema,
         description=description,
         media_type=ProblemDetailsException._PROBLEM_DETAILS_MEDIA_TYPE,
