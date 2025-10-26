@@ -17,6 +17,8 @@ const menuItems = [
   { label: "Forums", icon: "message", href: "/forums" },
   { label: "Recent Changes", icon: "refresh-alert", href: "/history" },
 ];
+
+const novelPath = Astro.url.pathname.startsWith("/novel/");
 ---
 
 <html lang="en">
@@ -35,7 +37,7 @@ const menuItems = [
       <div id="page-content" class="flex flex-col flex-1 min-w-0 md:ml-64">
         <header
           id="nav-bar"
-          class="fixed top-0 right-0 left-0 flex h-16 shrink-0 items-center justify-between gap-2 px-2 z-30 md:left-64 border-b"
+          class={`fixed top-0 right-0 left-0 flex h-16 shrink-0 items-center justify-between gap-2 px-2 z-30 md:left-64 ${novelPath ? "" : "bg-background border-b"}`}
         >
           <SheetSidebar menuItems={menuItems} />
           <div
@@ -77,6 +79,9 @@ const menuItems = [
     const sidebarOpenButton = document.getElementById("sidebar-open-button");
     const sidebarCloseButton = document.getElementById("sidebar-close-button");
     const sheetSidebar = document.getElementById("sheet-sidebar");
+    const sheetSidebarOpenButton = document.getElementById(
+      "sheet-sidebar-open-button",
+    );
     const sheetSidebarCloseButton = document.getElementById(
       "sheet-sidebar-close-button",
     );
@@ -140,6 +145,54 @@ const menuItems = [
     }
 
     largeScreenQuery.addEventListener("change", handleScreenChange);
+
+    if (window.location.pathname.startsWith("/novel/")) {
+      let bgColor, borderColor, foregroundColor;
+
+      navBar.style.borderBottomWidth = "1px";
+
+      const updateColors = () => {
+        const computedStyle = getComputedStyle(document.documentElement);
+        bgColor = computedStyle.getPropertyValue("--background").trim();
+        borderColor = computedStyle.getPropertyValue("--border").trim();
+        foregroundColor = computedStyle.getPropertyValue("--foreground").trim();
+        handleScroll();
+      };
+
+      const handleScroll = () => {
+        const opacity = Math.min(window.scrollY / 40, 1);
+        const mixedColor = `color-mix(in oklch, white ${(1 - opacity) * 100}%, ${foregroundColor})`;
+        let borderBase;
+
+        navBar.style.backgroundColor = bgColor.replace(")", ` / ${opacity})`);
+
+        if (borderColor.includes("/")) {
+          borderBase = borderColor.split("/")[0].trim();
+        } else {
+          borderBase = borderColor.replace(")", "");
+        }
+
+        navBar.style.borderBottomColor = `${borderBase} / ${opacity * 0.1})`;
+
+        if (sheetSidebarOpenButton) {
+          sheetSidebarOpenButton.style.color = mixedColor;
+        }
+        if (sidebarOpenButton) {
+          sidebarOpenButton.style.color = mixedColor;
+        }
+        navHeader.style.color = mixedColor;
+      };
+
+      updateColors();
+
+      const observer = new MutationObserver(updateColors);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme"],
+      });
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    }
 
     requestAnimationFrame(() => {
       pageContent.classList.add(
