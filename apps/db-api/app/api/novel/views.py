@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import structlog
-from litestar import Response, Router, get, post
+from litestar import Response, Router, get, patch, post
 from litestar.datastructures import State
 from litestar.di import Provide
 from litestar.exceptions import (
@@ -11,6 +11,7 @@ from litestar.exceptions import (
 )
 from meilisearch_python_sdk import AsyncClient, AsyncIndex
 from meilisearch_python_sdk.errors import MeilisearchApiError
+from msgspec import UNSET
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.const import INVALID_WEBNDB_ID, NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX
@@ -36,12 +37,15 @@ from .schemas import (
     NovelIDParam,
     NovelQueryRequest,
     NovelSchema,
+    NovelUpdateSchema,
     to_novel_schema,
 )
 from .service import (
+    clear_novel_titles,
     find_repeated_lang_titles,
     insert_novel,
     select_novel,
+    update_novel,
     upsert_novel_titles,
 )
 
@@ -227,8 +231,97 @@ async def create_novel(
     )
 
 
+@patch(
+    path='/{novel_id:str}',
+    tags=['novels'],
+    summary='Update novel',
+    description='Update the web novel identified by `novel_id`.',
+    operation_class=custom_operation(
+        custom_reqbody(
+            description=(
+                f'Descriptions are limited to {NOVEL_DESCRIPTION_MAX} characters.'
+                f' Titles are limited to {NOVEL_TITLE_MAX} characters.\n'
+                '\n'
+                'A novel must have at least one title.'
+                ' There can only be one title per language.\n'
+                '\n'
+                'The value of `titles` replaces the current collection of titles.'
+                ' To update just one title, the `titles` array must include all'
+                ' current titles, or else those titles will be removed.'
+            ),
+            required=False,
+        )
+    ),
+    response_description='Novel updated, representation follows',
+    responses={
+        400: create_400_response_spec(
+            description=(
+                'Bad request syntax, validation error, or more than one title'
+                ' per language'
+            ),
+            client_error_detail_example=(
+                "Language 'en' is used by more than one title"
+                ' but only one title per language is allowed'
+            ),
+            include_validation_error=True,
+            validation_detail_example='Validation failed for PATCH /novels/1',
+            validation_message_example="Invalid enum value 'eng'",
+            validation_key_example='titles[0].lang',
+            validation_source_example='body',
+        ),
+        404: create_404_response_spec(
+            description='Novel ID in path parameter is not associated with a novel',
+            detail_example='Could not find a novel identified by novel ID 0',
+        ),
+    },
+)
+async def patch_novel(
+    transaction: AsyncSession,
+    meili_index: AsyncIndex,
+    novel_id: Annotated[str, NovelIDParam],
+    data: NovelUpdateSchema = None,
+) -> NovelSchema:
+    if data is None:
+        data = NovelUpdateSchema()
+    novel = await select_novel(transaction, novel_id)
+    if novel is None:
+        raise NotFoundException(
+            f'Could not find a novel identified by novel ID {novel_id}'
+        )
+
+    if data.titles is not UNSET:
+        rep_lang = find_repeated_lang_titles(data.titles)
+        if rep_lang:
+            raise ClientException(
+                f"Language '{rep_lang}' is used by more than one title"
+                ' but only one title per language is allowed'
+            )
+
+    try:
+        novel = await update_novel(
+            transaction,
+            novel_id,
+            await novel.awaitable_attrs.original_language
+            if data.original_language is UNSET
+            else data.original_language,
+            await novel.awaitable_attrs.description
+            if data.description is UNSET
+            else data.description,
+        )
+        titles = None
+        if data.titles is not UNSET:
+            await clear_novel_titles(transaction, novel_id)
+            titles = await upsert_novel_titles(transaction, novel_id, data.titles)
+        res = await to_novel_schema(novel, titles)
+        await meili_index.update_documents([res])
+        await transaction.commit()
+    except Exception:
+        raise InternalServerException
+    return res
+
+
 novel_router = Router(
     path=PATH,
     dependencies={'meili_index': Provide(get_meili_novel_index)},
-    route_handlers=[query_novels, get_novel, create_novel],
+    route_handlers=[query_novels, get_novel, create_novel, patch_novel],
 )
