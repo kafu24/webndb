@@ -11,9 +11,9 @@ const { novels } = Astro.props;
   {
     novels.map((novel) => (
       <div class="flex flex-col border-2 h-[384px] p-2 rounded-md bg-popover">
-        <div class="flex flex-col pb-1 text-ellipsis">
+        <div class="flex flex-col text-ellipsis pb-1">
           <div>
-            <span class="flex float-right items-center gap-1 text-green-400 bg-accent rounded px-2 text-md font-semibold shadow ml-2">
+            <span class="flex float-right items-center gap-0.5 text-green-400 bg-accent rounded px-2 py-0.5 text-sm font-semibold shadow ml-2">
               <Icon name="tabler:circle-dot" class="w-4 h-4" />
               {novel.status}
             </span>
@@ -28,8 +28,8 @@ const { novels } = Astro.props;
             </div>
           </div>
         </div>
-        <div class="flex justify-center gap-8 text-md pb-1">
-          <span class="flex items-center gap-1">
+        <div class="flex justify-center gap-8 text-sm pb-1">
+          <span class="flex items-center gap-0.5">
             <Icon name="tabler:star" class="w-4 h-4" />
             {novel.rating}/{novel.num_ratings}
           </span>

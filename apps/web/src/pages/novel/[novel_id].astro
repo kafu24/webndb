@@ -31,6 +31,76 @@ const novel = {
   num_reviews: "102",
   readers: "10k",
 };
+
+const chapters = [
+  {
+    volume: "Volume 2",
+    chapters: [
+      {
+        chapter: "Chapter 3",
+        entries: [
+          {
+            language: "us",
+            title:
+              "Chapter 3: title3 title3 title3title3 title3 title3 title3 title3 title3",
+            href: "/chapter/chapter",
+            group: "Translator1",
+            date: "2025-10-25",
+            comments: 12,
+          },
+          {
+            language: "jp",
+            title: "title3",
+            href: "/chapter/chapter",
+            group:
+              "Publisher1 Publisher Publisher Publisher Publisher Publisher Publisher Publisher Publisher",
+            date: "2025-10-25",
+            comments: 12,
+          },
+        ],
+      },
+      {
+        chapter: "Chapter 2",
+        entries: [
+          {
+            language: "us",
+            title: "Chapter 2: title2",
+            href: "/chapter/chapter",
+            group: "Translator1",
+            date: "2025-10-25",
+            comments: 12,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    volume: "Volume 1",
+    chapters: [
+      {
+        chapter: "Chapter 1",
+        entries: [
+          {
+            language: "us",
+            title: "Chapter 1: title1",
+            href: "/chapter/chapter",
+            group: "Translator1",
+            date: "2025-10-25",
+            comments: 12,
+          },
+          {
+            language: "jp",
+            title: "title1",
+            href: "/chapter/chapter",
+            group: "Publisher",
+            date: "2025-10-25",
+            comments: 12,
+          },
+        ],
+      },
+    ],
+  },
+];
 ---
 
 <div class="relative">
@@ -49,7 +119,7 @@ const novel = {
     <div class="flex gap-4">
       <img
         src={novel.image}
-        class="aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[524px]:w-21 max-[524px]:h-30"
+        class="aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30"
       />
       <div class="flex flex-col w-full">
         <div class="flex flex-col justify-between h-42 w-full">
@@ -62,25 +132,9 @@ const novel = {
           </span>
           <div class="flex items-end z-25">
             <span
-              class="text-xl drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white max-[524px]:absolute max-[524px]:left-4"
+              class="text-lg w-[calc(100%-144px)] line-clamp-2 leading-[1.05] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white max-[548px]:absolute max-[548px]:left-4 max-[548px]:w-[calc(100%-176px)]"
             >
-              Author
-              <div
-                class="flex gap-2 text-sm max-[524px]:text-xs max-[524px]:gap-1"
-              >
-                <span class="flex items-center gap-0.5">
-                  <Icon name="tabler:star" class="w-3 h-3" />
-                  {novel.rating}/{novel.num_ratings}
-                </span>
-                <span class="flex items-center gap-0.5">
-                  <Icon name="tabler:message" class="w-3 h-3" />
-                  {novel.num_reviews}
-                </span>
-                <span class="flex items-center gap-0.5">
-                  <Icon name="tabler:user-plus" class="w-3 h-3" />
-                  {novel.readers}
-                </span>
-              </div>
+              by Author Author AuthorAuthor Author Author
             </span>
             <div class="absolute right-4">
               <Button size="sm"> <Icon name="tabler:edit" /> </Button>
@@ -92,39 +146,42 @@ const novel = {
           </div>
         </div>
         <div
-          class="flex items-center gap-2 pt-6 max-[524px]:relative max-[524px]:right-25"
+          class="flex items-center gap-2 pt-6 max-[548px]:relative max-[548px]:right-25"
         >
           <Button size="lg" class="[&_svg]:size-5">
             <Icon name="tabler:book" />
-            <span class="max-[790px]:hidden">Start Reading</span>
+            <span class="max-[798px]:hidden">Start Reading</span>
           </Button>
-          <Button size="lg" class="[&_svg]:size-5 max-[924px]:p-3">
+          <Button size="lg" class="[&_svg]:size-5 max-[932px]:p-3">
             <Icon name="tabler:bookmark" />
-            <span class="max-[924px]:hidden">Add to List</span>
+            <span class="max-[932px]:hidden">Add to List</span>
           </Button>
-          <Button size="lg" class="px-3"><Icon name="tabler:share" /></Button>
+          <Button size="lg" class="px-4"><Icon name="tabler:share" /></Button>
         </div>
       </div>
     </div>
 
     <div class="flex gap-4 pt-2">
-      <aside class="w-42 flex-shrink-0 hidden lg:block">
-        <span class="text-lg font-bold mb-2">MORE DETAILS</span>
-        <div class="flex flex-col gap-2 text-sm">
-          <div class="space-y-0.5">
+      <aside class="w-42 flex-shrink-0 hidden lg:block mb-2">
+        <span class="text-lg font-bold">DETAILS</span>
+        <div class="flex flex-col gap-2 text-sm leading-snug">
+          <div class="space-y-1">
             <p>
               <b class="font-semibold">Status:</b>
               <span class="text-green-400">{novel.status}</span>
             </p>
             <p><b class="font-semibold">Available:</b> 197 chapters</p>
-            <p><b class="font-semibold">Lasted updated:</b> 10/25/2025</p>
+            <p>
+              <b class="font-semibold">Lasted updated:</b>
+              <span class="flex">2025-10-25</span>
+            </p>
           </div>
-          <div class="space-y-0.5">
+          <div class="space-y-1">
             <p><b class="font-semibold">Author(s):</b> Author</p>
             <p><b class="font-semibold">Publisher(s):</b> Publisher</p>
-            <p><b class="font-semibold">Publishing Date:</b> 10/25/2025</p>
+            <p><b class="font-semibold">Publishing Year:</b> 2025</p>
           </div>
-          <div class="space-y-0.5">
+          <div class="space-y-1">
             <p><b class="font-semibold">Original Language:</b> Japanese</p>
             <p>
               <b class="font-semibold">Available Language(s):</b> English, Japanese
@@ -138,13 +195,13 @@ const novel = {
       >
         <div class="flex-2">
           <div class="mb-2">
-            <span class="text-lg font-bold mb-4">GENRES</span>
+            <span class="text-lg font-bold">GENRES</span>
             <div class="flex flex-wrap">
               {
                 novel.genres.map((genre) => (
                   <a
                     href={`/genre/${genre}`}
-                    class="bg-foreground/10 hover:bg-foreground/12 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
+                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
                   >
                     {genre}
                   </a>
@@ -153,49 +210,82 @@ const novel = {
             </div>
           </div>
           <div class="mb-2">
-            <span class="text-lg font-bold mb-2">DESCRIPTION</span>
-            <p class="text-foreground/90 leading-relaxed text-sm">
+            <span class="text-lg font-bold">DESCRIPTION</span>
+            <p class="text-foreground/90 leading-snug text-sm">
               {novel.description}
             </p>
           </div>
 
-          <div class="mb-2 w-full lg:w-42 flex-shrink-0 block lg:hidden">
-            <span class="text-lg font-bold block">MORE DETAILS</span>
-            <div class="flex flex-wrap space-x-4 space-y-2 text-sm">
-              <div class="space-y-0.5">
+          <div class="mb-1 w-full lg:w-42 flex-shrink-0 block lg:hidden">
+            <span class="text-lg font-bold block">DETAILS</span>
+            <div
+              class="flex flex-wrap space-x-4 space-y-2 text-sm leading-snug"
+            >
+              <div class="space-y-1 min-w-40">
                 <p>
                   <b class="font-semibold">Status:</b>
                   <span class="text-green-400">{novel.status}</span>
                 </p>
                 <p><b class="font-semibold">Available:</b> 197 chapters</p>
-                <p><b class="font-semibold">Lasted updated:</b> 10/25/2025</p>
+                <p><b class="font-semibold">Lasted updated:</b> 2025-10-25</p>
               </div>
-              <div class="space-y-0.5">
+              <div class="space-y-1 min-w-40">
                 <p><b class="font-semibold">Author(s):</b> Author</p>
                 <p><b class="font-semibold">Publisher(s):</b> Publisher</p>
-                <p><b class="font-semibold">Publishing Date:</b> 10/25/2025</p>
+                <p><b class="font-semibold">Publishing Year:</b> 2025</p>
               </div>
-              <div class="space-y-0.5">
-                <p><b class="font-semibold">Original Language:</b> Japanese</p>
-                <p>
-                  <b class="font-semibold">Available Language(s):</b> English, Japanese
-                </p>
+              <div class="flex flex-col gap-2">
+                <div class="space-y-1 min-w-40">
+                  <p>
+                    <b class="font-semibold">Original Language:</b>
+                    Japanese
+                  </p>
+                  <p>
+                    <b class="font-semibold">Available Language(s):</b>
+                    English, Japanese
+                  </p>
+                </div>
+                <div class="flex gap-4 space-y-1 min-w-40">
+                  <div>
+                    <b class="font-semibold">Translator(s):</b>
+                    <p>Translator1</p>
+                    <p>Translator2</p>
+                  </div>
+                  <div>
+                    <b class="font-semibold">Alternative Title(s):</b>
+                    <p>
+                      <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                      title1
+                    </p>
+                    <p>
+                      <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                      title2
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="mb-2">
-            <span class="text-lg font-bold mb-2">TAGS</span>
-            <div class="flex flex-wrap gap-2">
-              <a href="/tag/..." class="text-blue-400 text-sm">
-                tag1, tag2, tag3
-              </a>
+            <span class="text-lg font-bold">TAGS</span>
+            <div class="flex flex-wrap">
+              {
+                novel.genres.map((genre) => (
+                  <a
+                    href={`/genre/${genre}`}
+                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
+                  >
+                    {genre}
+                  </a>
+                ))
+              }
             </div>
           </div>
-          <div>
+          <div class="mb-2">
             <span class="text-lg font-bold">LINKS</span>
             <div
-              class="bg-card border border-border rounded-md px-4 py-2 text-sm text-muted-foreground"
+              class="bg-card border border-border rounded-md px-4 py-2 text-sm text-muted-foreground mt-1"
             >
               Content is hidden from guests, please sign in to access.
             </div>
@@ -207,17 +297,18 @@ const novel = {
             <Icon name="tabler:chevron-compact-down" class="pt-0.5 w-full" />
           </button>
         </div>
-        <div class="w-84 max-[1274px]:hidden"></div>
+        <div class="w-84 max-[1282px]:hidden"></div>
       </div>
 
       <aside
-        class="flex-1 space-y-6 max-[1274px]:hidden w-84 absolute top-68 right-4 pb-4"
+        class="flex-1 max-[1282px]:hidden w-84 absolute top-68 right-4 pb-4"
       >
-        <div class="bg-card rounded-md px-4 py-2 border border-border">
-          <span class="text-lg font-bold mb-2">RATING</span>
-          <div class="text-center mb-4">
+        <div class="bg-card rounded-md px-4 py-2 border border-border mb-4">
+          <span class="text-lg font-bold">RATING</span>
+          <div class="text-center mb-1">
             <div class="text-3xl font-bold">
-              9.2 <Icon
+              9.2
+              <Icon
                 name="tabler:star-filled"
                 class="inline -translate-y-1 text-yellow-500"
               />
@@ -260,8 +351,8 @@ const novel = {
         </div>
 
         <div class="bg-card rounded-md px-4 py-2 border border-border">
-          <span class="text-lg font-bold mb-2">RECOMMENDATIONS</span>
-          <div class="flex gap-2 mb-4">
+          <span class="text-lg font-bold">RECOMMENDATIONS</span>
+          <div class="flex gap-2 mt-1 mb-3">
             <button
               class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
             >
@@ -284,21 +375,148 @@ const novel = {
 
     <div class="flex flex-1 gap-4">
       <div class="flex flex-col flex-1">
-        <div class="mb-2">
-          <span class="text-lg font-bold mb-2">CHAPTERS</span>
-          <div>TODO: collapsible volumes/chapters here</div>
+        <!-- TODO: client-island, pagination -->
+        <div class="mb-3">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex gap-2">
+              <span class="text-lg font-bold">CHAPTERS</span>
+              <button
+                class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-card hover:bg-foreground/8"
+              >
+                <Icon name="tabler:list" class="w-4 h-4" />
+                <span class="max-[334px]:hidden">View all</span>
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-card hover:bg-foreground/8"
+              >
+                <Icon name="tabler:arrow-down" class="w-4 h-4" />
+                <span class="max-[482px]:hidden">Descending</span>
+              </button>
+
+              <div>
+                <button
+                  id="language-filter-btn"
+                  class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-card hover:bg-foreground/8"
+                >
+                  <Icon name="tabler:language" class="w-4 h-4" />
+                  <span class="max-[482px]:hidden">Languages</span>
+                  <Icon name="tabler:chevron-down" class="w-4 h-4" />
+                </button>
+
+                <!-- TODO: dropdown menu -->
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-md px-4 py-2 border border-border">
+            {
+              chapters.map((volume, vIdx) => (
+                <div class="space-y-2">
+                  <div class="w-full flex items-center gap-3 font-semibold text-lg">
+                    <button class="flex items-center gap-2 hover:text-foreground/60">
+                      <Icon name="tabler:chevron-down" class="w-5 h-5" />
+                      {volume.volume}
+                    </button>
+                    <hr class="flex-1 border-border" />
+                  </div>
+                  <div
+                    id={`volume-${vIdx}`}
+                    class="space-y-3 ml-6.5 max-[548px]:ml-2"
+                  >
+                    {volume.chapters.map((chapter, cIdx) => (
+                      <div class="space-y-2">
+                        <button class="w-full flex items-center gap-2 font-medium hover:text-foreground/60">
+                          <Icon name="tabler:chevron-down" class="w-4 h-4" />
+                          {chapter.chapter}
+                        </button>
+                        <div
+                          id={`chapter-${vIdx}-${cIdx}`}
+                          class="ml-2 border-l-1 border-border"
+                        >
+                          {chapter.entries.map((entry, eIdx) => (
+                            <a
+                              href={entry.href}
+                              class={`flex justify-between gap-4 px-4 py-2 hover:bg-foreground/8 items-center ${eIdx < chapter.entries.length - 1 ? "border-b border-dashed border-border" : ""}`}
+                            >
+                              <div class="flex flex-col gap-1 text-sm">
+                                <span class="block font-medium line-clamp-2 max-[1282px]:line-clamp-3 max-[548px]:text-xs">
+                                  <Icon
+                                    name={`flag:${entry.language}-4x3`}
+                                    class="shadow inline mr-1"
+                                  />
+                                  {entry.title}
+                                </span>
+                                <div class="items-center gap-1 hidden max-[1282px]:flex">
+                                  <span class="text-xs text-muted-foreground line-clamp-2">
+                                    <Icon
+                                      name="tabler:users"
+                                      class="w-4 h-4 inline mr-1"
+                                    />
+                                    {entry.group}
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="flex gap-4 justify-end">
+                                <div class="flex max-[1282px]:flex-col gap-4 max-[1282px]:gap-1 text-muted-foreground">
+                                  <div class="flex items-center gap-1 max-w-40">
+                                    <span class="text-xs text-end truncate max-[1282px]:hidden">
+                                      <Icon
+                                        name="tabler:users"
+                                        class="w-4 h-4 inline"
+                                      />
+                                      {entry.group}
+                                    </span>
+                                  </div>
+                                  <div class="flex items-center gap-1">
+                                    <Icon
+                                      name="tabler:calendar"
+                                      class="w-4 h-4"
+                                    />
+                                    <span class="text-xs whitespace-nowrap">
+                                      {entry.date}
+                                    </span>
+                                  </div>
+                                  <div class="flex items-center gap-1">
+                                    <Icon
+                                      name="tabler:message"
+                                      class="w-4 h-4"
+                                    />
+                                    <span class="text-xs">
+                                      {entry.comments}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div class="flex items-center">
+                                  <button>
+                                    <Icon name="tabler:flag" class="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
         </div>
 
-        <div class="flex-1 flex-col gap-4 max-[1274px]:flex hidden">
+        <div class="flex-1 flex-col gap-4 max-[1282px]:flex hidden mt-1">
           <div
             id="rating-container"
             class="h-28 lg:h-auto overflow-hidden relative"
           >
             <div class="bg-card rounded-md px-4 py-2 border border-border">
-              <span class="text-lg font-bold mb-2">RATING</span>
-              <div class="text-center mb-4">
+              <span class="text-lg font-bold">RATING</span>
+              <div class="text-center mb-1">
                 <div class="text-3xl font-bold">
-                  9.2 <Icon
+                  9.2
+                  <Icon
                     name="tabler:star-filled"
                     class="inline -translate-y-1 text-yellow-500"
                   />
@@ -352,7 +570,7 @@ const novel = {
 
           <div class="bg-card rounded-md px-4 py-2 border border-border mb-2">
             <span class="text-lg font-bold">RECOMMENDATIONS</span>
-            <div class="flex gap-2 mb-4">
+            <div class="flex gap-2 mt-1 mb-4">
               <button
                 class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
               >
@@ -373,13 +591,18 @@ const novel = {
             </div>
           </div>
         </div>
-        <div class="mb">
-          <span class="text-lg font-bold mb-2">COMMENTS</span>
-          <div>TODO: comments here</div>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold">COMMENTS</span>
+          <!-- TODO: comments here, client island -->
+          <button
+            class="bg-card border border-border rounded-md px-4 py-2 text-sm mt-1 hover:bg-foreground/8"
+          >
+            Load comments
+          </button>
         </div>
       </div>
 
-      <div class="w-84 max-[1274px]:hidden"></div>
+      <div class="w-84 max-[1282px]:hidden"></div>
     </div>
   </BaseLayout>
 
@@ -418,7 +641,7 @@ const novel = {
         });
       }
 
-       expandRatingBtn.addEventListener("click", (e) => {
+      expandRatingBtn.addEventListener("click", (e) => {
         e.preventDefault();
         expandRatingBtn.style.display = "none";
         ratingContainer.style.height = "auto";

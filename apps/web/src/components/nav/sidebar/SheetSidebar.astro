@@ -11,9 +11,10 @@ const currentPath = Astro.url.pathname;
   <Sheet>
     <SheetTrigger asChild>
       <Button
+        id="sheet-sidebar-open-button"
         variant="ghost"
         size="md"
-        class="rounded-full p-2 hover:bg-foreground/10 [&_svg]:size-5"
+        class="rounded-full hover:bg-foreground/10 [&_svg]:size-5 p-3"
       >
         <Icon name="tabler:layout-sidebar" />
       </Button>
@@ -26,13 +27,13 @@ const currentPath = Astro.url.pathname;
           WebNDB
         </a>
       </div>
-      <ul class="flex flex-1 flex-col p-2">
-        <li class="flex w-full min-w-0 flex-col gap-1">
+      <ul class="flex flex-1 flex-col py-2">
+        <li class="flex w-full min-w-0 flex-col">
           {
             menuItems.map((item) => (
               <a href={item.href}>
                 <button
-                  class={`${item.href === currentPath ? "bg-foreground/5 pointer-events-none" : "hover:bg-foreground/8"} flex w-full items-center rounded px-4 py-1.5 gap-2 font-normal !text-lg`}
+                  class={`${item.href === currentPath ? "bg-foreground/5 pointer-events-none" : "hover:bg-foreground/8"} flex w-full items-center px-6 py-1.5 gap-2 font-normal !text-lg`}
                 >
                   <Icon name={`tabler:${item.icon}`} class="w-6 h-6" />
                   <span>{item.label}</span>

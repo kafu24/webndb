@@ -18,11 +18,11 @@ const { novels } = Astro.props;
           />
         </a>
         <div>
-          <span class="float-right flex items-center gap-0.5 lg:gap-1 text-green-400 pl-2 bg-accent rounded py-0.5 pr-2 text-sm lg:text-md font-semibold shadow ml-2">
-            <Icon name="tabler:circle-dot" class="w-3 h-3 lg:w-4 lg:h-4" />
+          <span class="float-right flex items-center gap-0.5 text-green-400 pl-2 bg-accent rounded py-0.5 px-2 text-sm font-semibold shadow ml-2">
+            <Icon name="tabler:circle-dot" class="w-4 h-4" />
             {novel.status}
           </span>
-          <div class="pb-1 lg:pb-1.5">
+          <div class="pb-0.5 lg:pb-1">
             <Icon
               name="flag:jp-4x3"
               class="w-6 lg:w-7 h-auto inline shadow mr-1"
@@ -38,18 +38,18 @@ const { novels } = Astro.props;
         <div>
           <div
             class="flex flex-col @[300px]:flex-row pb-0.5 @[300px]:gap-4 @[300px]:lg:gap-8
-              text-sm @[300px]:lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 @[300px]:lg:pt-1"
+              text-sm float-none md:float-right md:pl-8 w-auto md:pt-0.5"
           >
-            <span class="flex items-center gap-1">
-              <Icon name="tabler:bookmark" class="w-3 h-3 lg:w-4 lg:h-4" />
+            <span class="flex items-center gap-0.5">
+              <Icon name="tabler:star" class="w-4 h-4" />
               {novel.rating}/{novel.num_ratings}
             </span>
             <span class="flex items-center gap-0.5">
-              <Icon name="tabler:message" class="w-3 h-3 lg:w-4 lg:h-4" />
+              <Icon name="tabler:message" class="w-4 h-4" />
               {novel.num_reviews}
             </span>
             <span class="flex items-center gap-0.5">
-              <Icon name="tabler:user-plus" class="w-3 h-3 lg:w-4 lg:h-4" />
+              <Icon name="tabler:user-plus" class="w-4 h-4" />
               {novel.readers}
             </span>
           </div>
@@ -57,7 +57,7 @@ const { novels } = Astro.props;
             {novel.genres?.map((genre) => (
               <a
                 href={`/genre/${genre}`}
-                class="inline-flex px-2 py-1 lg:py-1 mr-1 mb-1 bg-accent hover:bg-accent/80 font-semibold rounded text-xs lg:text-sm transition-colors shadow"
+                class="inline-flex px-2 py-1 mr-1 mb-1 bg-accent hover:bg-accent/80 font-semibold rounded text-xs lg:text-sm transition-colors shadow"
               >
                 {genre}
               </a>
