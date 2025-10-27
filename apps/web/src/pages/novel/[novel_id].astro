@@ -413,22 +413,32 @@ const chapters = [
           <div class="bg-card rounded-md px-4 py-2 border border-border">
             {
               chapters.map((volume, vIdx) => (
-                <div class="space-y-2">
+                <div class="flex flex-col">
                   <div class="w-full flex items-center gap-3 font-semibold text-lg">
-                    <button class="flex items-center gap-2 hover:text-foreground/60">
-                      <Icon name="tabler:chevron-down" class="w-5 h-5" />
+                    <button
+                      class="volume-toggle flex items-center gap-2 hover:text-foreground/60"
+                      data-volume-idx={vIdx}
+                    >
+                      <Icon
+                        name="tabler:chevron-down"
+                        class="w-5 h-5"
+                      />
                       {volume.volume}
                     </button>
                     <hr class="flex-1 border-border" />
                   </div>
-                  <div
-                    id={`volume-${vIdx}`}
-                    class="space-y-3 ml-6.5 max-[548px]:ml-2"
-                  >
+                  <div id={`volume-${vIdx}`} class="ml-6.5 max-[548px]:ml-2">
                     {volume.chapters.map((chapter, cIdx) => (
-                      <div class="space-y-2">
-                        <button class="w-full flex items-center gap-2 font-medium hover:text-foreground/60">
-                          <Icon name="tabler:chevron-down" class="w-4 h-4" />
+                      <div class="flex flex-col">
+                        <button
+                          class="chapter-toggle w-full flex items-center gap-2 font-medium hover:text-foreground/60"
+                          data-volume-idx={vIdx}
+                          data-chapter-idx={cIdx}
+                        >
+                          <Icon
+                            name="tabler:chevron-down"
+                            class="w-4 h-4"
+                          />
                           {chapter.chapter}
                         </button>
                         <div
@@ -595,7 +605,7 @@ const chapters = [
           <span class="text-lg font-bold">COMMENTS</span>
           <!-- TODO: comments here, client island -->
           <button
-            class="bg-card border border-border rounded-md px-4 py-2 text-sm mt-1 hover:bg-foreground/8"
+            class="bg-card border border-border rounded-md px-4 py-2 font-semibold mt-1 hover:bg-foreground/8"
           >
             Load comments
           </button>
@@ -611,8 +621,12 @@ const chapters = [
       const title = document.getElementById("novel-title");
       const ratingContainer = document.getElementById("rating-container");
       const detailsContainer = document.getElementById("details-container");
-      const expandRatingBtn = document.getElementById("expand-rating-btn");
       const expandDetailsBtn = document.getElementById("expand-details-btn");
+      const volumeBtns =
+        document.querySelectorAll<HTMLElement>(".volume-toggle");
+      const chapterBtns =
+        document.querySelectorAll<HTMLElement>(".chapter-toggle");
+      const expandRatingBtn = document.getElementById("expand-rating-btn");
 
       function fitTitle(element: HTMLElement) {
         let minSize = 20;
@@ -641,16 +655,42 @@ const chapters = [
         });
       }
 
-      expandRatingBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        expandRatingBtn.style.display = "none";
-        ratingContainer.style.height = "auto";
-      });
-
       expandDetailsBtn.addEventListener("click", (e) => {
         e.preventDefault();
         expandDetailsBtn.style.display = "none";
         detailsContainer.style.height = "auto";
+      });
+
+      volumeBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          const vIdx = btn.dataset.volumeIdx;
+          const content = document.getElementById(`volume-${vIdx}`);
+          const icon = btn.querySelector("svg");
+
+          content?.classList.toggle("hidden");
+          icon?.classList.toggle("rotate-180");
+        });
+      });
+
+      chapterBtns.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          const vIdx = btn.dataset.volumeIdx;
+          const cIdx = btn.dataset.chapterIdx;
+          const content = document.getElementById(`chapter-${vIdx}-${cIdx}`);
+          const icon = btn.querySelector("svg");
+
+          content?.classList.toggle("hidden");
+          icon?.classList.toggle("rotate-180");
+        });
+      });
+
+      expandRatingBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        expandRatingBtn.style.display = "none";
+        ratingContainer.style.height = "auto";
       });
     });
   </script>
