@@ -21,18 +21,18 @@ const currentPath = Astro.url.pathname;
         </a>
         <button
           id="sidebar-close-button"
-          class="rounded-full p-2 hover:bg-foreground/10"
+          class="rounded-full p-3 hover:bg-foreground/10"
         >
           <Icon name={`tabler:x`} class="w-5 h-5" />
         </button>
       </div>
-      <ul class="flex flex-1 flex-col min-w-0 min-h-0 p-2">
-        <li class="flex w-full min-w-0 flex-col gap-1">
+      <ul class="flex flex-1 flex-col min-w-0 min-h-0 py-2">
+        <li class="flex w-full min-w-0 flex-col">
           {
             menuItems.map((item) => (
               <a href={item.href}>
                 <button
-                  class={`${item.href === currentPath ? "bg-foreground/5 pointer-events-none" : "hover:bg-foreground/8"} flex w-full items-center rounded px-4 py-1.5 gap-2 font-normal !text-lg`}
+                  class={`${item.href === currentPath ? "bg-foreground/5 pointer-events-none" : "hover:bg-foreground/8"} flex w-full items-center px-6 py-1.5 gap-2 font-normal !text-lg`}
                 >
                   <Icon name={`tabler:${item.icon}`} class="w-6 h-6" />
                   <span>{item.label}</span>
