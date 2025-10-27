@@ -112,8 +112,7 @@ const chapters = [
   >
   </div>
 
-  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64">
-  </div>
+  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64"/>
 
   <BaseLayout>
     <div class="flex gap-4">
@@ -168,7 +167,7 @@ const chapters = [
           <div class="space-y-1">
             <p>
               <b class="font-semibold">Status:</b>
-              <span class="text-green-400">{novel.status}</span>
+              <span class="font-semibold text-green-400">{novel.status}</span>
             </p>
             <p><b class="font-semibold">Available:</b> 197 chapters</p>
             <p>
@@ -186,6 +185,24 @@ const chapters = [
             <p>
               <b class="font-semibold">Available Language(s):</b> English, Japanese
             </p>
+          </div>
+          <div class="space-y-1">
+            <div>
+              <b class="font-semibold">Translator(s):</b>
+              <p>Translator1</p>
+              <p>Translator2</p>
+            </div>
+            <div>
+              <b class="font-semibold">Alternative Title(s):</b>
+              <p>
+                <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                title1
+              </p>
+              <p>
+                <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                title2
+              </p>
+            </div>
           </div>
         </div>
       </aside>
@@ -224,7 +241,9 @@ const chapters = [
               <div class="space-y-1 min-w-40">
                 <p>
                   <b class="font-semibold">Status:</b>
-                  <span class="text-green-400">{novel.status}</span>
+                  <span class="font-semibold text-green-400"
+                    >{novel.status}</span
+                  >
                 </p>
                 <p><b class="font-semibold">Available:</b> 197 chapters</p>
                 <p><b class="font-semibold">Lasted updated:</b> 2025-10-25</p>
@@ -287,7 +306,7 @@ const chapters = [
             <div
               class="bg-card border border-border rounded-md px-4 py-2 text-sm text-muted-foreground mt-1"
             >
-              Content is hidden from guests, please sign in to access.
+              TODO: buttons referencing associated sites
             </div>
           </div>
           <button
@@ -317,7 +336,7 @@ const chapters = [
               {novel.num_ratings} ratings
             </div>
           </div>
-          <div class="space-y-2 flex-1">
+          <div class="space-y-1 flex-1 mb-1">
             {
               [
                 { rating: 10, percentage: 45.2, count: 235 },
@@ -342,7 +361,7 @@ const chapters = [
                     />
                   </div>
                   <span class="text-xs w-16 text-right">
-                    {percentage}% ({count})
+                    {count} ({percentage}%)
                   </span>
                 </div>
               ))
@@ -350,8 +369,65 @@ const chapters = [
           </div>
         </div>
 
+        <div class="bg-card rounded-md px-4 py-2 border border-border mb-4">
+          <span class="text-lg font-bold">READING STATUS</span>
+          <div class="space-y-1 flex-1 mb-1">
+            {
+              [
+                {
+                  status: "Reading",
+                  color: "bg-green-500",
+                  percentage: 50,
+                  count: 500,
+                },
+                {
+                  status: "Planning",
+                  color: "bg-blue-500",
+                  percentage: 30,
+                  count: 300,
+                },
+                {
+                  status: "Paused",
+                  color: "bg-purple-500",
+                  percentage: 10,
+                  count: 100,
+                },
+                {
+                  status: "Dropped",
+                  color: "bg-red-500",
+                  percentage: 10,
+                  count: 100,
+                },
+              ].map(({ status, color, percentage, count }) => (
+                <div class="space-y-1">
+                  <div class="flex justify-between items-baseline">
+                    <span class="font-semibold text-sm">{status}</span>
+                    <span class="text-xs">
+                      {count} ({percentage}%)
+                    </span>
+                  </div>
+                  <div class="h-2 bg-muted rounded overflow-hidden">
+                    <div
+                      class={`h-full ${color}`}
+                      style={`width: ${percentage}%`}
+                    />
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
         <div class="bg-card rounded-md px-4 py-2 border border-border">
-          <span class="text-lg font-bold">RECOMMENDATIONS</span>
+          <div class="flex justify-between">
+            <span class="text-lg font-bold">RECOMMENDATIONS</span>
+            <button
+              class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+            >
+              <Icon name="tabler:list" class="w-4 h-4" />
+              <span class="max-[334px]:hidden">View all</span>
+            </button>
+          </div>
           <div class="flex gap-2 mt-1 mb-3">
             <button
               class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
@@ -389,7 +465,7 @@ const chapters = [
             </div>
             <div class="flex gap-2">
               <button
-                class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-card hover:bg-foreground/8"
+                class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
               >
                 <Icon name="tabler:arrow-down" class="w-4 h-4" />
                 <span class="max-[482px]:hidden">Descending</span>
@@ -398,7 +474,7 @@ const chapters = [
               <div>
                 <button
                   id="language-filter-btn"
-                  class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-card hover:bg-foreground/8"
+                  class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-foreground/5 hover:bg-foreground/8"
                 >
                   <Icon name="tabler:language" class="w-4 h-4" />
                   <span class="max-[482px]:hidden">Languages</span>
@@ -419,10 +495,7 @@ const chapters = [
                       class="volume-toggle flex items-center gap-2 hover:text-foreground/60"
                       data-volume-idx={vIdx}
                     >
-                      <Icon
-                        name="tabler:chevron-down"
-                        class="w-5 h-5"
-                      />
+                      <Icon name="tabler:chevron-down" class="w-5 h-5" />
                       {volume.volume}
                     </button>
                     <hr class="flex-1 border-border" />
@@ -435,10 +508,7 @@ const chapters = [
                           data-volume-idx={vIdx}
                           data-chapter-idx={cIdx}
                         >
-                          <Icon
-                            name="tabler:chevron-down"
-                            class="w-4 h-4"
-                          />
+                          <Icon name="tabler:chevron-down" class="w-4 h-4" />
                           {chapter.chapter}
                         </button>
                         <div
@@ -517,97 +587,160 @@ const chapters = [
         </div>
 
         <div class="flex-1 flex-col gap-4 max-[1282px]:flex hidden mt-1">
-          <div
-            id="rating-container"
-            class="h-28 lg:h-auto overflow-hidden relative"
-          >
-            <div class="bg-card rounded-md px-4 py-2 border border-border">
-              <span class="text-lg font-bold">RATING</span>
-              <div class="text-center mb-1">
-                <div class="text-3xl font-bold">
-                  9.2
-                  <Icon
-                    name="tabler:star-filled"
-                    class="inline -translate-y-1 text-yellow-500"
-                  />
-                </div>
-                <button
-                  id="expand-rating-btn"
-                  class="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-background to-transparent lg:hidden"
-                >
-                  <Icon
-                    name="tabler:chevron-compact-down"
-                    class="pt-0.5 w-full"
-                  />
-                </button>
-                <div class="text-sm text-muted-foreground">
-                  {novel.num_ratings} ratings
-                </div>
-              </div>
-              <div class="space-y-2 flex-1">
-                {
-                  [
-                    { rating: 10, percentage: 45.2, count: 235 },
-                    { rating: 9, percentage: 28.7, count: 149 },
-                    { rating: 8, percentage: 12.4, count: 64 },
-                    { rating: 7, percentage: 5.3, count: 28 },
-                    { rating: 6, percentage: 3.1, count: 16 },
-                    { rating: 5, percentage: 2.2, count: 11 },
-                    { rating: 4, percentage: 1.5, count: 8 },
-                    { rating: 3, percentage: 0.8, count: 4 },
-                    { rating: 2, percentage: 0.5, count: 3 },
-                    { rating: 1, percentage: 0.3, count: 2 },
-                  ].map(({ rating, percentage, count }) => (
-                    <div class="flex items-center gap-2">
-                      <span class="text-sm font-medium w-6 text-right">
-                        {rating}
-                      </span>
-                      <div class="flex-1 h-2 bg-muted rounded">
-                        <div
-                          class="h-full bg-yellow-500"
-                          style={`width: ${percentage}%`}
-                        />
-                      </div>
-                      <span class="text-xs w-16 text-right">
-                        {percentage}% ({count})
-                      </span>
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-wrap gap-4">
+              <div
+                id="rating-container"
+                class="h-47 lg:h-auto overflow-hidden relative min-w-64 flex-1"
+              >
+                <div class="bg-card rounded-md px-4 py-2 border border-border">
+                  <span class="text-lg font-bold">RATING</span>
+                  <div class="text-center mb-1">
+                    <div class="text-3xl font-bold">
+                      9.2
+                      <Icon
+                        name="tabler:star-filled"
+                        class="inline -translate-y-1 text-yellow-500"
+                      />
                     </div>
-                  ))
-                }
+                    <button
+                      id="expand-rating-btn"
+                      class="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-background to-transparent lg:hidden"
+                    >
+                      <Icon
+                        name="tabler:chevron-compact-down"
+                        class="pt-0.5 w-full"
+                      />
+                    </button>
+                    <div class="text-sm text-muted-foreground">
+                      {novel.num_ratings} ratings
+                    </div>
+                  </div>
+                  <div class="space-y-1 flex-1 mb-1">
+                    {
+                      [
+                        { rating: 10, percentage: 45.2, count: 235 },
+                        { rating: 9, percentage: 28.7, count: 149 },
+                        { rating: 8, percentage: 12.4, count: 64 },
+                        { rating: 7, percentage: 5.3, count: 28 },
+                        { rating: 6, percentage: 3.1, count: 16 },
+                        { rating: 5, percentage: 2.2, count: 11 },
+                        { rating: 4, percentage: 1.5, count: 8 },
+                        { rating: 3, percentage: 0.8, count: 4 },
+                        { rating: 2, percentage: 0.5, count: 3 },
+                        { rating: 1, percentage: 0.3, count: 2 },
+                      ].map(({ rating, percentage, count }) => (
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-medium w-6 text-right">
+                            {rating}
+                          </span>
+                          <div class="flex-1 h-2 bg-muted rounded">
+                            <div
+                              class="h-full bg-yellow-500"
+                              style={`width: ${percentage}%`}
+                            />
+                          </div>
+                          <span class="text-xs w-16 text-right">
+                            {count} ({percentage}%)
+                          </span>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-card rounded-md px-4 py-2 border border-border min-w-64 flex-1"
+              >
+                <span class="text-lg font-bold">READING STATUS</span>
+                <div class="space-y-1 flex-1 mb-1">
+                  {
+                    [
+                      {
+                        status: "Reading",
+                        color: "bg-green-500",
+                        percentage: 50,
+                        count: 500,
+                      },
+                      {
+                        status: "Planning",
+                        color: "bg-blue-500",
+                        percentage: 30,
+                        count: 300,
+                      },
+                      {
+                        status: "Paused",
+                        color: "bg-purple-500",
+                        percentage: 10,
+                        count: 100,
+                      },
+                      {
+                        status: "Dropped",
+                        color: "bg-red-500",
+                        percentage: 10,
+                        count: 100,
+                      },
+                    ].map(({ status, color, percentage, count }) => (
+                      <div class="space-y-1">
+                        <div class="flex justify-between items-baseline">
+                          <span class="font-semibold text-sm">{status}</span>
+                          <span class="text-xs">
+                            {count} ({percentage}%)
+                          </span>
+                        </div>
+                        <div class="h-2 bg-muted rounded overflow-hidden">
+                          <div
+                            class={`h-full ${color}`}
+                            style={`width: ${percentage}%`}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="bg-card rounded-md px-4 py-2 border border-border mb-2">
-            <span class="text-lg font-bold">RECOMMENDATIONS</span>
-            <div class="flex gap-2 mt-1 mb-4">
-              <button
-                class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
+            <div class="bg-card rounded-md px-4 py-2 border border-border mb-2">
+              <div class="flex justify-between">
+                <span class="text-lg font-bold">RECOMMENDATIONS</span>
+                <button
+                  class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+                >
+                  <Icon name="tabler:list" class="w-4 h-4" />
+                  <span class="max-[334px]:hidden">View all</span>
+                </button>
+              </div>
+              <div class="flex gap-2 mt-1 mb-4">
+                <button
+                  class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
+                >
+                  SYSTEM
+                </button>
+                <button
+                  class="flex-1 px-3 py-2 text-sm rounded-md hover:bg-foreground/8"
+                >
+                  USER
+                </button>
+              </div>
+              <div
+                class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(144px,1fr))]"
               >
-                SYSTEM
-              </button>
-              <button
-                class="flex-1 px-3 py-2 text-sm rounded-md hover:bg-foreground/8"
-              >
-                USER
-              </button>
-            </div>
-            <div
-              class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(144px,1fr))]"
-            >
-              <GridNovelResults
-                novels={Array.from({ length: 5 }, () => ({ ...novel }))}
-              />
+                <GridNovelResults
+                  novels={Array.from({ length: 5 }, () => ({ ...novel }))}
+                />
+              </div>
             </div>
           </div>
         </div>
         <div class="flex flex-col">
-          <span class="text-lg font-bold">COMMENTS</span>
-          <!-- TODO: comments here, client island -->
+          <span class="text-lg font-bold">REVIEWS</span>
+          <!-- TODO: reviews here, client island -->
           <button
             class="bg-card border border-border rounded-md px-4 py-2 font-semibold mt-1 hover:bg-foreground/8"
           >
-            Load comments
+            Load reviews
           </button>
         </div>
       </div>
@@ -615,6 +748,7 @@ const chapters = [
       <div class="w-84 max-[1282px]:hidden"></div>
     </div>
   </BaseLayout>
+</div>
 
   <script>
     document.addEventListener("astro:page-load", () => {
@@ -669,7 +803,7 @@ const chapters = [
           const icon = btn.querySelector("svg");
 
           content?.classList.toggle("hidden");
-          icon?.classList.toggle("rotate-180");
+          icon?.classList.toggle("rotate-270");
         });
       });
 
@@ -683,7 +817,7 @@ const chapters = [
           const icon = btn.querySelector("svg");
 
           content?.classList.toggle("hidden");
-          icon?.classList.toggle("rotate-180");
+          icon?.classList.toggle("rotate-270");
         });
       });
 
@@ -694,4 +828,3 @@ const chapters = [
       });
     });
   </script>
-</div>
