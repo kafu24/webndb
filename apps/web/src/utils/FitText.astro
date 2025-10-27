@@ -1,0 +1,42 @@
+---
+interface Props {
+  textId?: string;
+  minSize?: number;
+  maxSize?: number;
+}
+
+const { textId, minSize = 20, maxSize = 64 } = Astro.props;
+---
+
+<script define:vars={{ textId, minSize: minSize, maxSize: maxSize }}>
+  document.addEventListener("astro:page-load", () => {
+    const text = document.getElementById(textId);
+
+    function fitText(element) {
+      let min = minSize;
+      let max = maxSize;
+
+      while (max - min > 1) {
+        const midSize = (min + max) / 2;
+        element.style.fontSize = midSize + "px";
+
+        if (element.scrollHeight > element.clientHeight) {
+          max = midSize;
+        } else {
+          min = midSize;
+        }
+      }
+      element.style.fontSize = min + "px";
+    }
+
+    if (text) {
+      const resizeObserver = new ResizeObserver(() => fitText(text));
+      resizeObserver.observe(text.parentElement);
+
+      document.fonts.ready.then(() => {
+        fitText(text);
+        text.style.visibility = "visible";
+      });
+    }
+  });
+</script>
