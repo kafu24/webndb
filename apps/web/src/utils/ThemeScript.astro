@@ -32,7 +32,7 @@
       root.classList.toggle("dark", appliedTheme === "dark");
     }
 
-    document.addEventListener("astro:page-load", () => {
+    document.addEventListener("astro:after-swap", () => {
       applyTheme(getStoredTheme());
     });
 
