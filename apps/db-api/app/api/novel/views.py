@@ -88,7 +88,7 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
             include_validation_error=True,
             validation_detail_example='Validation failed for GET /novels?sort=novel_id',
             validation_message_example=(
-                f"Expected `str` matching regex '{create_sort_pattern(sortable_attributes)}'",
+                f"Expected `str` matching regex '{create_sort_pattern(sortable_attributes)}'"
             ),
             validation_key_example='sort',
             validation_source_example='query',
