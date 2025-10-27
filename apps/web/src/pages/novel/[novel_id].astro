@@ -4,6 +4,7 @@ export const prerender = false;
 import GridNovelResults from "@/components/display/GridNovelResults.astro";
 import { Button } from "@/components/starwind/button";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import FitText from "@/utils/FitText.astro";
 import { Icon } from "astro-icon/components";
 
 const { novel_id } = Astro.params;
@@ -105,14 +106,13 @@ const chapters = [
 
 <div class="relative">
   <div
-    class="flex flex-col justify-between absolute h-64 w-full
-  bg-size-[110%]
-  bg-position-[center_50%]"
+    class="flex flex-col justify-between absolute h-64 w-full bg-size-[110%] bg-position-[center_50%]"
     style={`background-image:url("${novel.image}")`}
   >
   </div>
 
-  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64"/>
+  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64">
+  </div>
 
   <BaseLayout>
     <div class="flex gap-4">
@@ -176,7 +176,15 @@ const chapters = [
             </p>
           </div>
           <div class="space-y-1">
-            <p><b class="font-semibold">Author(s):</b> Author</p>
+            <p>
+              <b class="font-semibold">Author(s):</b>
+              <a
+                href="/staff/author"
+                class="text-blue-500 hover:underline hover:text-blue-600"
+              >
+                Author
+              </a>
+            </p>
             <p><b class="font-semibold">Publisher(s):</b> Publisher</p>
             <p><b class="font-semibold">Publishing Year:</b> 2025</p>
           </div>
@@ -249,7 +257,15 @@ const chapters = [
                 <p><b class="font-semibold">Lasted updated:</b> 2025-10-25</p>
               </div>
               <div class="space-y-1 min-w-40">
-                <p><b class="font-semibold">Author(s):</b> Author</p>
+                <p>
+                  <b class="font-semibold">Author(s):</b>
+                  <a
+                    href="/staff/author"
+                    class="text-blue-500 hover:underline hover:text-blue-600"
+                  >
+                    Author
+                  </a>
+                </p>
                 <p><b class="font-semibold">Publisher(s):</b> Publisher</p>
                 <p><b class="font-semibold">Publishing Year:</b> 2025</p>
               </div>
@@ -750,81 +766,54 @@ const chapters = [
   </BaseLayout>
 </div>
 
-  <script>
-    document.addEventListener("astro:page-load", () => {
-      const title = document.getElementById("novel-title");
-      const ratingContainer = document.getElementById("rating-container");
-      const detailsContainer = document.getElementById("details-container");
-      const expandDetailsBtn = document.getElementById("expand-details-btn");
-      const volumeBtns =
-        document.querySelectorAll<HTMLElement>(".volume-toggle");
-      const chapterBtns =
-        document.querySelectorAll<HTMLElement>(".chapter-toggle");
-      const expandRatingBtn = document.getElementById("expand-rating-btn");
+<FitText textId="novel-title" minSize={20} maxSize={64} />
 
-      function fitTitle(element: HTMLElement) {
-        let minSize = 20;
-        let maxSize = 64;
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const ratingContainer = document.getElementById("rating-container");
+    const detailsContainer = document.getElementById("details-container");
+    const expandDetailsBtn = document.getElementById("expand-details-btn");
+    const volumeBtns = document.querySelectorAll<HTMLElement>(".volume-toggle");
+    const chapterBtns =
+      document.querySelectorAll<HTMLElement>(".chapter-toggle");
+    const expandRatingBtn = document.getElementById("expand-rating-btn");
 
-        while (maxSize - minSize > 1) {
-          const midSize = (minSize + maxSize) / 2;
-          element.style.fontSize = midSize + "px";
+    expandDetailsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      expandDetailsBtn.style.display = "none";
+      detailsContainer.style.height = "auto";
+    });
 
-          if (element.scrollHeight > element.clientHeight) {
-            maxSize = midSize;
-          } else {
-            minSize = midSize;
-          }
-        }
-        element.style.fontSize = minSize + "px";
-      }
-
-      if (title) {
-        const resizeObserver = new ResizeObserver(() => fitTitle(title));
-        resizeObserver.observe(title.parentElement);
-
-        document.fonts.ready.then(() => {
-          fitTitle(title);
-          title.style.visibility = "visible";
-        });
-      }
-
-      expandDetailsBtn.addEventListener("click", (e) => {
+    volumeBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
         e.preventDefault();
-        expandDetailsBtn.style.display = "none";
-        detailsContainer.style.height = "auto";
-      });
+        const vIdx = btn.dataset.volumeIdx;
+        const content = document.getElementById(`volume-${vIdx}`);
+        const icon = btn.querySelector("svg");
 
-      volumeBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          e.preventDefault();
-          const vIdx = btn.dataset.volumeIdx;
-          const content = document.getElementById(`volume-${vIdx}`);
-          const icon = btn.querySelector("svg");
-
-          content?.classList.toggle("hidden");
-          icon?.classList.toggle("rotate-270");
-        });
-      });
-
-      chapterBtns.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-          e.preventDefault();
-
-          const vIdx = btn.dataset.volumeIdx;
-          const cIdx = btn.dataset.chapterIdx;
-          const content = document.getElementById(`chapter-${vIdx}-${cIdx}`);
-          const icon = btn.querySelector("svg");
-
-          content?.classList.toggle("hidden");
-          icon?.classList.toggle("rotate-270");
-        });
-      });
-
-      expandRatingBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        expandRatingBtn.style.display = "none";
-        ratingContainer.style.height = "auto";
+        content?.classList.toggle("hidden");
+        icon?.classList.toggle("rotate-270");
       });
     });
-  </script>
+
+    chapterBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const vIdx = btn.dataset.volumeIdx;
+        const cIdx = btn.dataset.chapterIdx;
+        const content = document.getElementById(`chapter-${vIdx}-${cIdx}`);
+        const icon = btn.querySelector("svg");
+
+        content?.classList.toggle("hidden");
+        icon?.classList.toggle("rotate-270");
+      });
+    });
+
+    expandRatingBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      expandRatingBtn.style.display = "none";
+      ratingContainer.style.height = "auto";
+    });
+  });
+</script>
