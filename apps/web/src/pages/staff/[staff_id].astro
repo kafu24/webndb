@@ -1,0 +1,279 @@
+---
+export const prerender = false;
+
+import GridNovelResults from "@/components/display/GridNovelResults.astro";
+import { Button } from "@/components/starwind/button";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FitText from "@/utils/FitText.astro";
+import { Icon } from "astro-icon/components";
+
+const staff = {
+  name: "Yukinobu Tatsu",
+  image:
+    "https://s4.anilist.co/file/anilistcdn/staff/large/n216878-qJ0xkwUz8XmM.png",
+  primary_language: "jp",
+  languages: ["jp", "us"],
+  aliases: ["龍幸伸", "Yukinobu Tatu", "타츠 유키노부"],
+  links: [{ platform: "x", link: "https://x.com/TatuYukinobu" }],
+  gender: "Male",
+  description:
+    "description description description description description description description description description description description description description description description description",
+  roles: [
+    { role: "Original Creator", novel: 1234 },
+    { role: "Original Creator", novel: 1234 },
+  ],
+};
+
+const novel = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  genres: [
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+  ],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+---
+
+<div class="relative">
+  <div class="absolute top-0 left-0 w-full h-64 bg-card border-b border-border">
+  </div>
+  <BaseLayout>
+    <div class="flex gap-4">
+      <img
+        src={staff.image}
+        class="relative aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:h-30 border-border border"
+      />
+
+      <div class="flex flex-col w-full">
+        <div class="flex flex-col justify-between h-42 w-full mt-1 relative">
+          <div>
+            <span
+              id="staff-name"
+              class="font-bold h-18 block line-clamp-2 leading-[1.1] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text invisible mb-2"
+            >
+              <Icon
+                name={`flag:${staff.primary_language}-4x3`}
+                class="inline shadow mr-1"
+              />
+              {staff.name}
+            </span>
+          </div>
+          <div class="flex justify-between items-end z-25 mb-2 relative">
+            <div class="absolute right-0">
+              <Button size="sm"> <Icon name="tabler:edit" /> </Button>
+              <Button size="sm"><Icon name="tabler:history" /></Button>
+              <Button size="sm">
+                <Icon name="tabler:exclamation-circle" />
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-2 pt-5 max-[548px]:absolute max-[548px]:left-4 max-[548px]:top-47"
+        >
+          <Button
+            size="lg"
+            class="[&_svg]:size-5 max-[548px]:[&_svg]:size-4 max-[548px]:py-3 max-[548px]:h-9"
+          >
+            <Icon name="tabler:bookmark" />
+            <span class="max-[548px]:hidden">Follow</span>
+          </Button>
+          <Button
+            size="lg"
+            class="px-4 max-[548px]:[&_svg]:size-4 max-[548px]:p-3 max-[548px]:h-9"
+            ><Icon name="tabler:share" /></Button
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-1 gap-4 pt-2">
+      <aside class="w-42 flex-shrink-0 hidden lg:block mb-2">
+        <div class="mb-2">
+          <span class="text-lg font-bold">DETAILS</span>
+          <div class="flex flex-col gap-2 text-sm leading-snug">
+            <div class="space-y-1">
+              <div>
+                <b class="font-semibold">Gender:</b>
+                {staff.gender}
+              </div>
+              <div>
+                <b class="font-semibold">Role(s):</b> Author, Artist
+              </div>
+            </div>
+            <div class="space-y-1">
+              <div>
+                <b class="font-semibold">Language(s):</b>
+                {
+                  staff.languages.map((language) => (
+                    <p>
+                      <Icon
+                        name={`flag:${language}-4x3`}
+                        class="inline shadow mr-1"
+                      />
+                      {language}
+                    </p>
+                  ))
+                }
+              </div>
+            </div>
+            <div class="space-y-1">
+              <div>
+                <b class="font-semibold">Alias(es):</b>
+                {staff.aliases.map((alias) => <p>{alias}</p>)}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <span class="text-lg font-bold">LINKS</span>
+          <div class="flex flex-wrap gap-1 text-sm leading-snug">
+            {
+              staff.links.map((link) => (
+                <a
+                  href={link.link}
+                  class="flex p-2 rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+                >
+                  <Icon
+                    name={`tabler:brand-${link.platform}`}
+                    class="w-3 h-3"
+                  />
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </aside>
+      <div class="flex flex-1 flex-col">
+        <div class="mb-3 mt-1 lg:mt-0">
+          <span class="text-lg font-bold block">NOTES</span>
+          <p class="text-foreground/90 leading-snug text-sm">
+            {staff.description}
+          </p>
+        </div>
+        <div class="block lg:hidden">
+          <div class="mb-2">
+            <span class="text-lg font-bold">DETAILS</span>
+            <div class="flex flex-wrap gap-4 text-sm leading-snug">
+              <div class="space-y-1">
+                <div>
+                  <b class="font-semibold">Gender:</b>
+                  {staff.gender}
+                </div>
+                <div>
+                  <b class="font-semibold">Role(s):</b> Author, Artist
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-4">
+                <div class="space-y-1">
+                  <div>
+                    <b class="font-semibold">Language(s):</b>
+                    {
+                      staff.languages.map((language) => (
+                        <p>
+                          <Icon
+                            name={`flag:${language}-4x3`}
+                            class="inline shadow mr-1"
+                          />
+                          {language}
+                        </p>
+                      ))
+                    }
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div>
+                    <b class="font-semibold">Alias(es):</b>
+                    {staff.aliases.map((alias) => <p>{alias}</p>)}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <span class="text-lg font-bold">LINKS</span>
+            <div class="flex flex-wrap gap-1 text-sm leading-snug">
+              {
+                staff.links.map((link) => (
+                  <a
+                    href={link.link}
+                    class="flex p-2 rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+                  >
+                    <Icon
+                      name={`tabler:brand-${link.platform}`}
+                      class="w-3 h-3"
+                    />
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-card rounded-md px-4 py-2 border border-border mt-1 mb-2"
+        >
+          <!-- TODO: view switch? -->
+          <span class="text-lg font-bold block mb-1">ASSOCIATED NOVELS</span>
+          <div class="relative mb-1">
+            <div
+              class="grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] gap-x-2 gap-y-8 pb-6"
+            >
+              <GridNovelResults
+                novels={Array.from({ length: 8 }, () => ({ ...novel }))}
+              />
+            </div>
+            <div
+              class="absolute inset-0 grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] gap-x-2 gap-y-8 pb-6 pointer-events-none"
+            >
+              {
+                Array.from({ length: 8 }, () => (
+                  <div class="relative">
+                    <span class="absolute -bottom-6 left-0 right-0 text-center font-semibold">
+                      Role
+                    </span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+        <div>
+          <!-- TODO: chapters -->
+          <span class="text-lg font-bold block mb-1">CHAPTER RELEASES</span>
+          <div class="bg-card rounded-md border border-border">
+            {
+              staff.roles.map((role, idx) => (
+                <a
+                  href={`/novel/${role.novel}`}
+                  class={`flex justify-between items-center px-4 py-3 hover:bg-accent/50 ${idx < staff.roles.length - 1 ? "border-b border-dashed border-border" : ""}`}
+                >
+                  <span class="font-medium">{role.role}</span>
+                  <span class="text-sm text-muted-foreground">
+                    Chapter #{role.novel}
+                  </span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </BaseLayout>
+</div>
+
+<FitText textId="staff-name" minSize={20} maxSize={64} />
