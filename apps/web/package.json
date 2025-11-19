@@ -36,6 +36,7 @@
     "clsx": "^2.1.1",
     "country-flag-icons": "^1.5.21",
     "date-fns": "^4.1.0",
+    "diff": "^8.0.2",
     "lucide-react": "^0.544.0",
     "nanostores": "^1.0.1",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
