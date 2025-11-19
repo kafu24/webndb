@@ -68,6 +68,7 @@ const novelPath = Astro.url.pathname.startsWith("/novel/");
   </body>
 </html>
 
+<!-- TODO: refactor this, use css classes for sidebar state to minimize js -->
 <script>
   import { $sidebarState } from "@/stores/sidebar";
   document.addEventListener("astro:page-load", () => {
@@ -173,7 +174,6 @@ const novelPath = Astro.url.pathname.startsWith("/novel/");
         navBar.style.borderBottomColor = `${borderBase} / ${opacity * 0.1})`;
 
         if (sheetSidebarOpenButton) {
-          sheetSidebarOpenButton.classList.remove("starwind-transition-colors");
           sheetSidebarOpenButton.style.color = mixedColor;
         }
         if (sidebarOpenButton) {
@@ -199,11 +199,7 @@ const novelPath = Astro.url.pathname.startsWith("/novel/");
         "duration-200",
         "ease-in-out",
       );
-      navBar.classList.add(
-        "transition-[left]",
-        "duration-200",
-        "ease-in-out",
-      );
+      navBar.classList.add("transition-[left]", "duration-200", "ease-in-out");
     });
   });
 </script>
