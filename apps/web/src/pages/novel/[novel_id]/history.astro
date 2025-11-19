@@ -1,0 +1,363 @@
+---
+export const prerender = false;
+
+import { Button } from "@/components/starwind/button";
+import { Input } from "@/components/starwind/input";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FitText from "@/utils/FitText.astro";
+import { Icon } from "astro-icon/components";
+
+const { novel_id } = Astro.params;
+
+const novel = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  genres: [
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+  ],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+
+const history = [
+  {
+    revision: 3,
+    date: "20:05, 2023-10-20",
+    user: "JohnDoe JohnDoe JohnDoeJohnDoe",
+    amount: 150.0,
+    comment:
+      "Initial payment for services rendered. comment comment comment comment comment comment comment comment comment",
+  },
+  {
+    revision: 2,
+    date: "20:05, 2023-10-01",
+    user: "JaneSmith",
+    amount: 200.0,
+    comment: "Additional fee for extra features requested.",
+  },
+  {
+    revision: 1,
+    date: "20:05, 2023-09-15",
+    user: "AliceW",
+    amount: 50.0,
+    comment: "Refund for overcharge on previous payment.",
+  },
+];
+---
+
+<div class="relative">
+  <div
+    class="flex flex-col justify-between absolute h-64 w-full bg-size-[110%] bg-position-[center_50%]"
+    style={`background-image:url("${novel.image}")`}
+  >
+  </div>
+
+  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64">
+  </div>
+
+  <BaseLayout>
+    <div class="flex gap-4 w-full relative">
+      <img
+        src={novel.image}
+        class="aspect-[5/7] object-cover rounded-md z-20 :w-21 h-30 border-border border"
+      />
+      <div class="flex flex-col w-full">
+        <div class="flex flex-col justify-between h-42 w-full">
+          <span
+            id="novel-title"
+            class="font-bold h-30 block break-words leading-[1.1] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white invisible"
+          >
+            <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+            {novel.title}
+          </span>
+          <div class="flex items-end mb-1 z-25">
+            <span
+              class="text-lg line-clamp-2 leading-[1.05] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white absolute left-0 w-[calc(100%-176px)]"
+            >
+              by Author Author AuthorAuthor Author Author
+            </span>
+            <div class="ml-auto">
+              <Button size="sm"> <Icon name="tabler:edit" /> </Button>
+              <Button href={`/novel/${novel_id}`} size="sm"
+                ><Icon name="tabler:book" /></Button
+              >
+              <Button size="sm">
+                <Icon name="tabler:exclamation-circle" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-4 pt-4">
+      <div class="flex flex-col flex-1">
+        <div class="flex items-center gap-2 mb-2">
+          <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
+            <Icon name="tabler:arrow-narrow-left" />
+          </Button>
+          <h1 class="text-4xl font-semibold">Novel History</h1>
+        </div>
+        <div>
+          <div class="flex gap-2">
+          <span class="text-lg font-bold">diff</span>
+        <div
+            id="error-message"
+            class="hidden text-sm text-red-500 mt-1 px-2"
+          />
+        </div>
+          <div class="flex gap-1 mt-1 max-[400px]:flex-col mb-2">
+            <div class="flex relative">
+              <Icon
+                name="tabler:git-commit"
+                class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4"
+              />
+              <Input
+                id="revision-1"
+                size="sm"
+                autocomplete="off"
+                placeholder="Revision 1 (default: latest)"
+                class="pl-7 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20 min-w-56"
+              />
+              <div
+                id="dropdown-1"
+                class="hidden absolute top-full mt-1 w-full bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto z-50"
+              />
+            </div>
+
+            <div class="flex relative">
+              <Icon
+                name="tabler:git-commit"
+                class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4"
+              />
+              <Input
+              id="revision-2"
+                size="sm"
+                autocomplete="off"
+                placeholder="Revision 2 (default: previous)"
+                class="pl-7 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20 min-w-56"
+              />
+              <div
+                id="dropdown-2"
+                class="hidden absolute top-full mt-1 w-full bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto z-50"
+              />
+            </div>
+            <Button id="compare-btn" size="sm">Compare</Button>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-lg font-bold">REVISIONS</span>
+        <div class="flex gap-2 mb-1">
+          <button
+            class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+          >
+            <Icon name="tabler:arrow-down" class="w-4 h-4" />
+            <span class="max-[400px]:hidden">Descending</span>
+          </button>
+          <button
+            id="language-filter-btn"
+            class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-foreground/5 hover:bg-foreground/8"
+          >
+            <Icon name="tabler:filter" class="w-4 h-4" />
+            <span class="max-[400px]:hidden">Filter</span>
+            <Icon name="tabler:chevron-down" class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+        <div class="bg-card rounded-md border border-border">
+          <table class="table-fixed w-full text-xs">
+            <thead>
+              <tr class="border-border border-b-1 text-left text-semibold">
+                <th class="pl-4 pr-2 py-2 w-14">Rev #</th>
+                <th class="px-2 py-2 w-28">Date</th>
+                <th class="px-2 py-2">User</th>
+                <th class="pl-2 pr-4 py-2 w-17">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                history.map((entry, index) => (
+                  <>
+                    <tr key={index}>
+                      <td class="pl-4 pr-2 pt-2 pb-1 w-12">
+                        <a
+                          href={`/novel/${novel_id}/history/${entry.revision}`}
+                          class="text-blue-500 hover:underline hover:text-blue-600"
+                        >
+                          {entry.revision}
+                        </a>
+                      </td>
+                      <td class="px-2 pt-2 pb-1 w-28">{entry.date}</td>
+                      <td class="px-2 pt-2 pb-1 truncate" title={entry.user}>
+                        {entry.user}
+                      </td>
+                      <td class="pl-2 pr-4 pt-2 pb-1 w-18">{entry.amount}</td>
+                    </tr>
+                    <tr key={`comment-${index}`} class="bg-background/80">
+                      <td
+                        colspan="4"
+                        class="border-border border-b-1 px-4 pt-1 pb-2 text-muted-foreground"
+                      >
+                        {entry.comment}
+                      </td>
+                    </tr>
+                  </>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </BaseLayout>
+</div>
+
+<FitText textId="novel-title" minSize={20} maxSize={64} />
+
+<script define:vars={{ history, novel_id }}>
+  document.addEventListener("astro:page-load", () => {
+    const backButton = document.getElementById("back-btn");
+    backButton?.addEventListener("click", () => {
+      window.history.back();
+    });
+
+    const revisions = history.map(h => h.revision);
+    const input1 = document.getElementById("revision-1");
+    const input2 = document.getElementById("revision-2");
+    const dropdown1 = document.getElementById("dropdown-1");
+    const dropdown2 = document.getElementById("dropdown-2");
+    const compareBtn = document.getElementById("compare-btn");
+    const errorMessage = document.getElementById("error-message");
+
+    let selectedRev1 = null;
+    let selectedRev2 = null;
+
+    const showError = (message) => {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove("hidden");
+      setTimeout(() => {
+        errorMessage.classList.add("hidden");
+      }, 3000);
+    }
+
+    const filterRevisions = (query, excludeRev) => {
+      return revisions.filter(rev => {
+        const matchesQuery = query === "" || rev.toString().includes(query);
+        const notExcluded = rev !== excludeRev;
+        return matchesQuery && notExcluded;
+      });
+    }
+
+    const renderDropdown = (dropdown, filteredRevs, input) => {
+      dropdown.innerHTML = "";
+
+      if (filteredRevs.length === 0) {
+        dropdown.innerHTML = '<div class="px-4 py-2 text-sm text-muted-foreground">No revisions found</div>';
+        dropdown.classList.remove("hidden");
+        return;
+      }
+
+      filteredRevs.forEach(rev => {
+        const option = document.createElement("div");
+        option.className = "px-4 py-2 text-sm hover:bg-foreground/10 cursor-pointer";
+        option.textContent = `Rev #${rev}`;
+        option.dataset.revision = rev;
+
+        option.addEventListener("click", () => {
+          input.value = rev;
+          if (input === input1) {
+            selectedRev1 = rev;
+          } else {
+            selectedRev2 = rev;
+          }
+          dropdown.classList.add("hidden");
+        });
+        dropdown.appendChild(option);
+      });
+
+      dropdown.classList.remove("hidden");
+    }
+
+    const setupInput = (input, dropdown, getOtherSelected) => {
+      input.addEventListener("focus", () => {
+        const query = input.value;
+        const otherSelected = getOtherSelected();
+        const filtered = filterRevisions(query, otherSelected);
+        renderDropdown(dropdown, filtered, input);
+      });
+
+      input.addEventListener("input", (e) => {
+        const query = e.target.value;
+        const otherSelected = getOtherSelected();
+        const filtered = filterRevisions(query, otherSelected);
+        renderDropdown(dropdown, filtered, input);
+
+        if (input === input1) {
+          selectedRev1 = revisions.includes(parseInt(query)) ? parseInt(query) : null;
+        } else {
+          selectedRev2 = revisions.includes(parseInt(query)) ? parseInt(query) : null;
+        }
+      });
+    }
+
+    setupInput(input1, dropdown1, () => selectedRev2);
+    setupInput(input2, dropdown2, () => selectedRev1);
+
+    document.addEventListener("click", (e) => {
+      if (!input1.contains(e.target) && !dropdown1.contains(e.target)) {
+        dropdown1.classList.add("hidden");
+      }
+      if (!input2.contains(e.target) && !dropdown2.contains(e.target)) {
+        dropdown2.classList.add("hidden");
+      }
+    });
+
+    compareBtn.addEventListener("click", () => {
+      let rev1 = input1.value ? parseInt(input1.value) : null;
+      let rev2 = input2.value ? parseInt(input2.value) : null;
+
+      if (!rev1 && rev2) {
+        rev1 = Math.max(...revisions);
+      } else if (rev1 && !rev2) {
+        const rev1Index = revisions.indexOf(rev1);
+        if (rev1Index < revisions.length - 1) {
+          rev2 = revisions[rev1Index + 1];
+        } else {
+          showError(`No previous revision before ${rev1}`);
+          return;
+        }
+      } else if (!rev1 && !rev2) {
+        showError("Please select at least one revision to compare");
+        return;
+      }
+
+      if (!revisions.includes(rev1)) {
+        showError(`Revision ${rev1} does not exist`);
+        return;
+      }
+      if (!revisions.includes(rev2)) {
+        showError(`Revision ${rev2} does not exist`);
+        return;
+      }
+      if (rev1 === rev2) {
+        showError("Please select two different revisions");
+        return;
+      }
+
+      window.location.href = `/novel/${novel_id}/history/diff/${rev1}/${rev2}`;
+    });
+  });
+</script>
