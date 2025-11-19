@@ -1,0 +1,24 @@
+---
+const { staffList } = Astro.props;
+import { Icon } from "astro-icon/components";
+---
+
+<div
+  class="grid grid-cols-[repeat(auto-fit,_minmax(min(384px,100%),_1fr))] gap-2 pt-2 mb-3"
+>
+  {
+    staffList.map((staff) => (
+      <a href={`/staff/${staff.id}`}>
+        <div class="flex flex-col border-2 p-2 rounded-md bg-popover">
+          <span class="truncate">
+            <Icon
+              name={`flag:${staff.primary_language}-4x3`}
+              class="shadow inline mr-1"
+            />
+            {staff.name}
+          </span>
+        </div>
+      </a>
+    ))
+  }
+</div>

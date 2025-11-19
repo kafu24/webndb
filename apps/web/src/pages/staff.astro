@@ -1,0 +1,62 @@
+---
+import StaffResults from "@/components/display/StaffResults.astro";
+import Pagination from "@/components/search/SearchPagination.astro";
+import { Button } from "@/components/starwind/button";
+import { Input } from "@/components/starwind/input";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+
+const staff = {
+  id: 1234,
+  name: "Yukinobu Tatsu",
+  image:
+    "https://s4.anilist.co/file/anilistcdn/staff/large/n216878-qJ0xkwUz8XmM.png",
+  primary_language: "jp",
+  languages: ["jp", "us"],
+  aliases: ["龍幸伸", "Yukinobu Tatu", "타츠 유키노부"],
+  links: [{ platform: "x", link: "https://x.com/TatuYukinobu" }],
+  gender: "Male",
+  description:
+    "description description description description description description description description description description description description description description description description",
+  roles: [
+    { role: "Original Creator", novel: 1234 },
+    { role: "Original Creator", novel: 1234 },
+  ],
+};
+---
+
+<BaseLayout>
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
+        <Icon name="tabler:arrow-narrow-left" />
+      </Button>
+      <h1 class="text-4xl font-semibold">Search Staff</h1>
+    </div>
+    <div class="flex gap-2">
+      <div class="flex flex-1 relative mb-2">
+        <Icon
+          name="tabler:search"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5"
+        />
+        <Input
+          size="md"
+          placeholder="Staff Name"
+          class="pl-10 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
+        />
+      </div>
+      <Button>Search</Button>
+    </div>
+    <StaffResults staffList={Array.from({ length: 5 }, () => ({ ...staff }))} />
+    <Pagination />
+  </div>
+</BaseLayout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const backButton = document.getElementById("back-btn");
+    backButton?.addEventListener("click", () => {
+      history.back();
+    });
+  });
+</script>
