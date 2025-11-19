@@ -115,11 +115,20 @@ const chapters = [
   </div>
 
   <BaseLayout>
-    <div class="flex gap-4 w-full">
-      <img
-        src={novel.image}
-        class="aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border"
-      />
+    <div class="flex gap-4 w-full relative">
+      <div
+        class="group aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border"
+      >
+        <img
+          src={novel.image}
+          class="aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border"
+        />
+        <div
+          id="cover-image"
+          class="absolute top-0 left-0 aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border cursor-pointer bg-black/50 invisible group-hover:visible"
+        >
+        </div>
+      </div>
       <div class="flex flex-col w-full">
         <div class="flex flex-col justify-between h-42 w-full">
           <span
@@ -131,13 +140,15 @@ const chapters = [
           </span>
           <div class="flex items-end mb-1 z-25">
             <span
-              class="text-lg w-[calc(100%-144px)] line-clamp-2 leading-[1.05] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white max-[548px]:absolute max-[548px]:left-4 max-[548px]:w-[calc(100%-176px)]"
+              class="text-lg w-[calc(100%-144px)] line-clamp-2 leading-[1.05] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white max-[548px]:absolute max-[548px]:left-0 max-[548px]:w-[calc(100%-176px)]"
             >
               by Author Author AuthorAuthor Author Author
             </span>
-            <div class="absolute right-4">
+            <div class="absolute right-0">
               <Button size="sm"> <Icon name="tabler:edit" /> </Button>
-              <Button size="sm"><Icon name="tabler:history" /></Button>
+              <Button href={`/novel/${novel.novel_id}/history`} size="sm"
+                ><Icon name="tabler:history" /></Button
+              >
               <Button size="sm">
                 <Icon name="tabler:exclamation-circle" />
               </Button>
@@ -149,7 +160,8 @@ const chapters = [
         >
           <Button size="lg" class="[&_svg]:size-5">
             <Icon name="tabler:book" />
-            <span class="max-[798px]:hidden">Start Reading</span>
+            <span class="max-[806px]:hidden">Start Reading</span>
+
           </Button>
           <Button size="lg" class="[&_svg]:size-5 max-[932px]:p-4">
             <Icon name="tabler:bookmark" />
@@ -777,6 +789,12 @@ const chapters = [
     </div>
   </BaseLayout>
 </div>
+<div
+  id="cover-image-overlay"
+  class="flex invisible justify-center align-center fixed z-100 top-0 left-0 w-full h-full bg-black/80"
+>
+  <img src={novel.image} class="object-cover rounded-md h-full w-auto py-10" />
+</div>
 
 <FitText textId="novel-title" minSize={20} maxSize={64} />
 
@@ -789,6 +807,8 @@ const chapters = [
     const chapterBtns =
       document.querySelectorAll<HTMLElement>(".chapter-toggle");
     const expandRatingBtn = document.getElementById("expand-rating-btn");
+    const coverImage = document.getElementById("cover-image");
+    const coverImageOverlay = document.getElementById("cover-image-overlay");
 
     expandDetailsBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -826,6 +846,16 @@ const chapters = [
       e.preventDefault();
       expandRatingBtn.style.display = "none";
       ratingContainer.style.height = "auto";
+    });
+
+    coverImage.addEventListener("click", (e) => {
+      e.preventDefault();
+      coverImageOverlay.style.visibility = "visible";
+    });
+
+    coverImageOverlay.addEventListener("click", (e) => {
+      e.preventDefault();
+      coverImageOverlay.style.visibility = "hidden";
     });
   });
 </script>
