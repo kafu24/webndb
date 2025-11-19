@@ -1,0 +1,889 @@
+---
+export const prerender = false;
+
+import GridNovelResults from "@/components/display/GridNovelResults.astro";
+import { Button } from "@/components/starwind/button";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import FitText from "@/utils/FitText.astro";
+import { Icon } from "astro-icon/components";
+
+const { novel_id } = Astro.params;
+
+const novel = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  genres: [
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+    "genre1",
+  ],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+
+const chapters = [
+  {
+    volume: "Volume 2",
+    chapters: [
+      {
+        chapter: "Chapter 3",
+        entries: [
+          {
+            language: "us",
+            title:
+              "Chapter 3: title3 title3 title3title3 title3 title3 title3 title3 title3",
+            href: "/chapter/chapter",
+            group: "Translator1",
+            date: "2025-10-25",
+            comments: 12,
+          },
+          {
+            language: "jp",
+            title: "title3",
+            href: "/chapter/chapter",
+            group:
+              "Publisher1 Publisher Publisher Publisher Publisher Publisher Publisher Publisher Publisher",
+            date: "2025-10-25",
+            comments: 12,
+          },
+        ],
+      },
+      {
+        chapter: "Chapter 2",
+        entries: [
+          {
+            language: "us",
+            title: "Chapter 2: title2",
+            href: "/chapter/chapter",
+            group: "Translator1",
+            date: "2025-10-25",
+            comments: 12,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    volume: "Volume 1",
+    chapters: [
+      {
+        chapter: "Chapter 1",
+        entries: [
+          {
+            language: "us",
+            title: "Chapter 1: title1",
+            href: "/chapter/chapter",
+            group: "Translator1",
+            date: "2025-10-25",
+            comments: 12,
+          },
+          {
+            language: "jp",
+            title: "title1",
+            href: "/chapter/chapter",
+            group: "Publisher",
+            date: "2025-10-25",
+            comments: 12,
+          },
+        ],
+      },
+    ],
+  },
+];
+---
+
+<div class="relative">
+  <div
+    class="flex flex-col justify-between absolute h-64 w-full bg-size-[110%] bg-position-[center_50%]"
+    style={`background-image:url("${novel.image}")`}
+  >
+  </div>
+
+  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64">
+  </div>
+
+  <BaseLayout>
+    <div class="flex gap-4 w-full relative">
+      <div
+        class="group aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border"
+      >
+        <img
+          src={novel.image}
+          class="aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border"
+        />
+        <div
+          id="cover-image"
+          class="absolute top-0 left-0 aspect-[5/7] object-cover rounded-md z-20 w-42 h-60 max-[548px]:w-21 max-[548px]:h-30 border-border border cursor-pointer bg-black/50 invisible group-hover:visible"
+        >
+        </div>
+      </div>
+      <div class="flex flex-col w-full">
+        <div class="flex flex-col justify-between h-42 w-full">
+          <span
+            id="novel-title"
+            class="font-bold h-30 block break-words leading-[1.1] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white invisible"
+          >
+            <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+            {novel.title}
+          </span>
+          <div class="flex items-end mb-1 z-25">
+            <span
+              class="text-lg w-[calc(100%-144px)] line-clamp-2 leading-[1.05] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white max-[548px]:absolute max-[548px]:left-0 max-[548px]:w-[calc(100%-176px)]"
+            >
+              by Author Author AuthorAuthor Author Author
+            </span>
+            <div class="absolute right-0">
+              <Button size="sm"> <Icon name="tabler:edit" /> </Button>
+              <Button href={`/novel/${novel.novel_id}/history`} size="sm"
+                ><Icon name="tabler:history" /></Button
+              >
+              <Button size="sm">
+                <Icon name="tabler:exclamation-circle" />
+              </Button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex items-center gap-2 pt-6 max-[548px]:relative max-[548px]:right-25"
+        >
+          <Button size="lg" class="[&_svg]:size-5">
+            <Icon name="tabler:book" />
+            <span class="max-[806px]:hidden">Start Reading</span>
+          </Button>
+          <Button size="lg" class="[&_svg]:size-5 max-[932px]:p-4">
+            <Icon name="tabler:bookmark" />
+            <span class="max-[932px]:hidden">Add to List</span>
+          </Button>
+          <Button size="lg" class="px-4"><Icon name="tabler:share" /></Button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-400 dark:border-yellow-600 rounded-md px-4 py-3 mt-4 max-w-220"
+    >
+      <div class="flex items-start gap-2">
+        <Icon
+          name="tabler:alert-triangle"
+          class="w-4 h-4 text-yellow-700 dark:text-yellow-400 flex-shrink-0 mt-0.5"
+        />
+        <div class="flex flex-col gap-1">
+          <p class="text-sm font-medium text-yellow-900 dark:text-yellow-200">
+            This is an old revision of this page, as edited by editor on 18
+            November 2025 at 20:31.
+          </p>
+          <p class="text-xs text-yellow-800 dark:text-yellow-300">
+            <a href="#" class="hover:underline">(diff)</a>
+            <a href="#" class="hover:underline">← Previous revision</a>
+            <span class="mx-2">|</span>
+            <a href={`/novel/${novel_id}`} class="hover:underline font-semibold"
+              >Latest revision</a
+            >
+            <a href="#" class="hover:underline">(diff)</a>
+            <span class="mx-2">|</span>
+            <a href="#" class="hover:underline">Newer revision →</a>
+            <a href="#" class="hover:underline">(diff)</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4 pt-2">
+      <aside class="w-42 flex-shrink-0 hidden lg:block mb-2">
+        <span class="text-lg font-bold">DETAILS</span>
+        <div class="flex flex-col gap-2 text-sm leading-snug">
+          <div class="space-y-1">
+            <p>
+              <b class="font-semibold">Status:</b>
+              <span class="font-semibold text-green-400">{novel.status}</span>
+            </p>
+            <p><b class="font-semibold">Available:</b> 197 chapters</p>
+            <p>
+              <b class="font-semibold">Lasted updated:</b>
+              <span class="flex">2025-10-25</span>
+            </p>
+          </div>
+          <div class="space-y-1">
+            <p>
+              <b class="font-semibold">Author:</b>
+              <a
+                href="/staff/author"
+                class="text-blue-500 hover:underline hover:text-blue-600"
+              >
+                Author
+              </a>
+            </p>
+            <p><b class="font-semibold">Publisher:</b> Publisher</p>
+            <p><b class="font-semibold">Publishing Year:</b> 2025</p>
+          </div>
+          <div class="space-y-1">
+            <p><b class="font-semibold">Original Language:</b> Japanese</p>
+            <p>
+              <b class="font-semibold">Available Language(s):</b> English, Japanese
+            </p>
+          </div>
+          <div class="space-y-1">
+            <div>
+              <b class="font-semibold">Translator(s):</b>
+              <p>Translator1</p>
+              <p>Translator2</p>
+            </div>
+            <div>
+              <b class="font-semibold">Alternative Title(s):</b>
+              <p>
+                <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                title1
+              </p>
+              <p>
+                <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                title2
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div
+        id="details-container"
+        class="flex flex-1 gap-4 h-40 lg:h-auto relative mb-2 overflow-hidden"
+      >
+        <div class="flex-2">
+          <div class="mb-1">
+            <span class="text-lg font-bold">GENRES</span>
+            <div class="flex flex-wrap">
+              {
+                novel.genres.map((genre) => (
+                  <a
+                    href={`/genre/${genre}`}
+                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
+                  >
+                    {genre}
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+          <div class="mb-2">
+            <span class="text-lg font-bold">DESCRIPTION</span>
+            <p class="text-foreground/90 leading-snug text-sm">
+              {novel.description}
+            </p>
+          </div>
+
+          <div class="mb-1 w-full lg:w-42 flex-shrink-0 block lg:hidden">
+            <span class="text-lg font-bold block">DETAILS</span>
+            <div
+              class="flex flex-wrap space-x-4 space-y-2 text-sm leading-snug"
+            >
+              <div class="space-y-1 min-w-40">
+                <p>
+                  <b class="font-semibold">Status:</b>
+                  <span class="font-semibold text-green-400"
+                    >{novel.status}</span
+                  >
+                </p>
+                <p><b class="font-semibold">Available:</b> 197 chapters</p>
+                <p><b class="font-semibold">Lasted updated:</b> 2025-10-25</p>
+              </div>
+              <div class="space-y-1 min-w-40">
+                <p>
+                  <b class="font-semibold">Author:</b>
+                  <a
+                    href="/staff/author"
+                    class="text-blue-500 hover:underline hover:text-blue-600"
+                  >
+                    Author
+                  </a>
+                </p>
+                <p><b class="font-semibold">Publisher:</b> Publisher</p>
+                <p><b class="font-semibold">Publishing Year:</b> 2025</p>
+              </div>
+              <div class="flex flex-col gap-2">
+                <div class="space-y-1 min-w-40">
+                  <p>
+                    <b class="font-semibold">Original Language:</b>
+                    Japanese
+                  </p>
+                  <p>
+                    <b class="font-semibold">Available Language(s):</b>
+                    English, Japanese
+                  </p>
+                </div>
+                <div class="flex gap-4 space-y-1 min-w-40">
+                  <div>
+                    <b class="font-semibold">Translator(s):</b>
+                    <p>Translator1</p>
+                    <p>Translator2</p>
+                  </div>
+                  <div>
+                    <b class="font-semibold">Alternative Title(s):</b>
+                    <p>
+                      <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                      title1
+                    </p>
+                    <p>
+                      <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+                      title2
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-1">
+            <span class="text-lg font-bold">TAGS</span>
+            <div class="flex flex-wrap">
+              {
+                novel.genres.map((genre) => (
+                  <a
+                    href={`/genre/${genre}`}
+                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
+                  >
+                    {genre}
+                  </a>
+                ))
+              }
+            </div>
+          </div>
+          <div class="mb-2">
+            <span class="text-lg font-bold">LINKS</span>
+            <div
+              class="bg-card border border-border rounded-md px-4 py-2 text-sm text-muted-foreground mt-1"
+            >
+              TODO: buttons referencing associated sites
+            </div>
+          </div>
+          <button
+            id="expand-details-btn"
+            class="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-background to-transparent lg:hidden"
+          >
+            <Icon name="tabler:chevron-compact-down" class="pt-0.5 w-full" />
+          </button>
+        </div>
+        <div class="w-84 max-[1282px]:hidden"></div>
+      </div>
+
+      <aside
+        class="flex-1 max-[1282px]:hidden w-84 absolute top-68 right-4 pb-4"
+      >
+        <div class="bg-card rounded-md px-4 py-2 border border-border mb-4">
+          <span class="text-lg font-bold">RATING</span>
+          <div class="text-center mb-1">
+            <div class="text-3xl font-bold">
+              9.2
+              <Icon
+                name="tabler:star-filled"
+                class="inline -translate-y-1 text-yellow-500"
+              />
+            </div>
+            <div class="text-sm text-muted-foreground">
+              {novel.num_ratings} ratings
+            </div>
+          </div>
+          <div class="space-y-1 flex-1 mb-1">
+            {
+              [
+                { rating: 10, percentage: 45.2, count: 235 },
+                { rating: 9, percentage: 28.7, count: 149 },
+                { rating: 8, percentage: 12.4, count: 64 },
+                { rating: 7, percentage: 5.3, count: 28 },
+                { rating: 6, percentage: 3.1, count: 16 },
+                { rating: 5, percentage: 2.2, count: 11 },
+                { rating: 4, percentage: 1.5, count: 8 },
+                { rating: 3, percentage: 0.8, count: 4 },
+                { rating: 2, percentage: 0.5, count: 3 },
+                { rating: 1, percentage: 0.3, count: 2 },
+              ].map(({ rating, percentage, count }) => (
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-medium w-6 text-right">
+                    {rating}
+                  </span>
+                  <div class="flex-1 h-2 bg-muted rounded overflow-hidden">
+                    <div
+                      class="h-full bg-yellow-500"
+                      style={`width: ${percentage}%`}
+                    />
+                  </div>
+                  <span class="text-xs w-16 text-right">
+                    {count} ({percentage}%)
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="bg-card rounded-md px-4 py-2 border border-border mb-4">
+          <span class="text-lg font-bold">READING STATUS</span>
+          <div class="space-y-1 flex-1 mb-1">
+            {
+              [
+                {
+                  status: "Reading",
+                  color: "bg-green-500",
+                  percentage: 50,
+                  count: 500,
+                },
+                {
+                  status: "Completed",
+                  color: "bg-blue-500",
+                  percentage: 20,
+                  count: 200,
+                },
+                {
+                  status: "Planning",
+                  color: "bg-white",
+                  percentage: 10,
+                  count: 100,
+                },
+                {
+                  status: "Paused",
+                  color: "bg-yellow-500",
+                  percentage: 10,
+                  count: 100,
+                },
+                {
+                  status: "Dropped",
+                  color: "bg-red-500",
+                  percentage: 10,
+                  count: 100,
+                },
+              ].map(({ status, color, percentage, count }) => (
+                <div class="space-y-1">
+                  <div class="flex justify-between items-baseline">
+                    <span class="font-semibold text-sm">{status}</span>
+                    <span class="text-xs">
+                      {count} ({percentage}%)
+                    </span>
+                  </div>
+                  <div class="h-2 bg-muted rounded overflow-hidden">
+                    <div
+                      class={`h-full ${color}`}
+                      style={`width: ${percentage}%`}
+                    />
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="bg-card rounded-md px-4 py-2 border border-border">
+          <div class="flex justify-between">
+            <span class="text-lg font-bold">RECOMMENDATIONS</span>
+            <button
+              class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+            >
+              <Icon name="tabler:list" class="w-4 h-4" />
+              <span class="max-[334px]:hidden">View all</span>
+            </button>
+          </div>
+          <div class="flex gap-2 mt-1 mb-2">
+            <button
+              class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
+            >
+              SYSTEM
+            </button>
+            <button
+              class="flex-1 px-3 py-2 text-sm rounded-md hover:bg-foreground/8"
+            >
+              USER
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <GridNovelResults
+              novels={Array.from({ length: 5 }, () => ({ ...novel }))}
+            />
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="flex flex-1 gap-4">
+      <div class="flex flex-col flex-1">
+        <!-- TODO: client-island, pagination -->
+        <div class="mb-2">
+          <div class="flex items-center justify-between mb-1">
+            <div class="flex gap-2">
+              <span class="text-lg font-bold">CHAPTERS</span>
+              <button
+                class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-card hover:bg-foreground/8"
+              >
+                <Icon name="tabler:list" class="w-4 h-4" />
+                <span class="max-[334px]:hidden">View all</span>
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+              >
+                <Icon name="tabler:arrow-down" class="w-4 h-4" />
+                <span class="max-[482px]:hidden">Descending</span>
+              </button>
+
+              <div>
+                <button
+                  id="language-filter-btn"
+                  class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-foreground/5 hover:bg-foreground/8"
+                >
+                  <Icon name="tabler:language" class="w-4 h-4" />
+                  <span class="max-[482px]:hidden">Languages</span>
+                  <Icon name="tabler:chevron-down" class="w-4 h-4" />
+                </button>
+
+                <!-- TODO: dropdown menu -->
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-card rounded-md px-4 py-2 border border-border">
+            {
+              chapters.map((volume, vIdx) => (
+                <div class="flex flex-col">
+                  <div class="w-full flex items-center gap-3 font-semibold text-lg">
+                    <button
+                      class="volume-toggle flex items-center gap-2 hover:text-foreground/60"
+                      data-volume-idx={vIdx}
+                    >
+                      <Icon name="tabler:chevron-down" class="w-5 h-5" />
+                      {volume.volume}
+                    </button>
+                    <hr class="flex-1 border-border" />
+                  </div>
+                  <div id={`volume-${vIdx}`} class="ml-6.5 max-[548px]:ml-2">
+                    {volume.chapters.map((chapter, cIdx) => (
+                      <div class="flex flex-col">
+                        <button
+                          class="chapter-toggle w-full flex items-center gap-2 font-medium hover:text-foreground/60"
+                          data-volume-idx={vIdx}
+                          data-chapter-idx={cIdx}
+                        >
+                          <Icon name="tabler:chevron-down" class="w-4 h-4" />
+                          {chapter.chapter}
+                        </button>
+                        <div
+                          id={`chapter-${vIdx}-${cIdx}`}
+                          class="ml-2 border-l-1 border-border"
+                        >
+                          {chapter.entries.map((entry, eIdx) => (
+                            <a
+                              href={entry.href}
+                              class={`flex justify-between gap-4 px-4 py-2 hover:bg-foreground/8 items-center ${eIdx < chapter.entries.length - 1 ? "border-b border-dashed border-border" : ""}`}
+                            >
+                              <div class="flex flex-col gap-1 text-sm">
+                                <span class="block font-medium line-clamp-2 max-[1282px]:line-clamp-3 max-[548px]:text-xs">
+                                  <Icon
+                                    name={`flag:${entry.language}-4x3`}
+                                    class="shadow inline mr-1"
+                                  />
+                                  {entry.title}
+                                </span>
+                                <div class="items-center gap-1 hidden max-[1282px]:flex">
+                                  <span class="text-xs text-muted-foreground line-clamp-2">
+                                    <Icon
+                                      name="tabler:users"
+                                      class="w-4 h-4 inline mr-1"
+                                    />
+                                    {entry.group}
+                                  </span>
+                                </div>
+                              </div>
+                              <div class="flex gap-4 justify-end">
+                                <div class="flex max-[1282px]:flex-col gap-4 max-[1282px]:gap-1 text-muted-foreground">
+                                  <div class="flex items-center gap-1 max-w-40">
+                                    <span class="text-xs text-end truncate max-[1282px]:hidden">
+                                      <Icon
+                                        name="tabler:users"
+                                        class="w-4 h-4 inline"
+                                      />
+                                      {entry.group}
+                                    </span>
+                                  </div>
+                                  <div class="flex items-center gap-1">
+                                    <Icon
+                                      name="tabler:calendar"
+                                      class="w-4 h-4"
+                                    />
+                                    <span class="text-xs whitespace-nowrap">
+                                      {entry.date}
+                                    </span>
+                                  </div>
+                                  <div class="flex items-center gap-1">
+                                    <Icon
+                                      name="tabler:message"
+                                      class="w-4 h-4"
+                                    />
+                                    <span class="text-xs">
+                                      {entry.comments}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div class="flex items-center">
+                                  <button>
+                                    <Icon name="tabler:flag" class="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="flex-1 flex-col gap-4 max-[1282px]:flex hidden mt-2">
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-wrap gap-4">
+              <div
+                id="rating-container"
+                class="h-56 lg:h-auto overflow-hidden relative min-w-64 flex-1"
+              >
+                <div class="bg-card rounded-md px-4 py-2 border border-border">
+                  <span class="text-lg font-bold">RATING</span>
+                  <div class="text-center mb-1">
+                    <div class="text-3xl font-bold">
+                      9.2
+                      <Icon
+                        name="tabler:star-filled"
+                        class="inline -translate-y-1 text-yellow-500"
+                      />
+                    </div>
+                    <button
+                      id="expand-rating-btn"
+                      class="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-background to-transparent lg:hidden"
+                    >
+                      <Icon
+                        name="tabler:chevron-compact-down"
+                        class="pt-0.5 w-full"
+                      />
+                    </button>
+                    <div class="text-sm text-muted-foreground">
+                      {novel.num_ratings} ratings
+                    </div>
+                  </div>
+                  <div class="space-y-1 flex-1 mb-1">
+                    {
+                      [
+                        { rating: 10, percentage: 45.2, count: 235 },
+                        { rating: 9, percentage: 28.7, count: 149 },
+                        { rating: 8, percentage: 12.4, count: 64 },
+                        { rating: 7, percentage: 5.3, count: 28 },
+                        { rating: 6, percentage: 3.1, count: 16 },
+                        { rating: 5, percentage: 2.2, count: 11 },
+                        { rating: 4, percentage: 1.5, count: 8 },
+                        { rating: 3, percentage: 0.8, count: 4 },
+                        { rating: 2, percentage: 0.5, count: 3 },
+                        { rating: 1, percentage: 0.3, count: 2 },
+                      ].map(({ rating, percentage, count }) => (
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-medium w-6 text-right">
+                            {rating}
+                          </span>
+                          <div class="flex-1 h-2 bg-muted rounded">
+                            <div
+                              class="h-full bg-yellow-500"
+                              style={`width: ${percentage}%`}
+                            />
+                          </div>
+                          <span class="text-xs w-16 text-right">
+                            {count} ({percentage}%)
+                          </span>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-card rounded-md px-4 py-2 border border-border min-w-64 flex-1"
+              >
+                <span class="text-lg font-bold">READING STATUS</span>
+                <div class="space-y-1 flex-1 mb-1">
+                  {
+                    [
+                      {
+                        status: "Reading",
+                        color: "bg-green-500",
+                        percentage: 50,
+                        count: 500,
+                      },
+                      {
+                        status: "Completed",
+                        color: "bg-blue-500",
+                        percentage: 20,
+                        count: 200,
+                      },
+                      {
+                        status: "Planning",
+                        color: "bg-white",
+                        percentage: 10,
+                        count: 100,
+                      },
+                      {
+                        status: "Paused",
+                        color: "bg-yellow-500",
+                        percentage: 10,
+                        count: 100,
+                      },
+                      {
+                        status: "Dropped",
+                        color: "bg-red-500",
+                        percentage: 10,
+                        count: 100,
+                      },
+                    ].map(({ status, color, percentage, count }) => (
+                      <div class="space-y-1">
+                        <div class="flex justify-between items-baseline">
+                          <span class="font-semibold text-sm">{status}</span>
+                          <span class="text-xs">
+                            {count} ({percentage}%)
+                          </span>
+                        </div>
+                        <div class="h-2 bg-muted rounded overflow-hidden">
+                          <div
+                            class={`h-full ${color}`}
+                            style={`width: ${percentage}%`}
+                          />
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-card rounded-md px-4 py-2 border border-border mb-2">
+              <div class="flex justify-between">
+                <span class="text-lg font-bold">RECOMMENDATIONS</span>
+                <button
+                  class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+                >
+                  <Icon name="tabler:list" class="w-4 h-4" />
+                  <span class="max-[334px]:hidden">View all</span>
+                </button>
+              </div>
+              <div class="flex gap-2 mt-1 mb-4">
+                <button
+                  class="flex-1 px-3 py-2 text-sm rounded-md font-medium bg-foreground/5"
+                >
+                  SYSTEM
+                </button>
+                <button
+                  class="flex-1 px-3 py-2 text-sm rounded-md hover:bg-foreground/8"
+                >
+                  USER
+                </button>
+              </div>
+              <div
+                class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(144px,1fr))]"
+              >
+                <GridNovelResults
+                  novels={Array.from({ length: 5 }, () => ({ ...novel }))}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-lg font-bold">REVIEWS</span>
+          <!-- TODO: reviews here, client island -->
+          <button
+            class="bg-card border border-border rounded-md px-4 py-2 font-semibold mt-1 hover:bg-foreground/8"
+          >
+            Load reviews
+          </button>
+        </div>
+      </div>
+
+      <div class="w-84 max-[1282px]:hidden"></div>
+    </div>
+  </BaseLayout>
+</div>
+<div
+  id="cover-image-overlay"
+  class="flex invisible justify-center align-center fixed z-100 top-0 left-0 w-full h-full bg-black/80"
+>
+  <img src={novel.image} class="object-cover rounded-md h-full w-auto py-10" />
+</div>
+
+<FitText textId="novel-title" minSize={20} maxSize={64} />
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const ratingContainer = document.getElementById("rating-container");
+    const detailsContainer = document.getElementById("details-container");
+    const expandDetailsBtn = document.getElementById("expand-details-btn");
+    const volumeBtns = document.querySelectorAll<HTMLElement>(".volume-toggle");
+    const chapterBtns =
+      document.querySelectorAll<HTMLElement>(".chapter-toggle");
+    const expandRatingBtn = document.getElementById("expand-rating-btn");
+    const coverImage = document.getElementById("cover-image");
+    const coverImageOverlay = document.getElementById("cover-image-overlay");
+
+    expandDetailsBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      expandDetailsBtn.style.display = "none";
+      detailsContainer.style.height = "auto";
+    });
+
+    volumeBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const vIdx = btn.dataset.volumeIdx;
+        const content = document.getElementById(`volume-${vIdx}`);
+        const icon = btn.querySelector("svg");
+
+        content?.classList.toggle("hidden");
+        icon?.classList.toggle("rotate-270");
+      });
+    });
+
+    chapterBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const vIdx = btn.dataset.volumeIdx;
+        const cIdx = btn.dataset.chapterIdx;
+        const content = document.getElementById(`chapter-${vIdx}-${cIdx}`);
+        const icon = btn.querySelector("svg");
+
+        content?.classList.toggle("hidden");
+        icon?.classList.toggle("rotate-270");
+      });
+    });
+
+    expandRatingBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      expandRatingBtn.style.display = "none";
+      ratingContainer.style.height = "auto";
+    });
+
+    coverImage.addEventListener("click", (e) => {
+      e.preventDefault();
+      coverImageOverlay.style.visibility = "visible";
+    });
+
+    coverImageOverlay.addEventListener("click", (e) => {
+      e.preventDefault();
+      coverImageOverlay.style.visibility = "hidden";
+    });
+  });
+</script>
