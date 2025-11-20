@@ -113,12 +113,13 @@ const history = [
         </div>
         <div>
           <div class="flex gap-2">
-          <span class="text-lg font-bold">diff</span>
-        <div
-            id="error-message"
-            class="hidden text-sm text-red-500 mt-1 px-2"
-          />
-        </div>
+            <span class="text-lg font-bold">diff</span>
+            <div
+              id="error-message"
+              class="hidden text-sm text-red-500 mt-1 px-2"
+            >
+            </div>
+          </div>
           <div class="flex gap-1 mt-1 max-[400px]:flex-col mb-2">
             <div class="flex relative">
               <Icon
@@ -135,7 +136,8 @@ const history = [
               <div
                 id="dropdown-1"
                 class="hidden absolute top-full mt-1 w-full bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto z-50"
-              />
+              >
+              </div>
             </div>
 
             <div class="flex relative">
@@ -144,7 +146,7 @@ const history = [
                 class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4"
               />
               <Input
-              id="revision-2"
+                id="revision-2"
                 size="sm"
                 autocomplete="off"
                 placeholder="Revision 2 (default: previous)"
@@ -153,30 +155,31 @@ const history = [
               <div
                 id="dropdown-2"
                 class="hidden absolute top-full mt-1 w-full bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto z-50"
-              />
+              >
+              </div>
             </div>
             <Button id="compare-btn" size="sm">Compare</Button>
           </div>
         </div>
         <div class="flex justify-between">
           <span class="text-lg font-bold">REVISIONS</span>
-        <div class="flex gap-2 mb-1">
-          <button
-            class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
-          >
-            <Icon name="tabler:arrow-down" class="w-4 h-4" />
-            <span class="max-[400px]:hidden">Descending</span>
-          </button>
-          <button
-            id="language-filter-btn"
-            class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-foreground/5 hover:bg-foreground/8"
-          >
-            <Icon name="tabler:filter" class="w-4 h-4" />
-            <span class="max-[400px]:hidden">Filter</span>
-            <Icon name="tabler:chevron-down" class="w-4 h-4" />
-          </button>
+          <div class="flex gap-1 mb-1">
+            <button
+              class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+            >
+              <Icon name="tabler:arrow-down" class="w-4 h-4" />
+              <span class="max-[400px]:hidden">Descending</span>
+            </button>
+            <button
+              id="language-filter-btn"
+              class="flex items-center gap-1 px-2 py-1 text-sm rounded-md border bg-foreground/5 hover:bg-foreground/8"
+            >
+              <Icon name="tabler:filter" class="w-4 h-4" />
+              <span class="max-[400px]:hidden">Filter</span>
+              <Icon name="tabler:chevron-down" class="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </div>
         <div class="bg-card rounded-md border border-border">
           <table class="table-fixed w-full text-xs">
             <thead>
@@ -234,7 +237,7 @@ const history = [
       window.history.back();
     });
 
-    const revisions = history.map(h => h.revision);
+    const revisions = history.map((h) => h.revision);
     const input1 = document.getElementById("revision-1");
     const input2 = document.getElementById("revision-2");
     const dropdown1 = document.getElementById("dropdown-1");
@@ -251,28 +254,30 @@ const history = [
       setTimeout(() => {
         errorMessage.classList.add("hidden");
       }, 3000);
-    }
+    };
 
     const filterRevisions = (query, excludeRev) => {
-      return revisions.filter(rev => {
+      return revisions.filter((rev) => {
         const matchesQuery = query === "" || rev.toString().includes(query);
         const notExcluded = rev !== excludeRev;
         return matchesQuery && notExcluded;
       });
-    }
+    };
 
     const renderDropdown = (dropdown, filteredRevs, input) => {
       dropdown.innerHTML = "";
 
       if (filteredRevs.length === 0) {
-        dropdown.innerHTML = '<div class="px-4 py-2 text-sm text-muted-foreground">No revisions found</div>';
+        dropdown.innerHTML =
+          '<div class="px-4 py-2 text-sm text-muted-foreground">No revisions found</div>';
         dropdown.classList.remove("hidden");
         return;
       }
 
-      filteredRevs.forEach(rev => {
+      filteredRevs.forEach((rev) => {
         const option = document.createElement("div");
-        option.className = "px-4 py-2 text-sm hover:bg-foreground/10 cursor-pointer";
+        option.className =
+          "px-4 py-2 text-sm hover:bg-foreground/10 cursor-pointer";
         option.textContent = `Rev #${rev}`;
         option.dataset.revision = rev;
 
@@ -289,7 +294,7 @@ const history = [
       });
 
       dropdown.classList.remove("hidden");
-    }
+    };
 
     const setupInput = (input, dropdown, getOtherSelected) => {
       input.addEventListener("focus", () => {
@@ -306,12 +311,16 @@ const history = [
         renderDropdown(dropdown, filtered, input);
 
         if (input === input1) {
-          selectedRev1 = revisions.includes(parseInt(query)) ? parseInt(query) : null;
+          selectedRev1 = revisions.includes(parseInt(query))
+            ? parseInt(query)
+            : null;
         } else {
-          selectedRev2 = revisions.includes(parseInt(query)) ? parseInt(query) : null;
+          selectedRev2 = revisions.includes(parseInt(query))
+            ? parseInt(query)
+            : null;
         }
       });
-    }
+    };
 
     setupInput(input1, dropdown1, () => selectedRev2);
     setupInput(input2, dropdown2, () => selectedRev1);
@@ -357,7 +366,7 @@ const history = [
         return;
       }
 
-      window.location.href = `/novel/${novel_id}/history/diff/${rev1}/${rev2}`;
+      window.location.href = `/novel/${novel_id}/history/diff/${rev1 > rev2 ? rev1 : rev2}/${rev1 > rev2 ? rev2 : rev1}`;
     });
   });
 </script>
