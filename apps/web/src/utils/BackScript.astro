@@ -1,0 +1,10 @@
+<script>
+import { navigate } from "astro:transitions/client";
+
+  document.addEventListener("astro:page-load", () => {
+    const backButton = document.getElementById("back-btn");
+    backButton?.addEventListener("click", () => {
+      navigate(history.back());
+    });
+  });
+</script>
