@@ -1,0 +1,334 @@
+---
+export const prerender = false;
+
+import { Button } from "@/components/starwind/button";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import { diffArrays } from "diff";
+
+const { novel_id, rev1_id, rev2_id } = Astro.params;
+
+const revision1 = {
+  revision: rev1_id,
+  date: "20:05, 2023-10-20",
+  user: "JohnDoe",
+  novel: {
+    title: "title1",
+    image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+    description: "description description",
+    author: "Author",
+    publisher: "Publisher",
+    status: "Ongoing",
+    genres: ["Fantasy", "Adventure", "Action"],
+    original_language: "Japanese",
+    available_languages: "English, Japanese",
+  },
+};
+
+const revision2 = {
+  revision: rev2_id,
+  date: "20:05, 2023-10-01",
+  user: "JaneSmith",
+  novel: {
+    title: "title2",
+    image:
+      "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+    description: "desc",
+    author: "Author author",
+    publisher: "Publisher",
+    status: "Completed",
+    genres: ["Fantasy", "Adventure"],
+    original_language: "Japanese",
+    available_languages: "English",
+  },
+};
+
+const segmentIntoWords = (text: string): string[] => {
+  if (!text) return [];
+  // TODO: connect a language detection model
+  const segmenter = new Intl.Segmenter("en", { granularity: "word" });
+  const segments = Array.from(segmenter.segment(text));
+  return segments.map((s) => s.segment);
+};
+
+const diffText = (oldText: string, newText: string) => {
+  const oldWords = segmentIntoWords(oldText);
+  const newWords = segmentIntoWords(newText);
+  return diffArrays(oldWords, newWords);
+};
+
+const fields = [
+  { label: "Title", old: revision2.novel.title, new: revision1.novel.title },
+  { label: "Image", old: revision2.novel.image, new: revision1.novel.image },
+  {
+    label: "Description",
+    old: revision2.novel.description,
+    new: revision1.novel.description,
+  },
+  { label: "Author", old: revision2.novel.author, new: revision1.novel.author },
+  {
+    label: "Publisher",
+    old: revision2.novel.publisher,
+    new: revision1.novel.publisher,
+  },
+  { label: "Status", old: revision2.novel.status, new: revision1.novel.status },
+  {
+    label: "Genres",
+    old: revision2.novel.genres.join(", "),
+    new: revision1.novel.genres.join(", "),
+  },
+  {
+    label: "Original Language",
+    old: revision2.novel.original_language,
+    new: revision1.novel.original_language,
+  },
+  {
+    label: "Available Languages",
+    old: revision2.novel.available_languages,
+    new: revision1.novel.available_languages,
+  },
+];
+
+const fieldDiffs = fields.map((field) => ({
+  ...field,
+  diff: diffText(field.old, field.new),
+  hasChanges: diffText(field.old, field.new).some(
+    (part) => part.added || part.removed,
+  ),
+}));
+
+const renderDiffSide = (diff: any[], side: "old" | "new") => {
+  return diff
+    .map((part) => {
+      if (side === "old" && part.added) return "";
+      if (side === "new" && part.removed) return "";
+
+      const text = part.value.join("");
+
+      if (part.removed) {
+        return `<span class="bg-red-200 dark:bg-red-900/50 border-b-2 border-red-400 dark:border-red-700">${text}</span>`;
+      } else if (part.added) {
+        return `<span class="bg-green-200 dark:bg-green-900/50 border-b-2 border-green-400 dark:border-green-700">${text}</span>`;
+      }
+      return text;
+    })
+    .join("");
+};
+
+const renderDiffInline = (diff: any[]) => {
+  return diff
+    .map((part) => {
+      const text = part.value.join("");
+
+      if (part.removed) {
+        return `<span class="bg-red-200 dark:bg-red-900/50 border-b-2 border-red-400 dark:border-red-700 line-through">${text}</span>`;
+      } else if (part.added) {
+        return `<span class="bg-green-200 dark:bg-green-900/50 border-b-2 border-green-400 dark:border-green-700">${text}</span>`;
+      }
+      return text;
+    })
+    .join("");
+};
+---
+
+<BaseLayout>
+  <div class="flex flex-col">
+    <div class="flex items-center gap-2 mb-4">
+      <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
+        <Icon name="tabler:arrow-narrow-left" />
+      </Button>
+      <span class="text-4xl font-semibold">Comparing Revisions</span>
+    </div>
+    <div
+      class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md px-4 py-3 mb-4"
+    >
+      <p class="text-sm font-medium text-blue-900 dark:text-blue-200">
+        Comparing
+        <a
+          href={`/novel/${novel_id}/history/${rev2_id}`}
+          class="text-blue-800 dark:text-blue-300 hover:underline"
+          >Revision {rev2_id}</a
+        >
+        (edited by {revision2.user} on {revision2.date}) with
+        <a
+          href={`/novel/${novel_id}/history/${rev1_id}`}
+          class="text-blue-800 dark:text-blue-300 hover:underline"
+          >Revision {rev1_id}</a
+        >
+        (by {revision1.user} on {revision1.date})
+      </p>
+    </div>
+    <div class="flex gap-4 justify-end items-center mb-2">
+      <div class="flex rounded-lg bg-foreground relative overflow-hidden">
+        <div
+          id="slider"
+          class="absolute w-10 h-10 z-20 opacity-20 bg-accent transition-all duration-200 ease-out hidden"
+        >
+        </div>
+        <button
+          id="side-by-side-btn"
+          data-view="side-by-side"
+          class="relative z-10 p-2 transition-colors text-background hover:bg-accent/10"
+        >
+          <Icon name="tabler:columns" class="w-6 h-6" />
+        </button>
+        <button
+          id="inline-btn"
+          data-view="inline"
+          class="relative z-10 p-2 transition-colors text-background hover:bg-accent/10"
+        >
+          <Icon name="tabler:layout-list" class="w-6 h-6" />
+        </button>
+      </div>
+    </div>
+
+    <div id="side-by-side-view" class="bg-card border border-border rounded-md">
+      <div
+        class="grid grid-cols-2 divide-x divide-border border-b border-border"
+      >
+        <div class="px-4 py-3 font-semibold text-xs">
+          Revision {revision2.revision} (Old)
+        </div>
+        <div class="px-4 py-3 font-semibold text-xs">
+          Revision {revision1.revision} (New)
+        </div>
+      </div>
+      {
+        fieldDiffs.map((field, index) => (
+          <div
+            class={`grid grid-cols-2 divide-x divide-dashed ${index === 0 ? "" : "border-t border-dashed"} ${field.hasChanges ? "bg-yellow-50/20 dark:bg-yellow-900/5" : ""}`}
+          >
+            <div class="px-4 py-3">
+              <div class="text-xs font-semibold text-muted-foreground mb-1">
+                {field.label}
+              </div>
+              <div class="flex flex-col gap-2">
+                <span
+                  class="text-xs break-words"
+                  set:html={renderDiffSide(field.diff, "old")}
+                />
+                {field.label === "Image" ? (
+                  <img
+                    src={field.old}
+                    class="w-20 h-auto rounded-md border border-border"
+                  />
+                ) : null}
+              </div>
+            </div>
+            <div class="px-4 py-3">
+              <div class="text-xs font-semibold text-muted-foreground mb-1">
+                {field.label}
+              </div>
+              <div class="flex flex-col gap-1">
+                <span
+                  class="text-xs break-words"
+                  set:html={renderDiffSide(field.diff, "new")}
+                />
+                {field.label === "Image" ? (
+                  <img
+                    src={field.new}
+                    class="w-20 h-auto rounded-md border border-border"
+                  />
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div
+      id="inline-view"
+      class="bg-card border border-border rounded-md hidden"
+    >
+      {
+        fieldDiffs.map((field, index) =>
+          field.hasChanges ? (
+            <div
+              class={`border-t border-dashed px-4 py-3 bg-yellow-50/20 dark:bg-yellow-900/5 ${index === 0 ? "border-t-0" : ""}`}
+            >
+              <div class="text-sm font-semibold text-muted-foreground mb-1">
+                {field.label}
+              </div>
+              {field.label === "Image" ? (
+                <div class="flex flex-col">
+                  <span
+                    class="text-sm mb-1 break-words"
+                    set:html={renderDiffInline(field.diff)}
+                  />
+                  <div class="flex items-center gap-4">
+                    <img
+                      src={field.old}
+                      class="w-auto h-32 rounded border border-border"
+                    />
+                    <Icon
+                      name="tabler:arrow-right"
+                      class="w-4 h-4 text-muted-foreground"
+                    />
+                    <img
+                      src={field.new}
+                      class="w-auto h-32 rounded border border-border"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <span class="text-sm break-words" set:html={renderDiffInline(field.diff)} />
+              )}
+            </div>
+          ) : (
+            <div
+              class={`border-t border-border px-4 py-3 ${index === 0 ? "border-t-0" : ""}`}
+            >
+              <div class="text-xs font-semibold text-muted-foreground mb-2">
+                {field.label}
+              </div>
+              <div class="text-sm text-muted-foreground">{field.new}</div>
+            </div>
+          ),
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const backButton = document.getElementById("back-btn");
+    const slider = document.getElementById("slider");
+    const buttons = document.querySelectorAll("[data-view]");
+    const sideBySideView = document.getElementById("side-by-side-view");
+    const inlineView = document.getElementById("inline-view");
+
+    backButton?.addEventListener("click", () => {
+      window.history.back();
+    });
+
+    const updateView = (view: string) => {
+      const button = Array.from(buttons).find(
+        (btn) => (btn as HTMLElement).dataset.view === view,
+      ) as HTMLElement;
+
+      if (slider && button) {
+        slider.style.transform = `translateX(${button.offsetLeft}px)`;
+      }
+      if (view === "side-by-side") {
+        sideBySideView?.classList.remove("hidden");
+        inlineView?.classList.add("hidden");
+      } else if (view === "inline") {
+        sideBySideView?.classList.add("hidden");
+        inlineView?.classList.remove("hidden");
+      }
+    };
+
+    updateView("side-by-side");
+    if (slider) {
+      slider.classList.remove("hidden");
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        updateView((btn as HTMLElement).dataset.view || "side-by-side");
+      });
+    });
+  });
+</script>
