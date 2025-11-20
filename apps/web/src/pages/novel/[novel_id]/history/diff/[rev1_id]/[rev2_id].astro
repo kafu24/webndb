@@ -5,6 +5,7 @@ import { Button } from "@/components/starwind/button";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Icon } from "astro-icon/components";
 import { diffArrays } from "diff";
+import BackScript from "@/utils/BackScript.astro"
 
 const { novel_id, rev1_id, rev2_id } = Astro.params;
 
@@ -291,17 +292,14 @@ const renderDiffInline = (diff: any[]) => {
   </div>
 </BaseLayout>
 
+<BackScript />
+
 <script>
   document.addEventListener("astro:page-load", () => {
-    const backButton = document.getElementById("back-btn");
     const slider = document.getElementById("slider");
     const buttons = document.querySelectorAll("[data-view]");
     const sideBySideView = document.getElementById("side-by-side-view");
     const inlineView = document.getElementById("inline-view");
-
-    backButton?.addEventListener("click", () => {
-      window.history.back();
-    });
 
     const updateView = (view: string) => {
       const button = Array.from(buttons).find(

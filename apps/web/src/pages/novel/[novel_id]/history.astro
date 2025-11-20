@@ -5,6 +5,7 @@ import { Button } from "@/components/starwind/button";
 import { Input } from "@/components/starwind/input";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import FitText from "@/utils/FitText.astro";
+import BackScript from "@/utils/BackScript.astro"
 import { Icon } from "astro-icon/components";
 
 const { novel_id } = Astro.params;
@@ -229,32 +230,19 @@ const history = [
 </div>
 
 <FitText textId="novel-title" minSize={20} maxSize={64} />
+<BackScript />
+
 
 <script define:vars={{ history, novel_id }}>
   document.addEventListener("astro:page-load", () => {
-    const backButton = document.getElementById("back-btn");
-    backButton?.addEventListener("click", () => {
-      window.history.back();
-    });
-
     const revisions = history.map((h) => h.revision);
     const input1 = document.getElementById("revision-1");
     const input2 = document.getElementById("revision-2");
     const dropdown1 = document.getElementById("dropdown-1");
     const dropdown2 = document.getElementById("dropdown-2");
-    const compareBtn = document.getElementById("compare-btn");
-    const errorMessage = document.getElementById("error-message");
 
     let selectedRev1 = null;
     let selectedRev2 = null;
-
-    const showError = (message) => {
-      errorMessage.textContent = message;
-      errorMessage.classList.remove("hidden");
-      setTimeout(() => {
-        errorMessage.classList.add("hidden");
-      }, 3000);
-    };
 
     const filterRevisions = (query, excludeRev) => {
       return revisions.filter((rev) => {
@@ -333,6 +321,31 @@ const history = [
         dropdown2.classList.add("hidden");
       }
     });
+  });
+</script>
+
+<script define:vars={{ history, novel_id }}>
+  window.__compareData = { history, novel_id };
+</script>
+
+
+<script>
+  import { navigate } from "astro:transitions/client";
+  document.addEventListener("astro:page-load", () => {
+    const { history, novel_id } = window.__compareData;
+    const revisions = history.map((h) => h.revision);
+    const input1 = document.getElementById("revision-1");
+    const input2 = document.getElementById("revision-2");
+    const compareBtn = document.getElementById("compare-btn");
+    const errorMessage = document.getElementById("error-message");
+
+    const showError = (message) => {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove("hidden");
+      setTimeout(() => {
+        errorMessage.classList.add("hidden");
+      }, 3000);
+    };
 
     compareBtn.addEventListener("click", () => {
       let rev1 = input1.value ? parseInt(input1.value) : null;
@@ -366,7 +379,7 @@ const history = [
         return;
       }
 
-      window.location.href = `/novel/${novel_id}/history/diff/${rev1 > rev2 ? rev1 : rev2}/${rev1 > rev2 ? rev2 : rev1}`;
+      navigate(`/novel/${novel_id}/history/diff/${rev1 > rev2 ? rev1 : rev2}/${rev1 > rev2 ? rev2 : rev1}`);
     });
   });
 </script>

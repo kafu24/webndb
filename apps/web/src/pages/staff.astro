@@ -5,6 +5,7 @@ import { Button } from "@/components/starwind/button";
 import { Input } from "@/components/starwind/input";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Icon } from "astro-icon/components";
+import BackScript from "@/utils/BackScript.astro"
 
 const staff = {
   id: 1234,
@@ -52,11 +53,4 @@ const staff = {
   </div>
 </BaseLayout>
 
-<script>
-  document.addEventListener("astro:page-load", () => {
-    const backButton = document.getElementById("back-btn");
-    backButton?.addEventListener("click", () => {
-      history.back();
-    });
-  });
-</script>
+<BackScript />
