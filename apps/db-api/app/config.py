@@ -71,6 +71,25 @@ SQLALCHEMY_DATABASE_URI_SYNC = URL.create(
 MEILI_URL = os.getenv('MEILI_URL', 'http://meili:7700')
 MEILI_MASTER_KEY = os.getenv('MEILI_MASTER_KEY')
 
+# Take from Realm Settings in Keycloak UI.
+KC_REALM_PUBKEY = os.getenv('KC_REALM_PUBKEY', '')
+KEYCLOAK_REALM_PUBKEY = (
+    '-----BEGIN PUBLIC KEY-----' + KC_REALM_PUBKEY + '-----END PUBLIC KEY-----'
+)
+KEYCLOAK_REALM = os.getenv('KEYCLOAK_REALM', 'myrealm')
+KEYCLOAK_CLIENT_ID = os.getenv('KEYCLOAK_CLIENT_ID', 'myclient')
+# TODO: read from .well-known?
+KEYCLOAK_AUTH_URL = os.getenv(
+    'KEYCLOAK_AUTH_URL',
+    'http://localhost:8080/realms/myrealm/protocol/openid-connect/auth',
+)
+# Token URL is reached by backend, not the user, so we use the internal
+# service name from compose.
+KEYCLOAK_TOKEN_URL = os.getenv(
+    'KEYCLOAK_TOKEN_URL',
+    'http://keycloak:8080/realms/myrealm/protocol/openid-connect/token',
+)
+
 ALLOWED_CORS_ORIGIN: list[str] | str = os.getenv('ALLOWED_CORS_ORIGIN', ['*'])
 # https://github.com/litestar-org/litestar-fullstack/blob/e4dd330917e3c500e73f68a6b4f9d1d2f71cc75f/src/app/config/base.py#L409
 # Check if the ALLOWED_CORS_ORIGINS is a string.
