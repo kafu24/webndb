@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "asyncpg>=0.30.0",
+    "authlib>=1.6.5",
     "litestar-granian>=0.14.2",
     "litestar[sqlalchemy,standard]>=2.18.0",
     "meilisearch-python-sdk>=5.2.0",
