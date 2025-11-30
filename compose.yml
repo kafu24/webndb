@@ -1,4 +1,30 @@
 services:
+  keycloak-db:
+    image: postgres:17.7-trixie
+    environment:
+      POSTGRES_USER: keycloak_test
+      POSTGRES_PASSWORD: keycloak_test
+      POSTGRES_DB: keycloak_test
+    ports:
+      - "5434:5432"
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.6
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    command:
+      - "start-dev"
+      - "--db=postgres"
+      - "--db-password=keycloak_test"
+      - "--db-username=keycloak_test"
+      - "--db-url-host=keycloak-db"
+      - "--db-url-port=5432"
+      - "--db-url-database=keycloak_test"
+    depends_on:
+      - keycloak-db
   web:
     build: apps/web
     ports:
@@ -71,3 +97,4 @@ services:
 
 volumes:
   healthcheck-volume:
+  keycloak-data:
