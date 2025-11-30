@@ -77,6 +77,7 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
 
 @get(
     path='/',
+    exclude_from_auth=True,
     dependencies={'query_request': Provide(NovelQueryRequest, sync_to_thread=True)},
     tags=['novels'],
     summary='Query novels',
@@ -137,6 +138,7 @@ async def query_novels(
 
 @get(
     path='/{novel_id:str}',
+    exclude_from_auth=True,
     tags=['novels'],
     summary='Get novel',
     description='Retrieve a novel by its WebNDB novel ID.',

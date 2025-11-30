@@ -67,6 +67,14 @@ class Base(AsyncAttrs, DeclarativeBase):
         )
 
 
+class AuthUser(Base):
+    __tablename__ = 'auth_user'
+
+    # OIDC sub claim
+    user_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    username: Mapped[str] = mapped_column(Text, unique=True)
+
+
 class Novel(Base):
     __tablename__ = 'novel'
 
