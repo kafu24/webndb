@@ -3,9 +3,9 @@ export const prerender = false;
 
 import { Button } from "@/components/starwind/button";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import BackScript from "@/utils/BackScript.astro";
 import { Icon } from "astro-icon/components";
 import { diffArrays } from "diff";
-import BackScript from "@/utils/BackScript.astro"
 
 const { novel_id, rev1_id, rev2_id } = Astro.params;
 
@@ -160,7 +160,7 @@ const renderDiffInline = (diff: any[]) => {
       </p>
     </div>
     <div class="flex gap-4 justify-end items-center mb-2">
-      <div class="flex rounded-lg bg-foreground relative overflow-hidden">
+      <div class="flex rounded-md bg-foreground relative overflow-hidden">
         <div
           id="slider"
           class="absolute w-10 h-10 z-20 opacity-20 bg-accent transition-all duration-200 ease-out hidden"
@@ -273,7 +273,10 @@ const renderDiffInline = (diff: any[]) => {
                   </div>
                 </div>
               ) : (
-                <span class="text-sm break-words" set:html={renderDiffInline(field.diff)} />
+                <span
+                  class="text-sm break-words"
+                  set:html={renderDiffInline(field.diff)}
+                />
               )}
             </div>
           ) : (
