@@ -18,7 +18,8 @@ const menuItems = [
   { label: "Recent Changes", icon: "refresh-alert", href: "/history" },
 ];
 
-const novelPath = Astro.url.pathname.startsWith("/novel/");
+const novelRegex = /^\/novel\/\d+(?:\/history(?:\/\d+)?)?\/?$/;
+const novelPath = novelRegex.test(Astro.url.pathname);
 ---
 
 <html lang="en">
@@ -145,7 +146,8 @@ const novelPath = Astro.url.pathname.startsWith("/novel/");
 
     largeScreenQuery.addEventListener("change", handleScreenChange);
 
-    if (window.location.pathname.startsWith("/novel/")) {
+    const novelRegex = /^\/novel\/\d+(?:\/history(?:\/\d+)?)?\/?$/;
+    if (novelRegex.test(window.location.pathname)) {
       let bgColor, borderColor, foregroundColor;
 
       navBar.style.borderBottomWidth = "1px";
