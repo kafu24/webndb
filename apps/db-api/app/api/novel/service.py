@@ -8,12 +8,15 @@ from sqlalchemy.orm import selectinload
 
 from app.models import Language, Novel, NovelTitle
 
+from ..volume.schemas import VolumeTitleWriteSchema
 from .schemas import NovelTitleWriteSchema
 
 logger = structlog.stdlib.get_logger()
 
 
-def find_repeated_lang_titles(titles: list[NovelTitleWriteSchema]) -> Language | None:
+def find_repeated_lang_titles(
+    titles: list[NovelTitleWriteSchema] | list[VolumeTitleWriteSchema],
+) -> Language | None:
     """Returns a language if more than one element in `titles` uses that
     language. None otherwise.
     """

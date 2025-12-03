@@ -14,9 +14,10 @@ from meilisearch_python_sdk.errors import MeilisearchApiError
 from msgspec import UNSET
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.const import INVALID_WEBNDB_ID, NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX
+from app.const import INVALID_WEBNDB_ID, VOLUME_ORDER_MAX, VOLUME_TITLE_MAX
 from app.meili import format_meili_api_error, update_index
 
+from ..novel.service import find_repeated_lang_titles, select_novel
 from ..problem_details import (
     create_400_response_spec,
     create_404_response_spec,
@@ -31,37 +32,37 @@ from ..schemas import (
     custom_operation,
     custom_reqbody,
 )
-from ..volume.service import insert_initial_volume_ordering
 from .meili import filterable_attributes, searchable_attributes, sortable_attributes
 from .schemas import (
-    NovelCreateSchema,
-    NovelIDMeta,
-    NovelIDParam,
-    NovelQueryRequest,
-    NovelSchema,
-    NovelUpdateSchema,
-    to_novel_schema,
+    VolumeCreateSchema,
+    VolumeIDMeta,
+    VolumeIDParam,
+    VolumeQueryRequest,
+    VolumeSchema,
+    VolumeUpdateSchema,
+    parse_api_volume_id,
+    to_volume_schema,
 )
 from .service import (
-    clear_novel_titles,
-    find_repeated_lang_titles,
-    insert_novel,
-    select_novel,
-    update_novel,
-    upsert_novel_titles,
+    clear_volume_titles,
+    get_next_order,
+    insert_volume,
+    select_volume,
+    update_volume,
+    upsert_volume_titles,
 )
 
-PATH = '/novels'
+PATH = '/volumes'
 logger = structlog.stdlib.get_logger()
 
 
-async def get_meili_novel_index(state: State) -> AsyncIndex:
+async def get_meili_volume_index(state: State) -> AsyncIndex:
     client: AsyncClient = state.meili_client
     try:
-        index = await client.get_index('novels')
+        index = await client.get_index('volumes')
     except MeilisearchApiError as e:
         if e.status_code == 404:  # Index doesn't exist
-            index = await client.create_index('novels', primary_key='novel_id')
+            index = await client.create_index('volumes', primary_key='volume_id')
             await update_index(
                 index,
                 searchable_attributes=searchable_attributes,
@@ -77,16 +78,16 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
 @get(
     path='/',
     exclude_from_auth=True,
-    dependencies={'query_request': Provide(NovelQueryRequest, sync_to_thread=True)},
-    tags=['novels'],
-    summary='Query novels',
-    description=f'Search for and fetch web novel entries.',
+    dependencies={'query_request': Provide(VolumeQueryRequest, sync_to_thread=True)},
+    tags=['volumes'],
+    summary='Query volumes',
+    description=f'Search for and fetch volumes.',
     response_description=GENERIC_RESPONSE_DESCRIPTION,
     responses={
         400: create_400_response_spec(
             description='Bad request syntax or validation error',
             include_validation_error=True,
-            validation_detail_example='Validation failed for GET /novels?sort=novel_id',
+            validation_detail_example='Validation failed for GET /volumes?sort=volume_id',
             validation_message_example=(
                 f"Expected `str` matching regex '{create_sort_pattern(sortable_attributes)}'"
             ),
@@ -95,9 +96,9 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
         )
     },
 )
-async def query_novels(
-    meili_index: AsyncIndex, query_request: NovelQueryRequest
-) -> QueryResponse[NovelSchema]:
+async def query_volumes(
+    meili_index: AsyncIndex, query_request: VolumeQueryRequest
+) -> QueryResponse[VolumeSchema]:
     try:
         if query_request.q != '':
             meili_results = await meili_index.search(
@@ -136,83 +137,96 @@ async def query_novels(
 
 
 @get(
-    path='/{novel_id:str}',
+    path='/{volume_id:str}',
     exclude_from_auth=True,
-    tags=['novels'],
-    summary='Get novel',
-    description='Retrieve a novel by its WebNDB novel ID.',
+    tags=['volumes'],
+    summary='Get volume',
+    description='Retrieve a volume by its WebNDB volume ID.',
     response_description=GENERIC_RESPONSE_DESCRIPTION,
     responses={
         400: create_400_response_spec(
             description='Bad request syntax or validation error',
             include_validation_error=True,
             validation_detail_example=(
-                f'Validation failed for GET /novels/{INVALID_WEBNDB_ID}'
+                f'Validation failed for GET /volumes/{INVALID_WEBNDB_ID}'
             ),
             validation_message_example=(
-                f'Expected `str` of length <= {NovelIDMeta.max_length}'
+                f'Expected `str` of length <= {VolumeIDMeta.max_length}'
             ),
-            validation_key_example='novel_id',
+            validation_key_example='volume_id',
             validation_source_example='path',
         ),
         404: create_404_response_spec(
-            description='Novel ID in path parameter is not associated with a novel',
-            detail_example='Could not find a novel identified by novel ID 0',
+            description='Volume ID in path parameter is not associated with a volume',
+            detail_example='Could not find a volume identified by volume ID 0-0',
         ),
     },
 )
-async def get_novel(
-    transaction: AsyncSession, novel_id: Annotated[str, NovelIDParam]
-) -> NovelSchema:
-    novel = await select_novel(transaction, novel_id)
-    if novel is None:
+async def get_volume(
+    transaction: AsyncSession, volume_id: Annotated[str, VolumeIDParam]
+) -> VolumeSchema:
+    novel_id, db_volume_id = parse_api_volume_id(volume_id)
+    volume = await select_volume(transaction, novel_id, db_volume_id)
+    if volume is None:
         raise NotFoundException(
-            f'Could not find a novel identified by novel ID {novel_id}'
+            f'Could not find a volume identified by volume ID {volume_id}'
         )
-    return to_novel_schema(novel)
+    return to_volume_schema(volume)
 
 
 @post(
     path='/',
+    exclude_from_auth=True, # TODO: temp
     guards=[required_request_body_guard],
-    tags=['novels'],
-    summary='Create novel',
-    description='Create a new web novel entry.',
+    tags=['volumes'],
+    summary='Create volume',
+    description='Create a new volume entry.',
     operation_class=custom_operation(
         custom_reqbody(
             description=(
-                f'Descriptions are limited to {NOVEL_DESCRIPTION_MAX} characters.'
-                f' Titles are limited to {NOVEL_TITLE_MAX} characters.\n'
+                '`volume_order` is used to track the ordering of volumes'
+                ' for a novel.'
+                f' The order is an integer in the range [1, {VOLUME_ORDER_MAX}].'
+                ' If `volume_order` is `null` (default),'
+                ' then the volume will be inserted last in the collection.'
+                ' A volume cannot be created if there are already'
+                f' {VOLUME_ORDER_MAX} volumes for the specified novel.\n'
                 '\n'
-                'A novel must have at least one title.'
+                f' Titles are limited to {VOLUME_TITLE_MAX} characters.\n'
+                '\n'
+                'A volume must have at least one title.'
                 ' There can only be one title per language.'
             ),
             required=True,
         )
     ),
     response_headers=[LocationHeader, ContentLocationHeader],
-    response_description='Novel created, representation follows',
+    response_description='Volume created, representation follows',
     responses={
         400: create_400_response_spec(
             description=(
-                'Bad request syntax, validation error, or more than one title'
-                ' per language'
+                'Bad request syntax, validation error, novel already has max'
+                ' number of volumes, more than one title per language'
             ),
             client_error_detail_example=(
-                "Language 'en' is used by more than one title"
-                ' but only one title per language is allowed'
+                'Novel identified by novel ID 123 already has the'
+                ' maximum amount of volumes'
             ),
             include_validation_error=True,
-            validation_detail_example='Validation failed for POST /novels',
+            validation_detail_example='Validation failed for POST /volumes',
             validation_message_example="Invalid enum value 'eng'",
             validation_key_example='titles[0].lang',
             validation_source_example='body',
-        )
+        ),
+        404: create_404_response_spec(
+            description='Novel ID in request body is not associated with a novel',
+            detail_example='Could not find a novel identified by novel ID 0',
+        ),
     },
 )
-async def create_novel(
-    transaction: AsyncSession, meili_index: AsyncIndex, data: NovelCreateSchema
-) -> Response[NovelSchema]:
+async def create_volume(
+    transaction: AsyncSession, meili_index: AsyncIndex, data: VolumeCreateSchema
+) -> Response[VolumeSchema]:
     rep_lang = find_repeated_lang_titles(data.titles)
     if rep_lang:
         raise ClientException(
@@ -220,39 +234,58 @@ async def create_novel(
             ' but only one title per language is allowed'
         )
 
-    try:
-        novel = await insert_novel(
-            transaction, data.original_language, data.description
+    novel = await select_novel(transaction, data.novel_id)
+    if novel is None:
+        raise NotFoundException(
+            f'Could not find a novel identified by novel ID {data.novel_id}'
         )
-        # No triggers on distributed tables, so we need to ensure a novel
-        # has a volume_ordering record in application.
-        await insert_initial_volume_ordering(transaction, novel.novel_id)
-        titles = await upsert_novel_titles(transaction, novel.novel_id, data.titles)
-        res = await to_novel_schema(novel, titles)
+
+    next_order = await get_next_order(transaction, data.novel_id)
+    if next_order > VOLUME_ORDER_MAX:
+        raise ClientException(
+            f'Novel identified by novel ID {data.novel_id} already has the'
+            ' maximum amount of volumes'
+        )
+
+    try:
+        volume = await insert_volume(transaction, data.novel_id, data.volume_order)
+        titles = await upsert_volume_titles(
+            transaction, volume.volume_id, data.novel_id, data.titles
+        )
+        res = await to_volume_schema(volume, titles)
         await meili_index.add_documents([res])
     except Exception:
         raise InternalServerException
     return Response(
         content=res,
         headers={
-            'Location': f'/novels/{novel.novel_id}',
-            'Content-Location': f'/novels/{novel.novel_id}',
+            'Location': f'/volumes/{res.volume_id}',
+            'Content-Location': f'/volumes/{res.volume_id}',
         },
     )
 
 
 @patch(
-    path='/{novel_id:str}',
-    tags=['novels'],
-    summary='Update novel',
-    description='Update the web novel identified by `novel_id`.',
+    path='/{volume_id:str}',
+    exclude_from_auth=True, # TODO: temp
+    tags=['volumes'],
+    summary='Update volume',
+    description='Update the volume identified by `volume_id`.',
     operation_class=custom_operation(
         custom_reqbody(
             description=(
-                f'Descriptions are limited to {NOVEL_DESCRIPTION_MAX} characters.'
-                f' Titles are limited to {NOVEL_TITLE_MAX} characters.\n'
+                '`volume_order` is used to track the ordering of volumes'
+                ' for a novel.'
+                f' The order is an integer in the range [1, {VOLUME_ORDER_MAX}].'
+                ' If volumes are ordered like [a, b, c],'
+                ' moving "b" to 1 would give [b, a, c].'
+                ' Moving "b" to 3 would give [a, c, b].'
+                ' Omit `volume_order` or send its current value to not change'
+                ' the volume order.\n'
                 '\n'
-                'A novel must have at least one title.'
+                f' Titles are limited to {VOLUME_TITLE_MAX} characters.\n'
+                '\n'
+                'A volume must have at least one title.'
                 ' There can only be one title per language.\n'
                 '\n'
                 'The value of `titles` replaces the current collection of titles.'
@@ -262,7 +295,7 @@ async def create_novel(
             required=False,
         )
     ),
-    response_description='Novel updated, representation follows',
+    response_description='Volume updated, representation follows',
     responses={
         400: create_400_response_spec(
             description=(
@@ -274,29 +307,30 @@ async def create_novel(
                 ' but only one title per language is allowed'
             ),
             include_validation_error=True,
-            validation_detail_example='Validation failed for PATCH /novels/1',
+            validation_detail_example='Validation failed for PATCH /volumes/1-2',
             validation_message_example="Invalid enum value 'eng'",
             validation_key_example='titles[0].lang',
             validation_source_example='body',
         ),
         404: create_404_response_spec(
-            description='Novel ID in path parameter is not associated with a novel',
-            detail_example='Could not find a novel identified by novel ID 0',
+            description='Volume ID in path parameter is not associated with a volume',
+            detail_example='Could not find a volume identified by volume ID 0-0',
         ),
     },
 )
-async def patch_novel(
+async def patch_volume(
     transaction: AsyncSession,
     meili_index: AsyncIndex,
-    novel_id: Annotated[str, NovelIDParam],
-    data: NovelUpdateSchema = None,
-) -> NovelSchema:
+    volume_id: Annotated[str, VolumeIDParam],
+    data: VolumeUpdateSchema = None,
+) -> VolumeSchema:
     if data is None:
-        data = NovelUpdateSchema()
-    novel = await select_novel(transaction, novel_id)
-    if novel is None:
+        data = VolumeUpdateSchema()
+    novel_id, db_volume_id = parse_api_volume_id(volume_id)
+    volume = await select_volume(transaction, novel_id, db_volume_id)
+    if volume is None:
         raise NotFoundException(
-            f'Could not find a novel identified by novel ID {novel_id}'
+            f'Could not find a volume identified by volume ID {volume_id}'
         )
 
     if data.titles is not UNSET:
@@ -308,21 +342,21 @@ async def patch_novel(
             )
 
     try:
-        novel = await update_novel(
-            transaction,
-            novel_id,
-            await novel.awaitable_attrs.original_language
-            if data.original_language is UNSET
-            else data.original_language,
-            await novel.awaitable_attrs.description
-            if data.description is UNSET
-            else data.description,
-        )
+        if data.volume_order is not UNSET and data.volume_order != volume.volume_order:
+            volume = await update_volume(
+                transaction,
+                novel_id,
+                db_volume_id,
+                volume.volume_order,
+                data.volume_order,
+            )
         titles = None
         if data.titles is not UNSET:
-            await clear_novel_titles(transaction, novel_id)
-            titles = await upsert_novel_titles(transaction, novel_id, data.titles)
-        res = await to_novel_schema(novel, titles)
+            await clear_volume_titles(transaction, db_volume_id)
+            titles = await upsert_volume_titles(
+                transaction, db_volume_id, novel_id, data.titles
+            )
+        res = await to_volume_schema(volume, titles)
         await meili_index.update_documents([res])
         await transaction.commit()
     except Exception:
@@ -330,8 +364,8 @@ async def patch_novel(
     return res
 
 
-novel_router = Router(
+volume_router = Router(
     path=PATH,
-    dependencies={'meili_index': Provide(get_meili_novel_index)},
-    route_handlers=[query_novels, get_novel, create_novel, patch_novel],
+    dependencies={'meili_index': Provide(get_meili_volume_index)},
+    route_handlers=[query_volumes, get_volume, create_volume, patch_volume],
 )
