@@ -152,10 +152,6 @@ def distribute_novel_title(target, connection, **kw):
     )
 
 
-# TODO: constraint trigger or something to ensure that a novel always has
-# at least one title
-
-
 # TODO: volume_ordering_hist table, references novel
 
 
