@@ -222,7 +222,12 @@ async def create_novel(
 
     try:
         novel = await insert_novel(
-            transaction, data.original_language, data.description, data.status
+            transaction,
+            data.original_language,
+            data.description,
+            data.status,
+            data.start_release_date,
+            data.end_release_date,
         )
         # No triggers on distributed tables, so we need to ensure a novel
         # has a volume_ordering record in application.
@@ -318,6 +323,12 @@ async def patch_novel(
             if data.description is UNSET
             else data.description,
             await novel.awaitable_attrs.status if data.status is UNSET else data.status,
+            await novel.awaitable_attrs.start_release_date
+            if data.start_release_date is UNSET
+            else data.start_release_date,
+            await novel.awaitable_attrs.end_release_date
+            if data.end_release_date is UNSET
+            else data.end_release_date,
         )
         titles = None
         if data.titles is not UNSET:
