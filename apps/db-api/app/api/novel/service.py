@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models import Language, Novel, NovelTitle
+from app.models import Language, Novel, NovelTitle, PublicationStatus
 
 from ..volume.schemas import VolumeTitleWriteSchema
 from .schemas import NovelTitleWriteSchema
@@ -41,10 +41,13 @@ async def insert_novel(
     db_session: AsyncSession,
     original_language: Language | None,
     description: str | None,
+    status: PublicationStatus,
 ) -> Novel:
     """Inserts a record in the `novel` table."""
     try:
-        novel = Novel(original_language=original_language, description=description)
+        novel = Novel(
+            original_language=original_language, description=description, status=status
+        )
         db_session.add(novel)
         await db_session.flush()
     except Exception:
@@ -58,13 +61,18 @@ async def update_novel(
     novel_id: str,
     original_language: Language | None,
     description: str | None,
+    status: PublicationStatus,
 ) -> Novel:
     """Updates the novel identified by `novel_id`."""
     try:
         stmt = (
             update(Novel)
             .where(cast(Novel.novel_id, Text) == novel_id)
-            .values(original_language=original_language, description=description)
+            .values(
+                original_language=original_language,
+                description=description,
+                status=status,
+            )
         )
         novel = await db_session.scalar(
             stmt.returning(Novel), execution_options={'populate_existing': True}
