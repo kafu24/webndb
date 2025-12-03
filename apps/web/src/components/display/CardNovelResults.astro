@@ -1,0 +1,93 @@
+---
+import { Button } from "@/components/starwind/button";
+import { Icon } from "astro-icon/components";
+
+const { novels } = Astro.props;
+---
+
+<div
+  class="grid grid-cols-[repeat(auto-fit,_minmax(min(384px,100%),_1fr))] gap-2 pt-2"
+>
+  {
+    novels.map((novel) => (
+      <div class="flex flex-col border-2 h-[384px] p-2 rounded-md bg-popover">
+        <div class="flex flex-col pb-1 text-ellipsis">
+          <div>
+            <span class="flex float-right items-center gap-1 text-green-400 bg-accent rounded px-2 text-md font-semibold shadow ml-2">
+              <Icon name="tabler:circle-dot" class="w-4 h-4" />
+              {novel.status}
+            </span>
+            <div>
+              <Icon name="flag:jp-4x3" class="w-7 h-auto inline shadow mr-1" />
+              <a
+                href={`/novel/${novel.novel_id}`}
+                class="text-lg font-bold hover:underline leading-snug"
+              >
+                {novel.title}
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center gap-8 text-md pb-1">
+          <span class="flex items-center gap-1">
+            <Icon name="tabler:star" class="w-4 h-4" />
+            {novel.rating}/{novel.num_ratings}
+          </span>
+          <span class="flex items-center gap-0.5">
+            <Icon name="tabler:message" class="w-4 h-4" />
+            {novel.num_reviews}
+          </span>
+          <span class="flex items-center gap-0.5">
+            <Icon name="tabler:user-plus" class="w-4 h-4" />
+            {novel.readers}
+          </span>
+        </div>
+        <div>
+          {novel.genres?.map((genre) => (
+            <a
+              href={`/genre/${genre}`}
+              class="inline-flex px-2 py-1 mr-1 mb-1 bg-accent hover:bg-accent/80 font-semibold rounded text-sm transition-colors shadow"
+            >
+              {genre}
+            </a>
+          ))}
+        </div>
+        <div class="flex gap-2 pt-1 min-h-0 flex-1">
+          <a
+            href={`/novel/${novel.novel_id}`}
+            class="inline-flex max-w-[180px]"
+          >
+            <img
+              src={novel.image}
+              class="aspect-[5/7] object-cover rounded-md"
+            />
+          </a>
+          <div class="flex flex-col flex-1 justify-between min-w-0">
+            <div
+              class="flex flex-col overflow-auto min-h-0 text-xs leading-snug
+                    [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-foreground/10 [&::-webkit-scrollbar-thumb]:bg-foreground/30"
+            >
+              <p class="break-words">{novel.description}</p>
+              <span>author</span>
+              <span>more info</span>
+              <div>tags</div>
+            </div>
+            <div class="flex justify-between gap-2 pt-2">
+              <Button size="sm" class="@container flex-1">
+                <span class="hidden @[120px]:flex items-center gap-1">
+                  <Icon name="tabler:bookmark" /> Add to List
+                </span>
+                <span class="@[120px]:hidden">
+                  <Icon name="tabler:bookmark" />
+                </span>
+              </Button>
+              <Button size="sm">
+                <Icon name="tabler:share" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</div>

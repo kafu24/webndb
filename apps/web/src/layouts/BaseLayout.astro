@@ -1,10 +1,22 @@
 ---
-// styles
+import HeaderActions from "@/components/nav/header/HeaderActions.astro";
+import SheetSidebar from "@/components/nav/sidebar/SheetSidebar.astro";
+import Sidebar from "@/components/nav/sidebar/Sidebar.astro";
 import "@/styles/starwind.css";
+import ThemeScript from "@/utils/ThemeScript.astro";
+import { Icon } from "astro-icon/components";
+import { ClientRouter } from "astro:transitions";
 
-// components
-import Nav from "@/components/layout/Nav.astro";
-import ThemeScript from "@/components/layout/ThemeScript.astro";
+const menuItems = [
+  { label: "Home", icon: "home", href: "/" },
+  { label: "Novels", icon: "book", href: "/novels" },
+  { label: "Tags", icon: "tag", href: "/tags" },
+  { label: "Publishers", icon: "news", href: "/publishers" },
+  { label: "Staff", icon: "users-group", href: "/staff" },
+  // { label: "Users", icon: "user", href: "/users" },
+  { label: "Forums", icon: "message", href: "/forums" },
+  { label: "Recent Changes", icon: "refresh-alert", href: "/history" },
+];
 ---
 
 <html lang="en">
@@ -15,9 +27,127 @@ import ThemeScript from "@/components/layout/ThemeScript.astro";
     <meta name="generator" content={Astro.generator} />
     <title>title</title>
     <ThemeScript />
+    <ClientRouter />
   </head>
   <body>
-    <Nav />
-    <div class="grid gap-6 px-4"><slot /></div>
+    <div class="flex">
+      <Sidebar menuItems={menuItems} transition:persist />
+      <div id="page-content" class="flex flex-col flex-1 min-w-0 md:ml-64">
+        <header
+          id="nav-bar"
+          class="fixed top-0 right-0 left-0 flex h-16 shrink-0 items-center justify-between gap-2 px-2 z-30 md:left-64 border-b"
+        >
+          <SheetSidebar menuItems={menuItems} />
+          <div
+            class="flex flex-1 items-center justify-between gap-2 max-w-370 mx-auto"
+          >
+            <nav class="flex items-center gap-2">
+              <button
+                id="sidebar-open-button"
+                class="rounded-full p-2 hover:bg-foreground/10 hidden"
+              >
+                <Icon name="tabler:layout-sidebar" class="w-5 h-5" />
+              </button>
+              <a
+                id="nav-header"
+                href="/"
+                class="flex items-center gap-2 text-3xl font-bold invisible"
+              >
+                <Icon name="tabler:home" />
+                <span class="max-[540px]:hidden">WebNDB</span>
+              </a>
+            </nav>
+            <HeaderActions />
+          </div>
+        </header>
+        <main class="mt-16 w-full max-w-370 mx-auto p-4 overflow-x-hidden">
+          <slot />
+        </main>
+      </div>
+    </div>
   </body>
 </html>
+
+<script>
+  import { $sidebarState } from "@/stores/sidebar";
+  document.addEventListener("astro:page-load", () => {
+    const sidebar = document.getElementById("sidebar");
+    const navBar = document.getElementById("nav-bar");
+    const pageContent = document.getElementById("page-content");
+    const sidebarOpenButton = document.getElementById("sidebar-open-button");
+    const sidebarCloseButton = document.getElementById("sidebar-close-button");
+    const sheetSidebar = document.getElementById("sheet-sidebar");
+    const sheetSidebarCloseButton = document.getElementById(
+      "sheet-sidebar-close-button",
+    );
+    const navHeader = document.getElementById("nav-header");
+    const largeScreenQuery = window.matchMedia("(min-width: 768px)");
+
+    const handleScreenChange = (e) => {
+      if (e.matches) {
+        sheetSidebarCloseButton.click();
+        sheetSidebar.style.display = "none";
+        if ($sidebarState.get() === "collapsed") {
+          sidebarOpenButton.style.display = "block";
+          pageContent.style.marginLeft = "0px";
+          navBar.style.left = "0px";
+        } else {
+          pageContent.style.marginLeft = "256px";
+          navBar.style.left = "256px";
+          navHeader.style.visibility = "hidden";
+        }
+      } else {
+        sidebarOpenButton.style.display = "none";
+        sheetSidebar.style.display = "block";
+        pageContent.style.marginLeft = "0px";
+        navBar.style.left = "0px";
+        navHeader.style.visibility = "visible";
+      }
+    };
+
+    sidebarOpenButton.addEventListener("click", () => {
+      sidebar.style.display = "";
+      sidebar.style.width = "256px";
+      pageContent.style.marginLeft = "256px";
+      navBar.style.left = "256px";
+      sidebarOpenButton.style.display = "none";
+      navHeader.style.visibility = "hidden";
+      $sidebarState.set("expanded");
+    });
+
+    sidebarCloseButton.addEventListener("click", () => {
+      sidebar.style.width = "0px";
+      pageContent.style.marginLeft = "0px";
+      navBar.style.left = "0px";
+      sidebarOpenButton.style.display = "block";
+      navHeader.style.visibility = "visible";
+      $sidebarState.set("collapsed");
+    });
+
+    if ($sidebarState.get() === "collapsed") {
+      sidebar.style.display = "none";
+      sidebar.style.width = "0px";
+      pageContent.style.marginLeft = "0px";
+      navBar.style.left = "0px";
+      sidebarOpenButton.style.display = "block";
+      navHeader.style.visibility = "visible";
+    }
+
+    if (largeScreenQuery.matches) {
+    } else {
+      sidebarOpenButton.style.display = "none";
+      navHeader.style.visibility = "visible";
+    }
+
+    largeScreenQuery.addEventListener("change", handleScreenChange);
+
+    requestAnimationFrame(() => {
+      pageContent.classList.add(
+        "transition-[margin]",
+        "duration-200",
+        "ease-in-out",
+      );
+      navBar.classList.add("transition-[left]", "duration-200", "ease-in-out");
+    });
+  });
+</script>

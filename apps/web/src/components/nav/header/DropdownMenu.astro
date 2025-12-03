@@ -1,5 +1,4 @@
 ---
-import Copy from "@tabler/icons/outline/copy.svg";
 import {
   Avatar,
   AvatarFallback,
@@ -10,6 +9,7 @@ import {
   DropdownLabel,
   DropdownSeparator,
 } from "@/components/starwind/dropdown";
+import { Icon } from "astro-icon/components";
 ---
 
 <div id="menu-container" class="w-64">
@@ -33,11 +33,11 @@ import {
     <DropdownSeparator />
     <div class="flex gap-0.5 p-2">
       <Button variant="ghost" class="flex-1">
-        <Copy />
+        <Icon name="tabler:settings" />
         Settings
       </Button>
       <Button id="theme-button" variant="ghost" class="flex-1">
-        <Copy />
+        <Icon name="tabler:palette" />
         Theme
       </Button>
     </div>
@@ -54,19 +54,18 @@ import {
   <div id="theme-menu" class="hidden">
     <DropdownLabel class="flex items-center gap-2 p-2">
       <Button id="back-button" variant="ghost" class="p-2">
-        <!-- TODO: replace with svg -->
-        <span>←</span>
+        <Icon name="tabler:arrow-narrow-left" />
       </Button>
       <h3>Choose a theme</h3>
     </DropdownLabel>
-    <!-- TODO: replace copy with svgs -->
+    <DropdownSeparator />
     <div class="flex flex-col gap-0.5 p-2">
       <Button
         variant="ghost"
         class="theme-option justify-start"
         data-theme="light"
       >
-        <Copy />
+        <Icon name="tabler:sun" />
         <span>Light</span>
       </Button>
       <Button
@@ -74,7 +73,7 @@ import {
         class="theme-option justify-start"
         data-theme="dark"
       >
-        <Copy />
+        <Icon name="tabler:moon-stars" />
         <span>Dark</span>
       </Button>
       <Button
@@ -82,12 +81,12 @@ import {
         class="theme-option justify-start"
         data-theme="system"
       >
-        <Copy />
+        <Icon name="tabler:device-desktop" />
         <div class="flex flex-col items-start">
           <span>System</span>
-          <span class="text-xs text-muted-foreground"
-            >Follow system preference</span
-          >
+          <span class="text-xs text-muted-foreground">
+            Follow system preference
+          </span>
         </div>
       </Button>
       <Button
@@ -95,12 +94,12 @@ import {
         class="theme-option justify-start"
         data-theme="custom"
       >
-        <Copy />
+        <Icon name="tabler:adjustments-horizontal" />
         <div class="flex flex-col items-start">
           <span>Custom</span>
-          <span class="text-xs text-muted-foreground"
-            >Create a custom theme</span
-          >
+          <span class="text-xs text-muted-foreground">
+            Create a custom theme
+          </span>
         </div>
       </Button>
     </div>
@@ -108,15 +107,15 @@ import {
 </div>
 
 <script>
-  import { themeManager, type Theme } from "@/utils/theme";
+  import { themeManager, type Theme } from "@/stores/theme";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("astro:page-load", () => {
     const menuContainer = document.getElementById("menu-container");
     const mainMenu = document.getElementById("main-menu");
     const themeMenu = document.getElementById("theme-menu");
     const themeButton = document.getElementById("theme-button");
     const backButton = document.getElementById("back-button");
-    const themeOptions = document.querySelectorAll(".theme-option");
+    const themeOptions = themeMenu.querySelectorAll(".theme-option");
 
     const showThemeMenu = () => {
       mainMenu?.classList.add("hidden");
@@ -140,7 +139,6 @@ import {
           const check = document.createElement("span");
           check.id = "theme-check";
           check.className = "theme-check ml-auto text-primary font-bold";
-          // TODO: replace with svg
           check.innerHTML = "✓";
           btn.appendChild(check);
         } else {

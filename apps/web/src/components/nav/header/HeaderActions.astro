@@ -1,0 +1,44 @@
+---
+import DropdownMenu from "@/components/nav/header/DropdownMenu.astro";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/starwind/avatar";
+import {
+  Dropdown,
+  DropdownContent,
+  DropdownTrigger,
+} from "@/components/starwind/dropdown";
+import { Input } from "@/components/starwind/input";
+import { Icon } from "astro-icon/components";
+---
+
+<div class="flex items-center gap-4">
+  <div class="relative">
+    <Icon
+      name="tabler:search"
+      class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5"
+    />
+    <Input
+      size="md"
+      placeholder="Search"
+      class="pl-10 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
+    />
+  </div>
+  <Dropdown>
+    <DropdownTrigger asChild>
+      <Avatar size="md" class="cursor-pointer">
+        <!-- TODO: avatar+fallback -->
+        <AvatarImage
+          src="https://i.pravatar.cc/150?u=a04258a2462d826712d"
+          alt="John Doe"
+        />
+        <AvatarFallback>JD</AvatarFallback>
+      </Avatar>
+    </DropdownTrigger>
+    <DropdownContent align="end">
+      <DropdownMenu />
+    </DropdownContent>
+  </Dropdown>
+</div>
