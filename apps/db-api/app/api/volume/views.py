@@ -176,7 +176,6 @@ async def get_volume(
 
 @post(
     path='/',
-    exclude_from_auth=True, # TODO: temp
     guards=[required_request_body_guard],
     tags=['volumes'],
     summary='Create volume',
@@ -267,7 +266,6 @@ async def create_volume(
 
 @patch(
     path='/{volume_id:str}',
-    exclude_from_auth=True, # TODO: temp
     tags=['volumes'],
     summary='Update volume',
     description='Update the volume identified by `volume_id`.',
