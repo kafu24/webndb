@@ -13,10 +13,11 @@ from sqlalchemy import (
     event,
     text,
 )
-from sqlalchemy.dialects.postgresql import TIMESTAMP
+from sqlalchemy.dialects.postgresql import ARRAY, TIMESTAMP
 from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy.types import BigInteger, Boolean, Enum, SmallInteger, Text
+from sqlalchemy.types import BigInteger, Boolean, Enum, Integer, SmallInteger, Text
 
 from .const import (
     CHAPTER_ORDER_MAX,
@@ -152,7 +153,40 @@ def distribute_novel_title(target, connection, **kw):
     )
 
 
-# TODO: volume_ordering_hist table, references novel
+# TODO: update to support history in this table. Having a separate history
+# table for this seems pointless.
+class VolumeOrdering(Base):
+    __tablename__ = 'volume_ordering'
+
+    novel_id: Mapped[int] = mapped_column(
+        ForeignKey('novel.novel_id'), primary_key=True
+    )
+    next_order: Mapped[int] = mapped_column(
+        Integer,
+        CheckConstraint(
+            f'next_order >= 1 AND next_order <= {VOLUME_ORDER_MAX + 1}',
+            name='volume_next_order_limit',
+        ),
+        default=text('1'),
+    )
+    ordering: Mapped[list[int]] = mapped_column(
+        MutableList.as_mutable(ARRAY(Integer)),
+        CheckConstraint(
+            f'cardinality(ordering) <= {VOLUME_ORDER_MAX}',
+            name='volume_ordering_cardinality',
+        ),
+        default=text('ARRAY[]::INTEGER[]'),
+    )
+
+
+@event.listens_for(VolumeOrdering.__table__, 'after_create')
+def distribute_volume(target, connection, **kw):
+    connection.execute(
+        text(
+            'SELECT create_distributed_table('
+            "'volume_ordering', 'novel_id', colocate_with => 'novel')"
+        )
+    )
 
 
 class Volume(Base):
