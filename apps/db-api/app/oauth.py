@@ -74,7 +74,7 @@ async def callback(
     transaction: AsyncSession,
 ) -> None:
     client: AsyncOAuth2Client = state.keycloak_client
-    if oauth_state != request.session['oauth_state']:
+    if oauth_state != request.session.get('oauth_state'):
         # TODO: log more stuff
         raise ClientException('State is invalid')
     token = await client.fetch_token(
@@ -85,7 +85,7 @@ async def callback(
         code_verifier=request.session.get('code_verifier'),
     )
     id_token = jwt.decode(token['id_token'], key=KEYCLOAK_REALM_PUBKEY)
-    if id_token['nonce'] != request.session['nonce']:
+    if id_token['nonce'] != request.session.get('nonce'):
         raise ClientException('Invalid nonce')
 
     user = await transaction.scalar(
