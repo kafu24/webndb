@@ -7,6 +7,7 @@ from app.const import NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX, WEBNDB_ID_MAX_LEN
 from app.models import Language
 
 from ..schemas import (
+    JSON_NULL,
     BaseStruct,
     QueryRequest,
     create_filter_param,
@@ -187,8 +188,14 @@ class NovelCreateSchema(BaseStruct):
     """Specifies the request body for creating a novel."""
 
     titles: Annotated[list[NovelTitleWriteSchema], NovelTitlesMeta]
-    original_language: NovelOlangType = None
-    description: NovelDescriptionType = None
+    original_language: NovelOlangType = JSON_NULL
+    description: NovelDescriptionType = JSON_NULL
+
+    def __post_init__(self):
+        if self.original_language is JSON_NULL:
+            self.original_language = None
+        if self.description is JSON_NULL:
+            self.description = None
 
 
 class NovelUpdateSchema(BaseStruct):
