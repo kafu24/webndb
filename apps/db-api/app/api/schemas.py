@@ -83,6 +83,36 @@ def string_or_null_extra_json_schema(max_length: int = None) -> dict:
     }
 
 
+def int_or_null_extra_json_schema(minimum: int, maximum: int) -> dict:
+    """Pass this as the `extra_json_schema` value of `msgspec.Meta` to
+    set an OpenAPI property to have
+
+    ```
+    type: ['int', 'null']
+    minimum: {minimum}
+    maximum: {maximum}
+    ```
+
+    The oneOf value is also omitted.
+
+    This does not affect validation; it only affects documentation.
+    """
+    return {
+        'extra': {
+            'type': [OpenAPIType.INTEGER, OpenAPIType.NULL],
+            'minimum': minimum,
+            'maximum': maximum,
+            # Since this is used in Annotated[int | None, Meta(...)], Litestar
+            # will set oneOf like:
+            # oneOf:
+            #   - type: 'integer'
+            #   - type: 'null'
+            # which is redundant because of the `type` we set above.
+            'oneOf': None,
+        }
+    }
+
+
 LocationHeader = ResponseHeader(
     name='Location',
     value='',  # Need a str value so type is added
