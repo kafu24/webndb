@@ -3,6 +3,7 @@ filterable_attributes = [
     'novel_id',
     'original_language',
     'description',
+    'status',
     'titles.lang',
     'titles.title',
     'titles.latin',

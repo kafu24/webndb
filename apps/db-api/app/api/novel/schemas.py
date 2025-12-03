@@ -4,7 +4,7 @@ from litestar.params import Parameter
 from msgspec import UNSET, Meta
 
 from app.const import NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX, WEBNDB_ID_MAX_LEN
-from app.models import Language
+from app.models import Language, PublicationStatus
 
 from ..schemas import (
     JSON_NULL,
@@ -69,6 +69,16 @@ NovelDescriptionType = Annotated[
         extra_json_schema=string_or_null_extra_json_schema(NOVEL_DESCRIPTION_MAX),
     ),
 ]
+
+NovelStatusType = Annotated[
+    PublicationStatus,
+    Meta(
+        title='Publication Status',
+        description='Value that tracks whether a novel is still being publisehd',
+        examples=[PublicationStatus.ONGOING],
+    ),
+]
+
 
 NovelTitleType = Annotated[
     str,
@@ -158,6 +168,7 @@ class NovelSchema(BaseStruct):
     novel_id: NovelIDResponseType = UNSET
     original_language: NovelOlangType = UNSET
     description: NovelDescriptionType = UNSET
+    status: NovelStatusType = UNSET
     titles: Annotated[list[NovelTitleSchema], NovelTitlesMeta] = UNSET
 
 
@@ -170,6 +181,7 @@ async def to_novel_schema(
         novel_id=str(novel.novel_id),
         original_language=novel.original_language,
         description=novel.description,
+        status=novel.status,
         titles=[to_novel_title_schema(t) for t in titles],
     )
 
@@ -190,6 +202,7 @@ class NovelCreateSchema(BaseStruct):
     titles: Annotated[list[NovelTitleWriteSchema], NovelTitlesMeta]
     original_language: NovelOlangType = JSON_NULL
     description: NovelDescriptionType = JSON_NULL
+    status: NovelStatusType = PublicationStatus.UNKNOWN
 
     def __post_init__(self):
         if self.original_language is JSON_NULL:
@@ -204,3 +217,4 @@ class NovelUpdateSchema(BaseStruct):
     titles: Annotated[list[NovelTitleWriteSchema], NovelTitlesMeta] = UNSET
     original_language: NovelOlangType = UNSET
     description: NovelDescriptionType = UNSET
+    status: NovelStatusType = UNSET

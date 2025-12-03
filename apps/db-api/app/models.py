@@ -39,6 +39,16 @@ class Language(StrEnum):
     JA = 'ja'  # Japanese
 
 
+class PublicationStatus(StrEnum):
+    """Publication status."""
+
+    ONGOING = 'ongoing'
+    COMPLETED = 'completed'
+    HIATUS = 'hiatus'
+    CANCELLED = 'cancelled'
+    UNKNOWN = 'unknown'
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     metadata = MetaData(
         naming_convention={
@@ -52,7 +62,12 @@ class Base(AsyncAttrs, DeclarativeBase):
     type_annotation_map = {
         Language: Enum(
             Language, name='language', values_callable=lambda x: [e.value for e in x]
-        )
+        ),
+        PublicationStatus: Enum(
+            PublicationStatus,
+            name='publication_status',
+            values_callable=lambda x: [e.value for e in x],
+        ),
     }
 
     def __repr__(self):
@@ -89,6 +104,9 @@ class Novel(Base):
             f'description IS NULL OR char_length(description) <= {NOVEL_DESCRIPTION_MAX}',
             name='novel_description_length',
         ),
+    )
+    status: Mapped[PublicationStatus] = mapped_column(
+        server_default=PublicationStatus.UNKNOWN
     )
 
     titles: Mapped[list['NovelTitle']] = relationship(
