@@ -76,7 +76,7 @@ async def update_novel(
 
 
 async def upsert_novel_titles(
-    db_session: AsyncSession, novel_id: str, title: list[NovelTitleWriteSchema]
+    db_session: AsyncSession, novel_id: str, titles: list[NovelTitleWriteSchema]
 ) -> Sequence[NovelTitle]:
     """Upsert records in the `novel_title` table."""
     try:
@@ -89,7 +89,7 @@ async def upsert_novel_titles(
                     'title': t.title,
                     'latin': t.latin,
                 }
-                for t in title
+                for t in titles
             ]
         )
         stmt = stmt.on_conflict_do_update(
