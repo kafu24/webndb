@@ -15,7 +15,7 @@ from msgspec import UNSET
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.const import INVALID_WEBNDB_ID, NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX
-from app.meili import format_meili_api_error
+from app.meili import format_meili_api_error, update_index
 
 from ..problem_details import (
     create_400_response_spec,
@@ -61,13 +61,11 @@ async def get_meili_novel_index(state: State) -> AsyncIndex:
     except MeilisearchApiError as e:
         if e.status_code == 404:  # Index doesn't exist
             index = await client.create_index('novels', primary_key='novel_id')
-            # Order of searchable attributes matters; earlier elements are more
-            # important when calculating relevancy.
-            await index.update_searchable_attributes(searchable_attributes)
-            await index.update_filterable_attributes(filterable_attributes)
-            await index.update_sortable_attributes(sortable_attributes)
-            await index.update_ranking_rules(
-                ['words', 'sort', 'typo', 'proximity', 'attribute', 'exactness']
+            await update_index(
+                index,
+                searchable_attributes=searchable_attributes,
+                filterable_attributes=filterable_attributes,
+                sortable_attributes=sortable_attributes,
             )
         else:
             logger.error('Could not get Meilisearch index')
