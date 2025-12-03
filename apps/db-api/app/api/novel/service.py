@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Sequence
 
 import structlog
@@ -42,11 +43,17 @@ async def insert_novel(
     original_language: Language | None,
     description: str | None,
     status: PublicationStatus,
+    start_release_date: datetime | None,
+    end_release_date: datetime | None,
 ) -> Novel:
     """Inserts a record in the `novel` table."""
     try:
         novel = Novel(
-            original_language=original_language, description=description, status=status
+            original_language=original_language,
+            description=description,
+            status=status,
+            start_release_date=start_release_date,
+            end_release_date=end_release_date,
         )
         db_session.add(novel)
         await db_session.flush()
@@ -62,6 +69,8 @@ async def update_novel(
     original_language: Language | None,
     description: str | None,
     status: PublicationStatus,
+    start_release_date: datetime | None,
+    end_release_date: datetime | None,
 ) -> Novel:
     """Updates the novel identified by `novel_id`."""
     try:
@@ -72,6 +81,8 @@ async def update_novel(
                 original_language=original_language,
                 description=description,
                 status=status,
+                start_release_date=start_release_date,
+                end_release_date=end_release_date,
             )
         )
         novel = await db_session.scalar(

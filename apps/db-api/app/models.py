@@ -108,6 +108,12 @@ class Novel(Base):
     status: Mapped[PublicationStatus] = mapped_column(
         server_default=PublicationStatus.UNKNOWN
     )
+    # Somewhat redundant to have these because it can be derived from
+    # chapter releases, but having them be user inputs makes it simpler.
+    start_release_date: Mapped[datetime | None] = mapped_column(
+        TIMESTAMP(timezone=True)
+    )
+    end_release_date: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
 
     titles: Mapped[list['NovelTitle']] = relationship(
         back_populates='novel',

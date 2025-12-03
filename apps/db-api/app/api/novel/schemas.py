@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TYPE_CHECKING, Annotated
 
 from litestar.params import Parameter
@@ -69,6 +70,45 @@ NovelDescriptionType = Annotated[
         extra_json_schema=string_or_null_extra_json_schema(NOVEL_DESCRIPTION_MAX),
     ),
 ]
+
+NovelStartReleaseDateType = Annotated[
+    datetime | None,
+    Meta(
+        title='Start Release Date',
+        description=(
+            'Timezone-aware date and time of when the novel was first released'
+            ' in a RFC 3339 compatible format'
+        ),
+        examples=['2025-12-03T09:07:24Z'],
+        extra_json_schema={
+            'extra': {
+                'oneOf': None,  # Get rid of Litestar's derived oneOf
+                'type': ['string', 'null'],
+                'format': 'date-time',
+            }
+        },
+    ),
+]
+
+NovelEndReleaseDateType = Annotated[
+    datetime | None,
+    Meta(
+        title='End Release Date',
+        description=(
+            'Timezone-aware date and time of when the novel was last released'
+            ' in a RFC 3339 compatible format'
+        ),
+        examples=['2025-12-03T09:08:27Z'],
+        extra_json_schema={
+            'extra': {
+                'oneOf': None,  # Get rid of Litestar's derived oneOf
+                'type': ['string', 'null'],
+                'format': 'date-time',
+            }
+        },
+    ),
+]
+
 
 NovelStatusType = Annotated[
     PublicationStatus,
@@ -169,6 +209,8 @@ class NovelSchema(BaseStruct):
     original_language: NovelOlangType = UNSET
     description: NovelDescriptionType = UNSET
     status: NovelStatusType = UNSET
+    start_release_date: NovelStartReleaseDateType = UNSET
+    end_release_date: NovelEndReleaseDateType = UNSET
     titles: Annotated[list[NovelTitleSchema], NovelTitlesMeta] = UNSET
 
 
@@ -182,6 +224,8 @@ async def to_novel_schema(
         original_language=novel.original_language,
         description=novel.description,
         status=novel.status,
+        start_release_date=novel.start_release_date,
+        end_release_date=novel.end_release_date,
         titles=[to_novel_title_schema(t) for t in titles],
     )
 
@@ -203,12 +247,18 @@ class NovelCreateSchema(BaseStruct):
     original_language: NovelOlangType = JSON_NULL
     description: NovelDescriptionType = JSON_NULL
     status: NovelStatusType = PublicationStatus.UNKNOWN
+    start_release_date: NovelStartReleaseDateType = JSON_NULL
+    end_release_date: NovelEndReleaseDateType = JSON_NULL
 
     def __post_init__(self):
         if self.original_language is JSON_NULL:
             self.original_language = None
         if self.description is JSON_NULL:
             self.description = None
+        if self.start_release_date is JSON_NULL:
+            self.start_release_date = None
+        if self.end_release_date is JSON_NULL:
+            self.end_release_date = None
 
 
 class NovelUpdateSchema(BaseStruct):
@@ -218,3 +268,5 @@ class NovelUpdateSchema(BaseStruct):
     original_language: NovelOlangType = UNSET
     description: NovelDescriptionType = UNSET
     status: NovelStatusType = UNSET
+    start_release_date: NovelStartReleaseDateType = UNSET
+    end_release_date: NovelEndReleaseDateType = UNSET
