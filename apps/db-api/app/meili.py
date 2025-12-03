@@ -6,7 +6,7 @@ import msgspec
 import structlog
 from litestar import Litestar
 from litestar.exceptions import ClientException, InternalServerException
-from meilisearch_python_sdk import AsyncClient
+from meilisearch_python_sdk import AsyncClient, AsyncIndex
 from meilisearch_python_sdk.errors import (
     MeilisearchApiError,
     MeilisearchCommunicationError,
@@ -57,3 +57,25 @@ async def meilisearch_client(app: Litestar) -> AsyncGenerator[None, None]:
 
 def format_meili_api_error(e: MeilisearchApiError) -> ClientException:
     return ClientException(e.message.lstrip('Error message: '))
+
+
+async def update_index(
+    index: AsyncIndex,
+    searchable_attributes: list[str],
+    filterable_attributes: list[str],
+    sortable_attributes: list[str],
+    ranking_rules: list[str] = [
+        'words',
+        'sort',
+        'typo',
+        'proximity',
+        'attribute',
+        'exactness',
+    ],
+):
+    # Order of searchable attributes matters; earlier elements are more
+    # important when calculating relevancy.
+    await index.update_searchable_attributes(searchable_attributes)
+    await index.update_filterable_attributes(filterable_attributes)
+    await index.update_sortable_attributes(sortable_attributes)
+    await index.update_ranking_rules(ranking_rules)
