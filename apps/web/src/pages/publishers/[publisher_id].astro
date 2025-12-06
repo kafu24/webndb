@@ -1,7 +1,6 @@
 ---
 export const prerender = false;
 
-import GridNovelResults from "@/components/display/GridNovelResults.astro";
 import { Button } from "@/components/starwind/button";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import FitText from "@/utils/FitText.astro";
@@ -224,33 +223,22 @@ const novel = {
             </div>
           </div>
         </div>
-        <div
-          class="bg-card rounded-md px-4 py-2 border border-border mt-1 mb-2"
-        >
-          <!-- TODO: view switch? -->
-          <span class="text-lg font-bold block mb-1">ASSOCIATED NOVELS</span>
-          <div class="relative mb-1">
-            <div
-              class="grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] gap-x-2 gap-y-8 pb-6"
-            >
-              <GridNovelResults
-                novels={Array.from({ length: 8 }, () => ({ ...novel }))}
-              />
-            </div>
-            <div
-              class="absolute inset-0 grid grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] gap-x-2 gap-y-8 pb-6 pointer-events-none"
-            >
-              {
-                Array.from({ length: 8 }, () => (
-                  <div class="relative">
-                    <span class="absolute -bottom-6 left-0 right-0 text-center font-semibold">
-                      Role
-                    </span>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+        <!-- TODO: chapters -->
+        <span class="text-lg font-bold block mb-1">CHAPTER RELEASES</span>
+        <div class="bg-card rounded-md border border-border">
+          {
+            staff.roles.map((role, idx) => (
+              <a
+                href={`/novel/${role.novel}`}
+                class={`flex justify-between items-center px-4 py-3 hover:bg-accent/50 ${idx < staff.roles.length - 1 ? "border-b border-dashed border-border" : ""}`}
+              >
+                <span class="font-medium">{role.role}</span>
+                <span class="text-sm text-muted-foreground">
+                  Chapter #{role.novel}
+                </span>
+              </a>
+            ))
+          }
         </div>
       </div>
     </div>

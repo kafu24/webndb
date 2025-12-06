@@ -7,7 +7,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import BackScript from "@/utils/BackScript.astro";
 import { Icon } from "astro-icon/components";
 
-const staff = {
+const publisher = {
   id: 1234,
   name: "Yukinobu Tatsu",
   image:
@@ -32,7 +32,7 @@ const staff = {
       <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
         <Icon name="tabler:arrow-narrow-left" />
       </Button>
-      <h1 class="text-4xl font-semibold">Staff</h1>
+      <h1 class="text-4xl font-semibold">Publishers</h1>
     </div>
     <div class="flex gap-2">
       <div class="flex flex-1 relative mb-2">
@@ -42,15 +42,15 @@ const staff = {
         />
         <Input
           size="md"
-          placeholder="Search Staff"
+          placeholder="Search Publishers"
           class="pl-10 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
         />
       </div>
       <Button>Search</Button>
     </div>
     <GroupResults
-      type="Staff"
-      list={Array.from({ length: 5 }, () => ({ ...staff }))}
+      group="Publishers"
+      list={Array.from({ length: 5 }, () => ({ ...publisher }))}
     />
     <Pagination />
   </div>
