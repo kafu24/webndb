@@ -1,11 +1,11 @@
 import { $selectedMinMax, toggleMinMax } from "@/stores/search";
-import { supportedMinMax } from "@/components/search/data/minMax";
+import { SUPPORTED_MIN_MAX } from "@/data/minMax";
 import { useStore } from "@nanostores/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface Props {
-  type: (typeof supportedMinMax)[number];
+  type: (typeof SUPPORTED_MIN_MAX)[number];
 }
 
 export default function SearchMinMax({ type }: Props) {
@@ -22,22 +22,23 @@ export default function SearchMinMax({ type }: Props) {
   };
 
   return (
-    <div className="flex flex-col flex-1 gap-2">
+    <div className="flex flex-col flex-1 gap-1">
       <div className="flex w-full items-center gap-1">
-        <span>{type} [</span>
+        <span className="font-semibold">{type} [</span>
         <Button
           variant="secondary"
           size="sm"
           onClick={() => toggleMinMax(type)}
-          className="h-auto w-12 p-0.5"
+          className="mt-1 h-auto w-10"
         >
           {current.type}
         </Button>
-        <span>]</span>
+        <span className="font-semibold">]</span>
       </div>
       <Input
+        disabled={type !== "Chapters"}
         type="number"
-        className="w-full"
+        className="w-full rounded-none"
         value={current.value === 0 ? "" : current.value}
         onChange={(e) => updateValue(e.target.value)}
       />

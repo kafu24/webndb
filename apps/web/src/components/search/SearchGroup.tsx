@@ -40,18 +40,18 @@ export default function SearchGroup({ group }: Props) {
 
     return (
       <>
-        <div className="flex flex-wrap max-w-full gap-2 p-2">
+        <div className="flex flex-wrap max-w-full gap-1 p-2">
           {selectedItems.map((item) => (
             <button
               key={item}
-              className="flex items-center gap-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+              className="flex items-center gap-1 px-2 py-1 text-xs bg-primary text-primary-foreground rounded hover:bg-primary/90"
               onClick={(e) => {
                 e.stopPropagation();
                 removeFromAtom(selectedAtom, item);
               }}
             >
               <span>{item}</span>
-              <IconX className="w-3 h-3" />
+              <IconX size={14} />
             </button>
           ))}
         </div>
@@ -65,9 +65,9 @@ export default function SearchGroup({ group }: Props) {
     const selectedItems = useStore(selectedAtom) ?? [];
 
     return (
-      <div className="flex flex-col gap-2 p-2">
+      <div className="flex flex-col gap-1 p-2">
         {items.map((item, index) => (
-          <div key={item} className="flex items-center gap-1.5">
+          <div key={item} className="flex items-center gap-2 text-sm">
             <Checkbox
               id={`${group}-${index}`}
               checked={selectedItems.includes(item)}
@@ -89,13 +89,15 @@ export default function SearchGroup({ group }: Props) {
   };
 
   return (
-    <div className="flex flex-col flex-1 gap-2 relative">
-      <span>{group}</span>
+    <div className="flex flex-col flex-1 gap-1 relative">
+      <span className="font-semibold">
+        {group === "Staff" ? "Authors" : "Publishers"}
+      </span>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <SearchTypeToggle type={group} />
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-72 p-1 max-h-60 overflow-y-auto">
+        <DropdownMenuContent className="w-70 p-1 max-h-60 overflow-y-auto">
           <DropdownSearch
             placeholder={`Search ${group.toLowerCase()}`}
             // TODO

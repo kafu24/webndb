@@ -66,13 +66,13 @@ export default function SearchReleaseDate() {
     const [isInvalid, setIsInvalid] = React.useState(false);
 
     return (
-      <div className="flex flex-col gap-2">
-        <span>{label}</span>
+      <div className="flex flex-col gap-1">
+        <span className="font-semibold">{label}</span>
         <div className="relative flex gap-2">
           <Input
             value={value}
             placeholder="Any"
-            className={`bg-background pr-10 ${isInvalid ? "border-red-400 focus-visible:ring-red-400" : ""}`}
+            className={`font-medium rounded-none pr-10 w-70 ${isInvalid ? "border-red-400 focus-visible:ring-red-400" : ""}`}
             onChange={(e) => {
               const newDate = new Date(e.target.value);
               setValue(e.target.value);
@@ -84,8 +84,8 @@ export default function SearchReleaseDate() {
               const newDate = new Date(e.target.value);
               setValue(e.target.value);
               if (isValidDate(newDate)) {
-                if (handleDateChange(newDate)) setIsInvalid(false)
-                else setIsInvalid(true)
+                if (handleDateChange(newDate)) setIsInvalid(false);
+                else setIsInvalid(true);
                 setMonth(newDate);
               }
             }}
