@@ -18,7 +18,10 @@ const { novels } = Astro.props;
               {novel.status}
             </span>
             <div>
-              <Icon name="flag:jp-4x3" class="w-7 h-auto inline shadow mr-1" />
+              <Icon
+                name="flag:jp-4x3"
+                class="w-7 h-auto inline shadow mr-1 mb-1"
+              />
               <a
                 href={`/novel/${novel.novel_id}`}
                 class="text-lg font-bold hover:underline leading-snug"
@@ -43,12 +46,12 @@ const { novels } = Astro.props;
           </span>
         </div>
         <div>
-          {novel.genres?.map((genre) => (
+          {novel.tags?.map((tag) => (
             <a
-              href={`/genre/${genre}`}
+              href={`/tag/${tag}`}
               class="inline-flex px-2 py-1 mr-1 mb-1 bg-accent hover:bg-accent/80 font-semibold rounded text-sm transition-colors shadow"
             >
-              {genre}
+              {tag}
             </a>
           ))}
         </div>

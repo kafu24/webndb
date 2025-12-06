@@ -41,12 +41,10 @@ import { Icon } from "astro-icon/components";
         Theme
       </Button>
     </div>
-    <div class="flex flex-col gap-0.5 p-2">
-      <!-- TODO: link, signout if signed in -->
-      <Button class="justify-center w-full font-semibold"> Sign In </Button>
-      <!-- TODO: link, only show if not signed in-->
-      <Button variant="ghost" class="justify-center w-full font-semibold">
-        Register
+    <div class="flex p-2 pt-1">
+      <!-- TODO: only show if not signed in -->
+      <Button href="/login" class="justify-center w-full font-semibold">
+        Sign In
       </Button>
     </div>
   </div>
@@ -59,30 +57,30 @@ import { Icon } from "astro-icon/components";
       <h3>Choose a theme</h3>
     </DropdownLabel>
     <DropdownSeparator />
-    <div class="flex flex-col gap-0.5 p-2">
+    <div class="flex flex-col py-2">
       <Button
         variant="ghost"
-        class="theme-option justify-start"
+        class="theme-option justify-start rounded-none"
         data-theme="light"
       >
         <Icon name="tabler:sun" />
-        <span>Light</span>
+        <span class="ml-1">Light</span>
       </Button>
       <Button
         variant="ghost"
-        class="theme-option justify-start"
+        class="theme-option justify-start rounded-none"
         data-theme="dark"
       >
         <Icon name="tabler:moon-stars" />
-        <span>Dark</span>
+        <span class="ml-1">Dark</span>
       </Button>
       <Button
         variant="ghost"
-        class="theme-option justify-start"
+        class="theme-option justify-start rounded-none"
         data-theme="system"
       >
         <Icon name="tabler:device-desktop" />
-        <div class="flex flex-col items-start">
+        <div class="flex flex-col items-start ml-1">
           <span>System</span>
           <span class="text-xs text-muted-foreground">
             Follow system preference
@@ -91,11 +89,11 @@ import { Icon } from "astro-icon/components";
       </Button>
       <Button
         variant="ghost"
-        class="theme-option justify-start"
+        class="theme-option justify-start rounded-none"
         data-theme="custom"
       >
         <Icon name="tabler:adjustments-horizontal" />
-        <div class="flex flex-col items-start">
+        <div class="flex flex-col items-start ml-1">
           <span>Custom</span>
           <span class="text-xs text-muted-foreground">
             Create a custom theme

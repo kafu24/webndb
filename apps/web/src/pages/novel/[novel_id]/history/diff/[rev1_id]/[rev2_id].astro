@@ -19,10 +19,11 @@ const revision1 = {
     description: "description description",
     author: "Author",
     publisher: "Publisher",
+    publishing_year: "2024",
     status: "Ongoing",
-    genres: ["Fantasy", "Adventure", "Action"],
+    tags: ["Fantasy", "Adventure", "Action"],
     original_language: "Japanese",
-    available_languages: "English, Japanese",
+    alternative_titles: ["title1", "title2"],
   },
 };
 
@@ -37,10 +38,11 @@ const revision2 = {
     description: "desc",
     author: "Author author",
     publisher: "Publisher",
+    publishing_year: "2025",
     status: "Completed",
-    genres: ["Fantasy", "Adventure"],
+    tags: ["Fantasy", "Adventure"],
     original_language: "Japanese",
-    available_languages: "English",
+    alternative_titles: ["title1", "title2"],
   },
 };
 
@@ -72,11 +74,16 @@ const fields = [
     old: revision2.novel.publisher,
     new: revision1.novel.publisher,
   },
+  {
+    label: "Publishing Year",
+    old: revision2.novel.publishing_year,
+    new: revision1.novel.publishing_year,
+  },
   { label: "Status", old: revision2.novel.status, new: revision1.novel.status },
   {
-    label: "Genres",
-    old: revision2.novel.genres.join(", "),
-    new: revision1.novel.genres.join(", "),
+    label: "Tags",
+    old: revision2.novel.tags.join(", "),
+    new: revision1.novel.tags.join(", "),
   },
   {
     label: "Original Language",
@@ -84,9 +91,9 @@ const fields = [
     new: revision1.novel.original_language,
   },
   {
-    label: "Available Languages",
-    old: revision2.novel.available_languages,
-    new: revision1.novel.available_languages,
+    label: "Alternative Title(s)",
+    old: revision2.novel.alternative_titles.join(", "),
+    new: revision2.novel.alternative_titles.join(", "),
   },
 ];
 
