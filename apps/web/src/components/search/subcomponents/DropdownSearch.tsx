@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import * as React from "react";
-import { IconHome } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 
 interface Props {
   placeholder?: string;
@@ -14,11 +14,11 @@ export default function DropdownSearch({
   onChange,
 }: Props) {
   return (
-    <div className="relative p-1">
-      <IconHome className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 pointer-events-none" />
+    <div className="relative p-1 pb-0">
+      <IconSearch className="absolute left-3.5 top-6/11 -translate-y-1/2 w-4 pointer-events-none" />
       <Input
         placeholder={placeholder}
-        className="pl-9 bg-accent"
+        className="pl-8.5 bg-accent"
         value={value}
         onChange={onChange}
       />

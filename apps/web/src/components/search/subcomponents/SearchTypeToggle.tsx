@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { useStore } from "@nanostores/react";
-import { IconHome } from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import { filterMap } from "@/stores/search";
 
 interface Props {
@@ -16,12 +16,12 @@ const SearchTypeToggle = React.forwardRef<HTMLButtonElement, Props>(
     return (
       <Button
         variant="secondary"
-        className="flex w-full justify-between font-bold"
+        className="flex w-70 justify-between bg-accent hover:bg-accent/80 rounded"
         ref={ref}
         {...rest}
       >
         <span className="truncate flex-1 text-left">{displayText}</span>
-        <IconHome />
+        <IconChevronDown />
       </Button>
     );
   },

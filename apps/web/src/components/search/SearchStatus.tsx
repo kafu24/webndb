@@ -3,12 +3,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { supportedStatuses } from "@/components/search/data/statuses";
+import { SUPPORTED_STATUSES } from "@/data/novels";
 import { useStore } from "@nanostores/react";
 import { Button } from "@/components/ui/button";
 import { $selectedStatuses, addToAtom, removeFromAtom } from "@/stores/search";
 import * as React from "react";
-import { IconHome } from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
@@ -23,31 +23,28 @@ export default function SearchStatus() {
       return (
         <Button
           variant="secondary"
-          className="flex w-full justify-between font-bold"
+          className="flex w-70 justify-between bg-accent hover:bg-accent/80 rounded"
           ref={ref}
           {...rest}
         >
           <span className="truncate flex-1 text-left">{displayText}</span>
-          <IconHome />
+          <IconChevronDown />
         </Button>
       );
     },
   );
 
   return (
-    <div className="flex flex-col flex-1 gap-2 relative">
-      <span>Publication Status</span>
+    <div className="flex flex-col flex-1 gap-1 relative">
+      <span className="font-semibold">Publication Status</span>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <SearchStatusesToggle />
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="start"
-          className="w-144 p-1 max-h-60 overflow-y-auto"
-        >
-          <div className="flex flex-col gap-2 p-2">
-            {supportedStatuses.map((status) => (
-              <div key={status} className="flex items-center gap-1.5">
+        <DropdownMenuContent align="start">
+          <div className="flex flex-col gap-2 p-2 w-68">
+            {SUPPORTED_STATUSES.map((status) => (
+              <div key={status} className="flex items-center gap-2">
                 <Checkbox
                   id={`$search-${status}`}
                   checked={selectedStatuses.includes(status)}
@@ -58,7 +55,7 @@ export default function SearchStatus() {
                 />
                 <Label
                   htmlFor={`$search-${status}`}
-                  className="flex-1 cursor-pointer text-md"
+                  className="flex-1 cursor-pointer font-medium"
                 >
                   {status}
                 </Label>

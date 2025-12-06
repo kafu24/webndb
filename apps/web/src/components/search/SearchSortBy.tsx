@@ -1,5 +1,5 @@
 import { $selectedSortBy } from "@/stores/search";
-import { supportedSortBy } from "@/components/search/data/sortBy";
+import { SUPPORTED_SORT_BY } from "@/data/sortBy";
 import { useStore } from "@nanostores/react";
 import {
   DropdownMenu,
@@ -8,37 +8,40 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { IconHome } from "@tabler/icons-react";
+import { IconChevronDown } from "@tabler/icons-react";
 
 export default function SearchSortBy() {
   const selectedSortBy = useStore($selectedSortBy);
 
   return (
-    <div className="flex flex-col gap-2">
-      <span>Sort By</span>
-      <DropdownMenu>
+    <div className="flex gap-1">
+      <span className="font-semibold mt-1">Sort By</span>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="secondary"
-            className="flex w-full justify-between font-bold"
+            className="flex justify-between rounded text-left w-40 px-3"
           >
-            <span>{selectedSortBy}</span>
-            <IconHome />
+            {selectedSortBy}
+            <IconChevronDown />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          {supportedSortBy.map((option) => (
+        <DropdownMenuContent
+          align="start"
+          avoidCollisions={false}
+          className="max-h-60 overflow-y-auto w-40 p-0"
+        >
+          {SUPPORTED_SORT_BY.map((option) => (
             <DropdownMenuItem
               key={`search-sort-${option}`}
               onClick={() => $selectedSortBy.set(option)}
-              className={`flex justify-between ${
+              className={`flex rounded-none font-semibold ${
                 selectedSortBy === option
                   ? "pointer-events-none opacity-50"
                   : ""
               }`}
             >
               <span>{option}</span>
-              {selectedSortBy === option && <IconHome />}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

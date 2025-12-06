@@ -1,9 +1,9 @@
 import { atom, type PreinitializedWritableAtom } from "nanostores";
-import { type Language } from "@/components/search/data/languages";
-import { type Tag, type TagState } from "@/components/search/data/tags";
-import { type Status } from "@/components/search/data/statuses";
-import { type MinMaxState } from "@/components/search/data/minMax";
-import { type SortBy } from "@/components/search/data/sortBy";
+import { type Language } from "@/data/languages";
+import { type Tag, type TagState } from "@/data/tags";
+import { type Status } from "@/data/novels";
+import { type MinMaxState } from "@/data/minMax";
+import { type SortBy } from "@/data/sortBy";
 
 export const $selectedOriginalLanguages = atom<Language[]>([]);
 export const $selectedAvailableLanguages = atom<Language[]>([]);
@@ -111,7 +111,6 @@ export const updateLatestDate = (date: Date | undefined): boolean => {
   });
   return true;
 };
-
 
 export function resetAllFilters() {
   Object.values(filterMap).forEach((atom) => atom.set([]));

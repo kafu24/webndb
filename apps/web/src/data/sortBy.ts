@@ -1,4 +1,4 @@
-export const supportedSortBy = [
+const SUPPORTED_SORT_BY = [
   "Latest Update",
   "Oldest Update",
   "Latest Added",
@@ -17,4 +17,6 @@ export const supportedSortBy = [
   "Least Reviews",
 ] as const;
 
-export type SortBy = (typeof supportedSortBy)[number];
+type SortBy = (typeof SUPPORTED_SORT_BY)[number];
+
+export { SUPPORTED_SORT_BY, SortBy };
