@@ -18,15 +18,7 @@ const novel = {
   image:
     "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
   status: "Ongoing",
-  genres: [
-    "genre1",
-    "genre1",
-    "genre1",
-    "genre1",
-    "genre1",
-    "genre1",
-    "genre1",
-  ],
+  tags: ["tag1", "tag1", "tag1", "tag1", "tag1", "tag1", "tag1"],
   rating: "9.2",
   num_ratings: "520",
   num_reviews: "102",
@@ -135,7 +127,7 @@ const chapters = [
             id="novel-title"
             class="font-bold h-30 block break-words leading-[1.1] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white invisible"
           >
-            <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
+            <Icon name="flag:jp-4x3" class="inline shadow mr-1 mb-1" />
             {novel.title}
           </span>
           <div class="flex items-end mb-1 z-25">
@@ -145,7 +137,9 @@ const chapters = [
               by Author Author AuthorAuthor Author Author
             </span>
             <div class="absolute right-0">
-              <Button size="sm"> <Icon name="tabler:edit" /> </Button>
+              <Button href={`/novel/${novel.novel_id}/edit`} size="sm">
+                <Icon name="tabler:edit" />
+              </Button>
               <Button href={`/novel/${novel.novel_id}/history`} size="sm"
                 ><Icon name="tabler:history" /></Button
               >
@@ -199,28 +193,19 @@ const chapters = [
             <p><b class="font-semibold">Publisher:</b> Publisher</p>
             <p><b class="font-semibold">Publishing Year:</b> 2025</p>
           </div>
-          <div class="space-y-1">
-            <p><b class="font-semibold">Original Language:</b> Japanese</p>
-            <p>
-              <b class="font-semibold">Available Language(s):</b> English, Japanese
-            </p>
+          <div>
+            <div class="space-y-1">
+              <p><b class="font-semibold">Original Language:</b> Japanese</p>
+              <p>
+                <b class="font-semibold">Available Language(s):</b> Japanese, English
+              </p>
+            </div>
           </div>
           <div class="space-y-1">
             <div>
-              <b class="font-semibold">Translator(s):</b>
-              <p>Translator1</p>
-              <p>Translator2</p>
-            </div>
-            <div>
               <b class="font-semibold">Alternative Title(s):</b>
-              <p>
-                <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
-                title1
-              </p>
-              <p>
-                <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
-                title2
-              </p>
+              <p>title1</p>
+              <p>title2</p>
             </div>
           </div>
         </div>
@@ -230,26 +215,27 @@ const chapters = [
         class="flex flex-1 gap-4 h-40 lg:h-auto relative mb-2 overflow-hidden"
       >
         <div class="flex-2">
-          <div class="mb-1">
-            <span class="text-lg font-bold">GENRES</span>
-            <div class="flex flex-wrap">
-              {
-                novel.genres.map((genre) => (
-                  <a
-                    href={`/genre/${genre}`}
-                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
-                  >
-                    {genre}
-                  </a>
-                ))
-              }
-            </div>
-          </div>
           <div class="mb-2">
             <span class="text-lg font-bold">DESCRIPTION</span>
             <p class="text-foreground/90 leading-snug text-sm">
               {novel.description}
             </p>
+          </div>
+
+          <div class="mb-1">
+            <span class="text-lg font-bold">TAGS</span>
+            <div class="flex flex-wrap">
+              {
+                novel.tags.map((tag) => (
+                  <a
+                    href={`/tag/${tag}`}
+                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
+                  >
+                    {tag}
+                  </a>
+                ))
+              }
+            </div>
           </div>
 
           <div class="mb-1 w-full lg:w-42 flex-shrink-0 block lg:hidden">
@@ -283,51 +269,24 @@ const chapters = [
               <div class="flex flex-col gap-2">
                 <div class="space-y-1 min-w-40">
                   <p>
-                    <b class="font-semibold">Original Language:</b>
-                    Japanese
+                    <b class="font-semibold">Original Language:</b> Japanese
                   </p>
                   <p>
-                    <b class="font-semibold">Available Language(s):</b>
-                    English, Japanese
+                    <b class="font-semibold">Available Language(s):</b> Japanese,
+                    English
                   </p>
                 </div>
                 <div class="flex gap-4 space-y-1 min-w-40">
                   <div>
-                    <b class="font-semibold">Translator(s):</b>
-                    <p>Translator1</p>
-                    <p>Translator2</p>
-                  </div>
-                  <div>
                     <b class="font-semibold">Alternative Title(s):</b>
-                    <p>
-                      <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
-                      title1
-                    </p>
-                    <p>
-                      <Icon name="flag:jp-4x3" class="inline shadow mr-1" />
-                      title2
-                    </p>
+                    <p>title1</p>
+                    <p>title2</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="mb-1">
-            <span class="text-lg font-bold">TAGS</span>
-            <div class="flex flex-wrap">
-              {
-                novel.genres.map((genre) => (
-                  <a
-                    href={`/genre/${genre}`}
-                    class="bg-accent hover:bg-accent/80 px-2 py-1 mr-1 mb-1 font-semibold rounded text-sm"
-                  >
-                    {genre}
-                  </a>
-                ))
-              }
-            </div>
-          </div>
           <div class="mb-2">
             <span class="text-lg font-bold">LINKS</span>
             <div
@@ -557,7 +516,7 @@ const chapters = [
                                 <span class="block font-medium line-clamp-2 max-[1282px]:line-clamp-3 max-[548px]:text-xs">
                                   <Icon
                                     name={`flag:${entry.language}-4x3`}
-                                    class="shadow inline mr-1"
+                                    class="shadow inline mr-1 mb-1"
                                   />
                                   {entry.title}
                                 </span>

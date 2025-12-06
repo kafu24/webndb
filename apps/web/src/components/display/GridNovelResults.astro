@@ -60,9 +60,9 @@ const { novels } = Astro.props;
         </div>
         <div class="text-[10px]">
           <div class="flex flex-wrap gap-1 pb-1">
-            {novel.genres?.map((genre) => (
+            {novel.tags?.map((tag) => (
               <span class="px-1 py-0.5 bg-white/20 rounded font-medium">
-                {genre}
+                {tag}
               </span>
             ))}
           </div>
