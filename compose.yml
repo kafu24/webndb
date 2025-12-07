@@ -61,6 +61,7 @@ services:
     depends_on:
       - master
       - meili
+      - keycloak
   meili:
     image: getmeili/meilisearch:v1.23.0
     ports:
