@@ -1,0 +1,102 @@
+---
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/starwind/pagination";
+let currentPage: number = 6;
+const maxPage: number = 10;
+
+// TODO: on-demand rendering so searchparams available
+// const baseParams = new URLSearchParams(Astro.url.searchParams);
+// const refererStr = Astro.request.headers.get('Referer');
+
+// if (refererStr) {
+//   const refererUrl = new URL(refererStr)
+//   currentPage = Number(refererUrl.searchParams.get("page"));
+//   console.log(refererUrl)
+// }
+
+// console.log(currentPage)
+// const buildPageHref = (page: number) => {
+//   const params = new URLSearchParams(baseParams);
+//   params.set("page", String(page));
+//   return `?${params.toString()}`;
+// }
+
+let showStartEllipsis = false;
+let showEndEllipsis = false;
+let pages: number[] = [];
+
+const range = (start: number, end: number) => {
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+};
+
+if (maxPage <= 7) {
+  pages = range(1, maxPage);
+} else if (currentPage <= 4) {
+  pages = range(1, currentPage + 2);
+  showEndEllipsis = true;
+} else if (currentPage >= maxPage - 3) {
+  pages = range(currentPage - 2, maxPage);
+  showStartEllipsis = true;
+} else {
+  pages = range(currentPage - 2, currentPage + 2);
+  showStartEllipsis = true;
+  showEndEllipsis = true;
+}
+---
+
+<Pagination>
+  <PaginationContent>
+    <PaginationPrevious
+      href={`?page=${currentPage - 1}`}
+      class={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+    >
+      Prev
+    </PaginationPrevious>
+    {
+      showStartEllipsis && (
+        <>
+          <PaginationItem>
+            <PaginationLink href={`?page=1`}>1</PaginationLink>
+          </PaginationItem>
+          <PaginationEllipsis />
+        </>
+      )
+    }
+    {
+      pages.map((page) => (
+        <PaginationItem>
+          <PaginationLink
+            href={`?page=${page}`}
+            isActive={page === currentPage}
+            class={page === currentPage ? "pointer-events-none opacity-50" : ""}
+          >
+            {page}
+          </PaginationLink>
+        </PaginationItem>
+      ))
+    }
+    {
+      showEndEllipsis && (
+        <>
+          <PaginationEllipsis />
+          <PaginationItem>
+            <PaginationLink href={`?page=${maxPage}`}>{maxPage}</PaginationLink>
+          </PaginationItem>
+        </>
+      )
+    }
+    <PaginationNext
+      href={`?page=${currentPage + 1}`}
+      class={currentPage === maxPage ? "pointer-events-none opacity-50" : ""}
+    >
+      Next
+    </PaginationNext>
+  </PaginationContent>
+</Pagination>

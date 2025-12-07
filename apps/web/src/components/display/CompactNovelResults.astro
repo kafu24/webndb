@@ -1,0 +1,109 @@
+---
+import { Icon } from "astro-icon/components";
+
+const { novels } = Astro.props;
+---
+
+<div class="flex flex-col gap-2 pt-2">
+  {
+    novels.map((novel) => (
+      <div
+        data-row
+        class="@container border-2 rounded-md h-[160px] p-2 overflow-hidden relative bg-popover"
+      >
+        <a href={`/novel/${novel.novel_id}`}>
+          <img
+            src={novel.image}
+            class="h-[140px] aspect-[5/7] rounded-md shadow float-left mr-2 object-cover"
+          />
+        </a>
+        <div>
+          <span class="float-right flex items-center gap-0.5 lg:gap-1 text-green-400 pl-2 bg-accent rounded py-0.5 pr-2 text-sm lg:text-md font-semibold shadow ml-2">
+            <Icon name="tabler:circle-dot" class="w-3 h-3 lg:w-4 lg:h-4" />
+            {novel.status}
+          </span>
+          <div class="pb-1 lg:pb-1.5">
+            <Icon
+              name="flag:jp-4x3"
+              class="w-6 lg:w-7 h-auto inline shadow mr-1"
+            />
+            <a
+              href={`/novel/${novel.novel_id}`}
+              class="lg:text-lg font-bold hover:underline leading-tight lg:leading-snug"
+            >
+              {novel.title}
+            </a>
+          </div>
+        </div>
+        <div>
+          <div
+            class="flex flex-col @[300px]:flex-row pb-0.5 @[300px]:gap-4 @[300px]:lg:gap-8
+              text-sm @[300px]:lg:text-md float-none md:float-right md:pl-8 w-auto md:pt-0.5 @[300px]:lg:pt-1"
+          >
+            <span class="flex items-center gap-1">
+              <Icon name="tabler:bookmark" class="w-3 h-3 lg:w-4 lg:h-4" />
+              {novel.rating}/{novel.num_ratings}
+            </span>
+            <span class="flex items-center gap-0.5">
+              <Icon name="tabler:message" class="w-3 h-3 lg:w-4 lg:h-4" />
+              {novel.num_reviews}
+            </span>
+            <span class="flex items-center gap-0.5">
+              <Icon name="tabler:user-plus" class="w-3 h-3 lg:w-4 lg:h-4" />
+              {novel.readers}
+            </span>
+          </div>
+          <div class="inline">
+            {novel.genres?.map((genre) => (
+              <a
+                href={`/genre/${genre}`}
+                class="inline-flex px-2 py-1 lg:py-1 mr-1 mb-1 bg-accent hover:bg-accent/80 font-semibold rounded text-xs lg:text-sm transition-colors shadow"
+              >
+                {genre}
+              </a>
+            ))}
+          </div>
+        </div>
+        <p class="text-xs lg:text-sm leading-tight lg:leading-snug">
+          {novel.description}
+        </p>
+        <button
+          data-expand-btn
+          class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent"
+        >
+          <Icon name="tabler:chevron-compact-down" class="pt-0.5 w-full" />
+        </button>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const rows = document.querySelectorAll<HTMLElement>("[data-row]");
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      entries.forEach((entry) => {
+        const row = entry.target as HTMLElement;
+        const btn = row.querySelector<HTMLButtonElement>("[data-expand-btn]");
+        btn.style.display = row.scrollHeight > row.clientHeight ? "" : "none";
+      });
+    });
+
+    rows.forEach((row) => {
+      const btn = row.querySelector<HTMLButtonElement>("[data-expand-btn]");
+
+      if (row.scrollHeight <= row.clientHeight) {
+        btn.style.display = "none";
+      }
+
+      resizeObserver.observe(row);
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        btn.style.display = "none";
+        row.style.height = "auto";
+      });
+    });
+  });
+</script>

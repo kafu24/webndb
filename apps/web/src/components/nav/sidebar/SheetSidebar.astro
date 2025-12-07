@@ -1,0 +1,57 @@
+---
+import { Button } from "@/components/starwind/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/starwind/sheet";
+import { Icon } from "astro-icon/components";
+
+const { menuItems } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<aside id="sheet-sidebar" class="block md:hidden">
+  <Sheet>
+    <SheetTrigger asChild>
+      <Button
+        variant="ghost"
+        size="md"
+        class="rounded-full p-2 hover:bg-foreground/10 [&_svg]:size-5"
+      >
+        <Icon name="tabler:layout-sidebar" />
+      </Button>
+    </SheetTrigger>
+    <SheetContent side="left" class="bg-popover gap-0">
+      <div class="flex flex-row justify-between items-center h-16 p-2">
+        <a href="/" class="flex items-center p-2 gap-2 text-3xl font-bold">
+          <!-- TODO: logo -->
+          <Icon name="tabler:home" />
+          WebNDB
+        </a>
+      </div>
+      <ul class="flex flex-1 flex-col p-2">
+        <li class="flex w-full min-w-0 flex-col gap-1">
+          {
+            menuItems.map((item) => (
+              <a href={item.href}>
+                <button
+                  class={`${item.href === currentPath ? "bg-foreground/5 pointer-events-none" : "hover:bg-foreground/8"} flex w-full items-center rounded px-4 py-1.5 gap-2 font-normal !text-lg`}
+                >
+                  <Icon name={`tabler:${item.icon}`} class="w-6 h-6" />
+                  <span>{item.label}</span>
+                </button>
+              </a>
+            ))
+          }
+        </li>
+      </ul>
+      <div
+        class="flex flex-col p-2 items-stretch text-center text-md gap-0.5 border-t mt-auto"
+      >
+        <div class="flex gap-8 mx-auto">
+          <a href="/about" class="hover:underline">About</a>
+          <a href="/api" class="hover:underline">API</a>
+        </div>
+        <a href="/compliance" class="hover:underline">Terms &amp; Policies</a>
+        <span>© 2025 WebNDB</span>
+      </div>
+    </SheetContent>
+  </Sheet>
+</aside>

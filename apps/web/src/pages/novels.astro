@@ -1,0 +1,40 @@
+---
+import NovelResults from "@/components/display/NovelResults.astro";
+import SearchFilter from "@/components/search/SearchFilter";
+import Pagination from "@/components/search/SearchPagination.astro";
+import { Button } from "@/components/starwind/button";
+import { Input } from "@/components/starwind/input";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Copy from "@tabler/icons/outline/copy.svg";
+---
+
+<BaseLayout>
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <!-- TODO: icon -->
+      <Copy /><h1 class="text-4xl font-semibold">Search Novels</h1>
+    </div>
+    <div class="relative">
+      <Copy
+        class="absolute left-1 top-6 -translate-y-1/2 text-gray-500 w-10 pointer-events-none"
+      />
+    </div>
+    <div class="flex gap-2">
+      <Input size="lg" placeholder="Search" class="pl-11 bg-accent" />
+      <Button>Search</Button>
+      <!-- TODO: icon -->
+      <Button id="search-filter-toggle" class="flex">
+        <span id="search-filter-toggle-text"> Show Filters </span>
+        <Copy
+          id="search-filter-toggle-icon"
+          class="transition-transform duration-150"
+        />
+      </Button>
+    </div>
+    <SearchFilter client:load />
+    <NovelResults />
+    <!-- TODO: fallback loading -->
+
+    <Pagination />
+  </div>
+</BaseLayout>

@@ -30,6 +30,10 @@
     {
       "name": "sheet",
       "version": "1.0.0"
+    },
+    {
+      "name": "pagination",
+      "version": "2.1.0"
     }
   ]
 }
