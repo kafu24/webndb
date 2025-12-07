@@ -109,7 +109,6 @@ NovelEndReleaseDateType = Annotated[
     ),
 ]
 
-
 NovelStatusType = Annotated[
     PublicationStatus,
     Meta(
@@ -118,7 +117,6 @@ NovelStatusType = Annotated[
         examples=[PublicationStatus.ONGOING],
     ),
 ]
-
 
 NovelTitleType = Annotated[
     str,
