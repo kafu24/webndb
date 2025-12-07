@@ -49,6 +49,15 @@ class PublicationStatus(StrEnum):
     UNKNOWN = 'unknown'
 
 
+class Gender(StrEnum):
+    """Gender."""
+
+    MALE = 'male'
+    FEMALE = 'female'
+    OTHER = 'other'
+    UNKNOWN = 'unknown'
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     metadata = MetaData(
         naming_convention={
@@ -67,6 +76,9 @@ class Base(AsyncAttrs, DeclarativeBase):
             PublicationStatus,
             name='publication_status',
             values_callable=lambda x: [e.value for e in x],
+        ),
+        Gender: Enum(
+            Gender, name='gender', values_callable=lambda x: [e.value for e in x]
         ),
     }
 
