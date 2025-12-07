@@ -21,9 +21,14 @@ from sqlalchemy.types import BigInteger, Boolean, Enum, Integer, SmallInteger, T
 
 from .const import (
     CHAPTER_ORDER_MAX,
+    EXTLINK_MAX_LEN,
     NOVEL_DESCRIPTION_MAX,
     NOVEL_TITLE_MAX,
     RELEASE_TITLE_MAX,
+    STAFF_ALIAS_NAME_MAX,
+    STAFF_ALIASES_MAX,
+    STAFF_DESCRIPTION_MAX,
+    STAFF_EXTTLINK_MAX,
     VOLUME_ORDER_MAX,
     VOLUME_TITLE_MAX,
 )
@@ -58,6 +63,25 @@ class Gender(StrEnum):
     UNKNOWN = 'unknown'
 
 
+class StaffType(StrEnum):
+    """Type of entity involved in the creation of a novel."""
+
+    PERSON = 'person'
+    GROUP = 'group'
+    COMPANY = 'company'
+    OTHER = 'other'
+
+
+class StaffRole(StrEnum):
+    """Staff member's role in the creation of a novel."""
+
+    AUTHOR = 'author'
+    ARTIST = 'artist'
+    EDTIOR = 'editor'
+    TRANSLATOR = 'translator'
+    STAFF = 'staff'
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     metadata = MetaData(
         naming_convention={
@@ -79,6 +103,12 @@ class Base(AsyncAttrs, DeclarativeBase):
         ),
         Gender: Enum(
             Gender, name='gender', values_callable=lambda x: [e.value for e in x]
+        ),
+        StaffType: Enum(
+            StaffType, name='staff_type', values_callable=lambda x: [e.value for e in x]
+        ),
+        StaffRole: Enum(
+            StaffRole, name='staff_role', values_callable=lambda x: [e.value for e in x]
         ),
     }
 
@@ -425,5 +455,181 @@ def distribute_ch_release(target, connection, **kw):
         text(
             'SELECT create_distributed_table('
             "'ch_release', 'novel_id', colocate_with => 'novel')"
+        )
+    )
+
+
+class Staff(Base):
+    __tablename__ = 'staff'
+
+    staff_id: Mapped[int] = mapped_column(
+        BigInteger, Identity(always=True), primary_key=True
+    )
+    staff_type: Mapped[StaffType] = mapped_column(server_default=StaffType.PERSON)
+    gender: Mapped[Gender] = mapped_column(server_default=Gender.UNKNOWN)
+    primary_lang: Mapped[Language]
+    main_alias: Mapped[str]
+    description: Mapped[str | None] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'description IS NULL OR char_length(description) <= {STAFF_DESCRIPTION_MAX}',
+            name='staff_description_length',
+        ),
+    )
+
+    # Without uselist=True, SQLAlchemy thinks `langs` and `aliases` are
+    # uselist=False. Guess it has something to do with `staff` having a FK to
+    # `staff_lang` and `staff_alias`.
+    langs: Mapped[list['StaffLang']] = relationship(
+        back_populates='staff',
+        passive_deletes='all',
+        order_by='StaffLang.lang',
+        primaryjoin='Staff.staff_id == StaffLang.staff_id',
+        uselist=True,
+    )
+    aliases: Mapped[list['StaffAlias']] = relationship(
+        back_populates='staff',
+        passive_deletes='all',
+        order_by='StaffAlias.order_pos',
+        primaryjoin='Staff.staff_id == StaffAlias.staff_id',
+        uselist=True,
+    )
+    extlinks: Mapped[list['StaffExtlink']] = relationship(
+        back_populates='staff', passive_deletes='all', order_by='StaffExtlink.order_pos'
+    )
+
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['primary_lang', 'staff_id'],
+            ['staff_lang.lang', 'staff_lang.staff_id'],
+            deferrable=True,
+            initially='DEFERRED',
+        ),
+        ForeignKeyConstraint(
+            ['main_alias', 'staff_id'],
+            ['staff_alias.name', 'staff_alias.staff_id'],
+            deferrable=True,
+            initially='DEFERRED',
+        ),
+    )
+
+
+@event.listens_for(Staff.__table__, 'after_create')
+def distribute_staff(target, connection, **kw):
+    connection.execute(text("SELECT create_distributed_table('staff', 'staff_id')"))
+
+
+class StaffLang(Base):
+    __tablename__ = 'staff_lang'
+
+    staff_id: Mapped[int] = mapped_column(
+        ForeignKey('staff.staff_id', ondelete='CASCADE')
+    )
+    lang: Mapped[Language]
+
+    staff: Mapped[Staff] = relationship(
+        back_populates='langs', primaryjoin='Staff.staff_id == StaffLang.staff_id'
+    )
+
+    __table_args__ = (PrimaryKeyConstraint('staff_id', 'lang'),)
+
+
+@event.listens_for(StaffLang.__table__, 'after_create')
+def distribute_staff_lang(target, connection, **kw):
+    connection.execute(
+        text(
+            'SELECT create_distributed_table('
+            "'staff_lang', 'staff_id', colocate_with => 'staff')"
+        )
+    )
+
+
+class StaffAlias(Base):
+    __tablename__ = 'staff_alias'
+
+    staff_id: Mapped[int] = mapped_column(
+        ForeignKey('staff.staff_id', ondelete='CASCADE')
+    )
+    # Starts counting at 0
+    order_pos: Mapped[int] = mapped_column(
+        SmallInteger,
+        CheckConstraint(
+            f'order_pos < {STAFF_ALIASES_MAX}', name='staff_alias_order_pos_limit'
+        ),
+    )
+    name: Mapped[str] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'char_length(name) <= {STAFF_ALIAS_NAME_MAX}',
+            name='staff_alias_name_length',
+        ),
+    )
+    latin: Mapped[str | None] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'latin IS NULL OR char_length(latin) <= {STAFF_ALIAS_NAME_MAX}',
+            name='staff_alias_latin_length',
+        ),
+    )
+
+    staff: Mapped[Staff] = relationship(
+        back_populates='aliases',
+        primaryjoin='Staff.staff_id == StaffAlias.staff_id',
+        overlaps='staff',
+    )
+
+    __table_args__ = (
+        PrimaryKeyConstraint('staff_id', 'order_pos'),
+        # Trying to prevent duplicate names is very annoying; we'd allow it if
+        # possible, but the unique constraint is needed for the FK in `staff`.
+        UniqueConstraint('name', 'staff_id'),
+    )
+
+
+@event.listens_for(StaffAlias.__table__, 'after_create')
+def distribute_staff_alias(target, connection, **kw):
+    connection.execute(
+        text(
+            'SELECT create_distributed_table('
+            "'staff_alias', 'staff_id', colocate_with => 'staff')"
+        )
+    )
+
+
+# TODO: should improve this to be like VNDB or something where we can give a
+# record a type and know what website it refers to. Should be able to get rid
+# of order_pos and CHECK CONSTRAINT on link.
+class StaffExtlink(Base):
+    __tablename__ = 'staff_extlink'
+
+    staff_id: Mapped[int] = mapped_column(
+        ForeignKey('staff.staff_id', ondelete='CASCADE'), primary_key=True
+    )
+    # Starts counting at 0
+    order_pos: Mapped[int] = mapped_column(
+        SmallInteger,
+        CheckConstraint(
+            f'order_pos < {STAFF_EXTTLINK_MAX}', name='staff_extlink_order_pos_limit'
+        ),
+        primary_key=True,
+    )
+    link: Mapped[str] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'char_length(link) <= {EXTLINK_MAX_LEN}', name='staff_extlink_link_length'
+        ),
+    )
+
+    staff: Mapped[Staff] = relationship(back_populates='extlinks')
+
+    __table_args__ = (UniqueConstraint('staff_id', 'order_pos'),)
+
+
+@event.listens_for(StaffExtlink.__table__, 'after_create')
+def distribute_staff_extlink(target, connection, **kw):
+    connection.execute(
+        text(
+            'SELECT create_distributed_table('
+            "'staff_extlink', 'staff_id', colocate_with => 'staff')"
         )
     )
