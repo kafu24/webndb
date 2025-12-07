@@ -1,7 +1,380 @@
 ---
+import GridNovelResults from "@/components/display/GridNovelResults.astro";
+import { Button } from "@/components/starwind/button";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+
+const randomNovel1 = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  tags: ["tag1", "tag1", "tag1", "tag1", "tag1", "tag1", "tag1"],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+
+const randomNovel2 = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  tags: ["tag1", "tag1", "tag1", "tag1", "tag1", "tag1", "tag1"],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+
+const novel = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  tags: ["tag1", "tag1", "tag1", "tag1", "tag1", "tag1", "tag1"],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+
+const recentReleases = Array.from({ length: 12 }, (_, i) => novel);
+
+const recentChanges = [
+  {
+    revision: 3,
+    type: "Novel",
+    date: "20:05, 2023-10-20",
+    user: "JohnDoe JohnDoe JohnDoeJohnDoe",
+    amount: 150.0,
+    comment:
+      "Initial payment for services rendered. comment comment comment comment comment comment comment comment comment",
+  },
+  {
+    revision: 2,
+    type: "Staff",
+    date: "20:05, 2023-10-01",
+    user: "JaneSmith",
+    amount: 200.0,
+    comment: "Additional fee for extra features requested.",
+  },
+  {
+    revision: 1,
+    type: "Novel",
+    date: "20:05, 2023-09-15",
+    user: "AliceW",
+    amount: 50.0,
+    comment: "Refund for overcharge on previous payment.",
+  },
+];
 ---
 
-<BaseLayout>
-  <h1>Astro</h1>
-</BaseLayout>
+<div class="relative">
+  <div
+    class="flex flex-col justify-between absolute h-108 w-full bg-size-[110%] bg-position-[center_50%]"
+    style={`background-image:url("${randomNovel2.image}")`}
+  >
+  </div>
+
+  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-108"></div>
+  <BaseLayout>
+    <div>
+      <div class="flex gap-8 items-center relative px-16 pt-2 pb-14">
+        <div class="flex-3">
+          <span class="text-5xl font-bold drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white">Welcome to WebNDB!</span>
+          <p class="text-xl leading-relaxed drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white">
+            A comphrensive database of East-Asian novels for an English-speaking
+            audience.
+          </p>
+          <p class="text-lg mt-4 drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white">
+            This website is an open, editable database that can be contributed
+            to with new information or corrections.
+          </p>
+          <div class="flex gap-4 mt-4">
+            <Button size="lg" href="/novels" class="drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)]">
+              Search novels
+            </Button>
+            <Button size="lg" href="/about" class="drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)]" variant="outline">
+              Learn more
+            </Button>
+          </div>
+        </div>
+        <div class="flex-2 relative left-20">
+          <div class="grid grid-cols-2 gap-4 max-w-md">
+            <a href={`/novel/${randomNovel2.novel_id}`}>
+              <img
+                src={randomNovel1.image}
+                class="aspect-[5/7] object-cover rounded-md h-72 w-auto border-border border shadow-lg -rotate-5"
+              />
+              <a href={`/novel/${randomNovel2.novel_id}`}>
+                <img
+                  src={randomNovel2.image}
+                  class="aspect-[5/7] object-cover rounded-md h-72 w-auto border-border border shadow-lg mt-6 absolute left-20 rotate-5"
+                />
+              </a>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Most popular -->
+      <div class="bg-card border border-border rounded-md px-4 pb-3 py-1 mt-4">
+        <div class="flex items-center justify-between">
+          <span class="text-2xl font-bold">Most Popular</span>
+          <div class="flex gap-2">
+            <Button variant="ghost" size="sm" class="text-base" disabled>
+              Weekly
+            </Button>
+            <Button variant="ghost" size="sm" class="text-base">
+              Monthly
+            </Button>
+            <Button variant="ghost" size="sm" class="text-base">
+              All Time
+            </Button>
+          </div>
+        </div>
+        <div
+          class="grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] gap-2 pt-2"
+        >
+          <GridNovelResults
+            novels={Array.from({ length: 10 }, () => ({ ...novel }))}
+          />
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mt-2">
+          <span class="text-2xl font-bold mb-2">Recent Releases</span>
+          <a href="/novels/?...">
+            <button
+              class="flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+            >
+              <Icon name="tabler:list" class="w-4 h-4" />
+              <span>View all</span>
+            </button>
+          </a>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          {
+            recentReleases.slice(0, 8).map((novel) => (
+              <div class="flex gap-4 bg-card border border-border rounded-md p-3">
+                <a href={`/novel/${novel.novel_id}`} class="flex-shrink-0">
+                  <img
+                    src={novel.image}
+                    alt={novel.title}
+                    class="w-25 h-35 object-cover rounded-md border border-border"
+                  />
+                </a>
+                <div class="flex-1 min-w-0">
+                  <a
+                    href={`/novel/${novel.id}`}
+                    class="font-semibold text-lg hover:underline line-clamp-2 mb-1"
+                  >
+                    {novel.title}
+                  </a>
+                  <div class="space-y-1.5">
+                    <div class="flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <a
+                        href={`/novel/${novel.id}/chapter/${novel.chapters?.[0]?.id}`}
+                        class="text-muted-foreground hover:text-foreground hover:underline"
+                      >
+                        {novel.chapters?.[0]?.title || "Chapter 1"}
+                      </a>
+                      <span class="ml-auto text-muted-foreground text-sm">
+                        {novel.chapters?.[0]?.time || "20 minutes ago"}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-muted" />
+                      <a
+                        href={`/novel/${novel.id}/chapter/${novel.chapters?.[1]?.id}`}
+                        class="text-muted-foreground hover:text-foreground "
+                      >
+                        {novel.chapters?.[1]?.title || "Chapter 2"}
+                      </a>
+                      <span class="ml-auto text-muted-foreground text-sm">
+                        {novel.chapters?.[1]?.time || "2 days ago"}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-muted" />
+                      <a
+                        href={`/novel/${novel.id}/chapter/${novel.chapters?.[2]?.id}`}
+                        class="text-muted-foreground hover:text-foreground "
+                      >
+                        {novel.chapters?.[2]?.title || "Chapter 3"}
+                      </a>
+                      <span class="ml-auto text-muted-foreground text-sm">
+                        {novel.chapters?.[2]?.time || "5 days ago"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Recent Changes -->
+      <div></div>
+      <div class="flex items-center justify-between mt-2">
+        <span class="text-2xl font-bold mb-2">Recent Changes</span>
+        <a href="/history">
+          <button
+            class="flex items-center gap-1 px-2 py-1 rounded-md border border-border bg-foreground/5 hover:bg-foreground/8"
+          >
+            <Icon name="tabler:list" class="w-4 h-4" />
+            <span>View all</span>
+          </button>
+        </a>
+      </div>
+      <div class="flex flex-col gap-2">
+        {
+          recentChanges.map((change) => (
+            <div class="bg-card rounded-md border border-border p-2 hover:bg-foreground/8 group">
+              <div class="flex gap-4">
+                <div class="flex-1">
+                  <div class="flex items-center">
+                    <span class="px-2 py-1 bg-accent rounded font-semibold">
+                      {change.type}
+                    </span>
+                    <span class="font-bold ml-2 mr-1 group-hover:underline">
+                      Rev. {change.revision}
+                    </span>
+                    <span>({change.amount})</span>
+                  </div>
+                  <p class="text-muted-foreground break-words ml-2">
+                    {change.comment}
+                  </p>
+                </div>
+
+                <div class="flex flex-col justify-center text-right text-muted-foreground whitespace-nowrap flex-shrink-0 mr-2">
+                  <div class="max-w-[200px] truncate">
+                    by{" "}
+                    <a
+                      href={`/user/${change.user}`}
+                      class="hover:underline"
+                      title={change.user}
+                    >
+                      {change.user}
+                    </a>
+                  </div>
+                  <div>{change.date}</div>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-border pt-3 mt-4">
+      <div class="flex gap-8">
+        <div class="flex-1">
+          <span class="font-bold text-lg mb-4">WebNDB</span>
+          <p class="text-muted-foreground text-sm">
+            An open, community-driven database for East-Asian novels and their
+            translations.
+          </p>
+          <div class="flex gap-2 mt-2">
+            <a
+              href="https://github.com"
+              class="text-muted-foreground hover:text-foreground"
+            >
+              <Icon name="tabler:brand-github" class="w-5 h-5" />
+            </a>
+            <a
+              href="https://discord.com"
+              class="text-muted-foreground hover:text-foreground"
+            >
+              <Icon name="tabler:brand-discord" class="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+        <div class="flex-1">
+          <span class="font-bold">Explore</span>
+          <div class="flex gap-16">
+            <div class="flex flex-col">
+              <a
+                href="/novels"
+                class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+              >
+                Novels
+              </a>
+              <a
+                href="/tags"
+                class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+              >
+                Tags
+              </a>
+              <a
+                href="/publishers"
+                class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+              >
+                Publishers
+              </a>
+            </div>
+            <div class="flex flex-col">
+              <a
+                href="/staff"
+                class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+              >
+                Staff
+              </a>
+              <a
+                href="/forums"
+                class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+              >
+                Forums
+              </a>
+              <a
+                href="/history"
+                class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+              >
+                Recent Changes
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col flex-1">
+          <span class="font-bold">More</span>
+          <a
+            href="/about"
+            class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+          >
+            About
+          </a>
+          <a
+            href="/api"
+            class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+          >
+            API
+          </a>
+          <a
+            href="/compliance"
+            class="hover:underline text-muted-foreground text-sm hover:text-foreground"
+          >
+            Terms & Policies
+          </a>
+        </div>
+      </div>
+    </footer>
+  </BaseLayout>
+</div>
