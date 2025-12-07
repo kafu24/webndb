@@ -19,7 +19,8 @@ const menuItems = [
 ];
 
 const novelRegex = /^\/novel\/\d+(?:\/history(?:\/\d+)?)?\/?$/;
-const novelPath = novelRegex.test(Astro.url.pathname);
+const path = Astro.url.pathname;
+const novelPath = novelRegex.test(path) || path === "/";
 ---
 
 <html lang="en">
@@ -147,7 +148,8 @@ const novelPath = novelRegex.test(Astro.url.pathname);
     largeScreenQuery.addEventListener("change", handleScreenChange);
 
     const novelRegex = /^\/novel\/\d+(?:\/history(?:\/\d+)?)?\/?$/;
-    if (novelRegex.test(window.location.pathname)) {
+    const path = window.location.pathname
+    if (novelRegex.test(path) || path === "/") {
       let bgColor, borderColor, foregroundColor;
 
       navBar.style.borderBottomWidth = "1px";
