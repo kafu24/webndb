@@ -108,20 +108,17 @@ async def callback(
     return None
 
 
-async def retrieve_user_handler(
+async def retrieve_user_id_handler(
     session: dict[str, Any],
     connection: ASGIConnection[Any, Any, Any, Any],
-) -> AuthUser | None:
-    if user_id := session.get('user_id'):
-        async with async_engine.begin() as conn:
-            return await conn.scalar(
-                select(AuthUser).where(AuthUser.user_id == user_id)
-            )
-    return None
+) -> str | None:
+    # Docs make this a retrieve_user_handler, but I think we can't return an
+    # ORM object because metadata stuff from database.py hasn't been set up yet.
+    return session.get('user_id')
 
 
 session_auth = SessionAuth[AuthUser, ServerSideSessionBackend](
-    retrieve_user_handler=retrieve_user_handler,
+    retrieve_user_handler=retrieve_user_id_handler,
     session_backend_config=ServerSideSessionConfig(),
     exclude=['/login', '/callback', '/schema'],
 )
