@@ -1,0 +1,30 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import EditPage from "@/pages/novel/[novel_id]/EditPage";
+
+const image =
+  "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg";
+const originalNovel = {
+  title: "title1",
+  image: "https://images.ranobedb.org/BemgRkCwSP8WScJB.jpg",
+  description: "description description",
+  author: "Author",
+  publisher: "Publisher",
+  publishing_year: "2024",
+  status: "Ongoing",
+  tags: ["Fantasy", "Adventure", "Action"],
+  original_language: "Japanese",
+  alternative_titles: ["title1", "title2"],
+};
+---
+
+<div class="relative">
+  <div class="absolute top-0 left-0 w-full h-64 bg-card border-b border-border">
+  </div>
+
+  <BaseLayout>
+    <EditPage originalNovel={originalNovel} client:load />
+  </BaseLayout>
+</div>
