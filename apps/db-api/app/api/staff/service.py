@@ -44,6 +44,8 @@ async def select_nonexistent_staff_id(
     """Returns sequence of staff_id values that aren't associated with
     a staff record.
     """
+    if not staff_ids:
+        return []
     unnested = func.unnest(array(staff_ids)).column_valued('t')
     stmt = (
         select(unnested)
@@ -252,6 +254,8 @@ async def insert_staff_novel_by_novel_id(
     novel_id: str,
     staff_ids: Sequence[str],
 ) -> Sequence[StaffNovel]:
+    if not staff_ids:
+        return []
     try:
         stmt = insert(StaffNovel).values(
             [{'novel_id': int(novel_id), 'staff_id': int(id)} for id in staff_ids]
