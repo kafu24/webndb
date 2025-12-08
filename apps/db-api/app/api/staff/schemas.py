@@ -249,8 +249,8 @@ class StaffCreateSchema(BaseStruct):
     primary_language: StaffPrimaryLanguageType
     main_alias: StaffMainAliasType
     languages: set[Language]
-    aliases: Annotated[list[StaffAliasSchema], StaffAliasesMeta]
-    extlinks: Annotated[list[StaffExtlinkSchema], StaffExtlinksMeta] = []
+    aliases: Annotated[list[StaffAliasWriteSchema], StaffAliasesMeta]
+    extlinks: Annotated[list[StaffExtlinkWriteSchema], StaffExtlinksMeta] = []
     staff_type: StaffTypeType = StaffType.PERSON
     gender: StaffGenderType = Gender.UNKNOWN
     description: StaffDescriptionType = JSON_NULL
@@ -266,8 +266,8 @@ class StaffUpdateSchema(BaseStruct):
     primary_language: StaffPrimaryLanguageType = UNSET
     main_alias: StaffMainAliasType = UNSET
     languages: set[Language] = UNSET
-    aliases: Annotated[list[StaffAliasSchema], StaffAliasesMeta] = UNSET
-    extlinks: Annotated[list[StaffExtlinkSchema], StaffExtlinksMeta] = UNSET
+    aliases: Annotated[list[StaffAliasWriteSchema], StaffAliasesMeta] = UNSET
+    extlinks: Annotated[list[StaffExtlinkWriteSchema], StaffExtlinksMeta] = UNSET
     staff_type: StaffTypeType = UNSET
     gender: StaffGenderType = UNSET
     description: StaffDescriptionType = UNSET
