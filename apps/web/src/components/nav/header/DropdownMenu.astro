@@ -32,7 +32,7 @@ import { Icon } from "astro-icon/components";
     </div>
     <DropdownSeparator />
     <div class="flex gap-0.5 p-2">
-      <Button variant="ghost" class="flex-1">
+      <Button id="settings-button" variant="ghost" class="flex-1">
         <Icon name="tabler:settings" />
         Settings
       </Button>
@@ -106,11 +106,13 @@ import { Icon } from "astro-icon/components";
 
 <script>
   import { themeManager, type Theme } from "@/stores/theme";
+  import { navigate } from "astro:transitions/client";
 
   document.addEventListener("astro:page-load", () => {
     const menuContainer = document.getElementById("menu-container");
     const mainMenu = document.getElementById("main-menu");
     const themeMenu = document.getElementById("theme-menu");
+    const settingsButton = document.getElementById("settings-button");
     const themeButton = document.getElementById("theme-button");
     const backButton = document.getElementById("back-button");
     const themeOptions = themeMenu.querySelectorAll(".theme-option");
@@ -144,6 +146,11 @@ import { Icon } from "astro-icon/components";
         }
       });
     };
+
+    settingsButton?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      navigate("/settings");
+    });
 
     themeButton?.addEventListener("click", (e) => {
       e.stopPropagation();

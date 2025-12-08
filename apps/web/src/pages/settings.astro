@@ -1,0 +1,21 @@
+---
+import { Button } from "@/components/starwind/button";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SettingsPage from "@/pages/SettingsPage";
+import BackScript from "@/utils/BackScript.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<BaseLayout>
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
+        <Icon name="tabler:arrow-narrow-left" />
+      </Button>
+      <h1 class="text-4xl font-semibold">Settings</h1>
+    </div>
+    <SettingsPage client:load />
+  </div>
+</BaseLayout>
+
+<BackScript />
