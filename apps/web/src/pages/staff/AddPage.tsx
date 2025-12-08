@@ -6,7 +6,6 @@ import {
   IconChevronDown,
 } from "@tabler/icons-react";
 import { SUPPORTED_LANGUAGES } from "@/data/languages";
-import axios from "axios";
 
 const STAFF_TYPES = ["person", "group", "company", "other"];
 const GENDERS = ["male", "female", "other", "unknown"];
@@ -15,19 +14,15 @@ export default function StaffAddPage() {
   const [staff, setStaff] = useState({
     staff_type: "Select Person",
     gender: "Select Gender",
-    primary_language: "Select Language",
-    main_alias: "",
-    description: "",
-    languages: [],
     aliases: [{ name: "", latin: "" }],
+    languages: ["Select Primary Language"],
     extlinks: [{ link: "" }],
+    description: "",
   });
 
   const [openLanguagesIndex, setOpenLanguagesIndex] = useState(null);
   const [openStaffTypeDropdown, setOpenStaffTypeDropdown] = useState(false);
   const [openGenderDropdown, setOpenGenderDropdown] = useState(false);
-  const [openPrimaryLanguageDropdown, setOpenPrimaryLanguageDropdown] =
-    useState(false);
   const [submitErrorMessage, setSubmitErrorMessage] = useState("");
   const [languageErrorMessage, setLanguageErrorMessage] = useState("");
   const [aliasErrorMessage, setAliasErrorMessage] = useState("");
@@ -37,7 +32,6 @@ export default function StaffAddPage() {
   const dropdownRefs = useRef({});
   const staffTypeDropdownRef = useRef(null);
   const genderDropdownRef = useRef(null);
-  const primaryLanguageDropdownRef = useRef(null);
 
   const handleChange = (field, value) => {
     setStaff((prev) => ({ ...prev, [field]: value }));
@@ -56,6 +50,7 @@ export default function StaffAddPage() {
         return item;
       }),
     }));
+
     if (field === "languages") {
       setOpenLanguagesIndex(null);
     }
@@ -66,16 +61,18 @@ export default function StaffAddPage() {
       const availableLanguages = SUPPORTED_LANGUAGES.filter(
         (lang) => !staff.languages.includes(lang.code),
       );
-
       if (availableLanguages.length === 0) {
         showError(setLanguageErrorMessage, "No more languages to add");
         return;
       }
-      if (staff.languages[staff.languages.length - 1] === "Select") {
+      if (
+        staff.languages[staff.languages.length - 1] === "Select Language" ||
+        staff.languages[staff.languages.length - 1] ===
+          "Select Primary Language"
+      ) {
         setOpenLanguagesIndex(staff.languages.length - 1);
         return;
       }
-
       setStaff((prev) => ({
         ...prev,
         [field]: [...prev[field], defaultValue],
@@ -93,7 +90,6 @@ export default function StaffAddPage() {
         showError(setAliasErrorMessage, "Maximum 10 aliases allowed");
         return;
       }
-
       setStaff((prev) => ({
         ...prev,
         [field]: [...prev[field], defaultValue],
@@ -110,7 +106,6 @@ export default function StaffAddPage() {
         showError(setLinkErrorMessage, "Maximum 10 external links allowed");
         return;
       }
-
       setStaff((prev) => ({
         ...prev,
         [field]: [...prev[field], defaultValue],
@@ -134,8 +129,8 @@ export default function StaffAddPage() {
   };
 
   const handleSubmit = async () => {
-    if (!staff.main_alias.trim()) {
-      showError(setSubmitErrorMessage, "Main alias is required");
+    if (!staff.aliases[0]?.name.trim()) {
+      showError(setSubmitErrorMessage, "Main alias (first name) is required");
       return;
     }
 
@@ -146,6 +141,14 @@ export default function StaffAddPage() {
 
     if (staff.gender === "Select Gender") {
       showError(setSubmitErrorMessage, "Gender is required");
+      return;
+    }
+
+    const validLanguages = staff.languages.filter(
+      (lang) => lang !== "Select Primary Language",
+    );
+    if (validLanguages.length === 0) {
+      showError(setSubmitErrorMessage, "Primary language is required");
       return;
     }
 
@@ -160,28 +163,16 @@ export default function StaffAddPage() {
     const submissionData = {
       staff_type: staff.staff_type,
       gender: staff.gender,
-      main_alias: staff.main_alias,
-      languages: [],
+      main_alias: staff.aliases[0].name.trim(),
+      primary_language: validLanguages[0],
+      languages: validLanguages,
       aliases: [],
       extlinks: [],
     };
 
-    if (
-      staff.primary_language &&
-      staff.primary_language !== "Select Language"
-    ) {
-      submissionData.primary_language = staff.primary_language;
-    }
-
     if (staff.description?.trim()) {
       submissionData.description = staff.description.trim();
     }
-
-    const validLanguages = staff.languages.filter((lang) => lang !== "Select");
-    if (validLanguages.length > 0) {
-      submissionData.languages = validLanguages;
-    }
-
     const validAliases = staff.aliases.filter(
       (alias) => alias.name.trim() !== "",
     );
@@ -203,26 +194,30 @@ export default function StaffAddPage() {
 
     try {
       console.log("Adding staff:", submissionData);
-      const { data } = await axios.post(
-        "http://localhost:8000/staff",
-        submissionData,
-        {
-          withCredentials: true,
-          headers: {
-            "X-XSRF-TOKEN": getXsrfToken(),
-            "Content-Type": "application/json",
-          },
+      const response = await fetch("http://localhost:8000/staff", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "X-XSRF-TOKEN": getXsrfToken(),
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(submissionData),
+      });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.detail ||
+            errorData.message ||
+            "Failed to create staff member",
+        );
+      }
+
+      const data = await response.json();
       console.log("Staff created:", data);
       alert("Staff member created successfully!");
     } catch (error) {
-      const message =
-        error.response?.data?.detail ||
-        error.response?.data?.message ||
-        "Failed to create staff member";
-      showError(setSubmitErrorMessage, message);
+      showError(setSubmitErrorMessage, error.message);
     }
   };
 
@@ -272,51 +267,26 @@ export default function StaffAddPage() {
       ) {
         setOpenGenderDropdown(false);
       }
-      if (
-        openPrimaryLanguageDropdown &&
-        primaryLanguageDropdownRef.current &&
-        !primaryLanguageDropdownRef.current.contains(event.target)
-      ) {
-        setOpenPrimaryLanguageDropdown(false);
-      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [
-    openLanguagesIndex,
-    openStaffTypeDropdown,
-    openGenderDropdown,
-    openPrimaryLanguageDropdown,
-  ]);
+  }, [openLanguagesIndex, openStaffTypeDropdown, openGenderDropdown]);
 
   return (
     <div>
       <div className="flex gap-4">
         <div className="flex-1 mb-1">
-          <span className="text-lg font-bold">NAMES</span>
-          <div className="flex flex-col text-sm leading-snug">
-            <p>
-              <b className="font-semibold">Name/Main Alias:</b>
-            </p>
-            <input
-              type="text"
-              value={staff.main_alias}
-              placeholder="Name"
-              onChange={(e) => handleChange("main_alias", e.target.value)}
-              className="bg-accent border-input px-2 py-1 text-sm w-full h-7 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20 mb-1"
-            />
-          </div>
-          <div>
-            <div>
-              <div className="flex">
-                <b className="font-semibold text-sm mt-1">Aliases:</b>
-                {aliasErrorMessage && (
-                  <div className="text-xs text-red-500 mt-1 px-2">
-                    {aliasErrorMessage}
-                  </div>
-                )}
+          <div className="flex">
+            <span className="text-lg font-bold">NAMES</span>
+            {aliasErrorMessage && (
+              <div className="text-sm text-red-500 mt-1 px-2">
+                {aliasErrorMessage}
               </div>
+            )}
+          </div>
+          <div className="flex flex-col text-sm leading-snug">
+            <div>
               {staff.aliases.map((alias, index) => (
                 <div
                   key={index}
@@ -325,7 +295,7 @@ export default function StaffAddPage() {
                   <input
                     type="text"
                     value={alias.name}
-                    placeholder="Alias"
+                    placeholder={index === 0 ? "Primary Name" : "Alias"}
                     onChange={(e) =>
                       handleArrayChange(
                         "aliases",
@@ -336,12 +306,14 @@ export default function StaffAddPage() {
                     }
                     className="flex-1 bg-accent border-input px-2 py-1 text-sm w-full h-7 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
                   />
-                  <button
-                    onClick={() => handleArrayRemove("aliases", index)}
-                    className="text-red-400 hover:text-red-300 absolute right-2"
-                  >
-                    <IconX size={14} />
-                  </button>
+                  {index > 0 && (
+                    <button
+                      onClick={() => handleArrayRemove("aliases", index)}
+                      className="text-red-400 hover:text-red-300 absolute right-2"
+                    >
+                      <IconX size={14} />
+                    </button>
+                  )}
                   <input
                     type="text"
                     value={alias.latin || ""}
@@ -364,15 +336,21 @@ export default function StaffAddPage() {
                 }
                 className="w-full flex items-center justify-center gap-1 bg-foreground text-primary-foreground hover:bg-primary/90 transition-colors px-2 py-1 rounded-md text-sm font-semibold"
               >
-                <IconPlus size={14} /> Add Alias
+                <IconPlus size={14} />
+                Add Alias
               </button>
             </div>
           </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold mt-3">LINKS</span>
-            <b className="font-semibold text-sm leading-snug">
-              External Links:
-            </b>
+
+          <div className="flex flex-col mt-3">
+            <div className="flex">
+              <span className="text-lg font-bold">LINKS</span>
+              {linkErrorMessage && (
+                <div className="text-sm text-red-500 mt-1 px-2">
+                  {linkErrorMessage}
+                </div>
+              )}
+            </div>
             {staff.extlinks.map((extlink, index) => (
               <div key={index} className="flex items-center gap-1 relative">
                 <input
@@ -396,15 +374,12 @@ export default function StaffAddPage() {
               onClick={() => handleArrayAdd("extlinks", { link: "" })}
               className="w-full flex items-center justify-center gap-1 bg-foreground text-primary-foreground hover:bg-primary/90 transition-colors px-2 py-1 rounded-md text-sm font-semibold mt-1"
             >
-              <IconPlus size={14} /> Add Link
+              <IconPlus size={14} />
+              Add Link
             </button>
-            {linkErrorMessage && (
-              <div className="text-sm text-red-500 mt-1 px-2">
-                {linkErrorMessage}
-              </div>
-            )}
           </div>
         </div>
+
         <div className="flex-1">
           <span className="text-lg font-bold">DETAILS</span>
           <div className="flex flex-col gap-2 text-sm leading-snug">
@@ -475,91 +450,37 @@ export default function StaffAddPage() {
                 )}
               </div>
             </div>
+
             <div className="mb-1">
-              <div>
-                <p>
-                  <b className="font-semibold">Primary Language:</b>
-                </p>
-                <div ref={primaryLanguageDropdownRef} className="relative">
-                  <div className="bg-accent hover:bg-accent/80 rounded">
-                    <button
-                      onClick={() =>
-                        setOpenPrimaryLanguageDropdown(
-                          !openPrimaryLanguageDropdown,
-                        )
-                      }
-                      className="w-full flex items-center justify-between px-2 py-1 text-sm"
-                    >
-                      <span className="flex items-center gap-2">
-                        {staff.primary_language && (
-                          <LanguageFlag languageCode={staff.primary_language} />
-                        )}
-                        {staff.primary_language
-                          ? SUPPORTED_LANGUAGES.find(
-                              (l) => l.code === staff.primary_language,
-                            )?.name || staff.primary_language
-                          : "Select Language"}
-                      </span>
-                      <IconChevronDown size={14} />
-                    </button>
-                  </div>
-                  {openPrimaryLanguageDropdown && (
-                    <div className="absolute top-full mt-1 w-full bg-popover border border-border rounded-md shadow-md max-h-48 overflow-y-auto z-50">
-                      <button
-                        onClick={() => {
-                          handleChange("primary_language", null);
-                          setOpenPrimaryLanguageDropdown(false);
-                        }}
-                        className="flex items-center gap-2 w-full text-left px-2 py-1 text-sm hover:bg-foreground/10 cursor-pointer"
-                      >
-                        None
-                      </button>
-                      {SUPPORTED_LANGUAGES.map(({ name, code, flag: Flag }) => (
-                        <button
-                          key={code}
-                          onClick={() => {
-                            handleChange("primary_language", code);
-                            setOpenPrimaryLanguageDropdown(false);
-                          }}
-                          className="flex items-center gap-2 w-full text-left px-2 py-1 text-sm hover:bg-foreground/10 cursor-pointer"
-                        >
-                          <Flag className="w-4 h-3" />
-                          {name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex mt-1">
-                <b className="font-semibold mt-1">Other Language(s):</b>
+              <div className="flex">
+                <b className="font-semibold">Language(s)</b>
                 {languageErrorMessage && (
-                  <div className="text-xs text-red-500 mt-1 px-2">
+                  <div className="text-xs text-red-500 mt-0.5 px-2">
                     {languageErrorMessage}
                   </div>
                 )}
               </div>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-col gap-1">
                 {staff.languages.map((langCode, index) => (
                   <div
                     key={index}
                     ref={(el) => (dropdownRefs.current[index] = el)}
-                    className="relative"
+                    className="relative w-full"
                   >
-                    <div className="flex items-center bg-accent hover:bg-accent/80 px-2 py-1 font-semibold rounded text-sm">
+                    <div className="flex items-center bg-accent hover:bg-accent/80 px-2 py-1 rounded text-sm">
                       <button
                         onClick={() => toggleLanguagesDropdown(index)}
-                        className="flex items-center gap-1 pr-2"
+                        className="flex items-center gap-1 pr-2 flex-1"
                       >
                         <LanguageFlag languageCode={langCode} />
                         <span>
-                          {langCode === "Select"
-                            ? "Select"
+                          {langCode === "Select Language"
+                            ? "Select Language"
                             : SUPPORTED_LANGUAGES.find(
                                 (l) => l.code === langCode,
                               )?.name || langCode}
                         </span>
-                        <IconChevronDown size={14} />
+                        <IconChevronDown size={14} className="ml-auto" />
                       </button>
                       <button
                         onClick={(e) => {
@@ -592,16 +513,18 @@ export default function StaffAddPage() {
                   </div>
                 ))}
                 <button
-                  onClick={() => handleArrayAdd("languages", "Select")}
-                  className="flex items-center gap-1 bg-foreground text-primary-foreground hover:bg-primary/90 transition-colors px-2 py-1 rounded-md text-sm font-semibold"
+                  onClick={() => handleArrayAdd("languages", "Select Language")}
+                  className="flex items-center justify-center gap-1 bg-foreground text-primary-foreground hover:bg-primary/90 transition-colors px-2 py-1 rounded-md text-sm font-semibold w-full"
                 >
-                  <IconPlus size={14} className="inline" /> Add
+                  <IconPlus size={14} className="inline" />
+                  Add Language
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
+
       <div className="mb-1">
         <span className="text-lg font-bold">NOTES</span>
         <textarea
