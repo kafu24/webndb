@@ -23,6 +23,8 @@ from .const import (
     CHAPTER_ORDER_MAX,
     EXTLINK_MAX_LEN,
     NOVEL_DESCRIPTION_MAX,
+    NOVEL_STAFF_MAX,
+    NOVEL_STAFF_NOTE_MAX,
     NOVEL_TITLE_MAX,
     RELEASE_TITLE_MAX,
     STAFF_ALIAS_NAME_MAX,
@@ -172,6 +174,9 @@ class Novel(Base):
         back_populates='novel',
         passive_deletes='all',
         order_by='Chapter.chapter_order',
+    )
+    novel_staff: Mapped[list['NovelStaff']] = relationship(
+        back_populates='novel', passive_deletes='all', order_by='NovelStaff.order_pos'
     )
 
 
@@ -497,6 +502,9 @@ class Staff(Base):
     extlinks: Mapped[list['StaffExtlink']] = relationship(
         back_populates='staff', passive_deletes='all', order_by='StaffExtlink.order_pos'
     )
+    staff_novel: Mapped[list['StaffNovel']] = relationship(
+        back_populates='staff', passive_deletes='all', order_by='StaffNovel.novel_id'
+    )
 
     __table_args__ = (
         ForeignKeyConstraint(
@@ -631,5 +639,74 @@ def distribute_staff_extlink(target, connection, **kw):
         text(
             'SELECT create_distributed_table('
             "'staff_extlink', 'staff_id', colocate_with => 'staff')"
+        )
+    )
+
+
+class StaffNovel(Base):
+    """`novel_staff` is the main table where details are stored. This
+    table only exists so we can avoid cross-shard queries when finding
+    the novels that a staff member is associated with.
+
+    Note that `novel_staff` can have multiple records for a
+    (novel_id, staff_id) pair, but `staff_novel` can't.
+    """
+
+    __tablename__ = 'staff_novel'
+
+    # No FK to novel because it's not colocated with this table.
+    novel_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    staff_id: Mapped[int] = mapped_column(
+        ForeignKey('staff.staff_id', ondelete='CASCADE'), primary_key=True
+    )
+
+    staff: Mapped[Staff] = relationship(back_populates='staff_novel')
+
+
+@event.listens_for(StaffNovel.__table__, 'after_create')
+def distribute_staff_novel(target, connection, **kw):
+    connection.execute(
+        text(
+            'SELECT create_distributed_table('
+            "'staff_novel', 'staff_id', colocate_with => 'staff')"
+        )
+    )
+
+
+class NovelStaff(Base):
+    __tablename__ = 'novel_staff'
+
+    novel_id: Mapped[int] = mapped_column(
+        ForeignKey('novel.novel_id', ondelete='CASCADE')
+    )
+    order_pos: Mapped[int] = mapped_column(
+        SmallInteger,
+        CheckConstraint(
+            f'order_pos < {NOVEL_STAFF_MAX}', name='novel_staff_order_pos_limit'
+        ),
+    )
+    # No FK to staff because it's not colocated with this table.
+    staff_id: Mapped[int] = mapped_column(BigInteger)
+    staff_main_alias: Mapped[str] = mapped_column(Text)
+    role: Mapped[StaffRole]
+    note: Mapped[str] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'char_length(note) <= {NOVEL_STAFF_NOTE_MAX}',
+            name='staff_novel_note_length',
+        ),
+    )
+
+    novel: Mapped[Novel] = relationship(back_populates='novel_staff')
+
+    __table_args__ = (PrimaryKeyConstraint('novel_id', 'staff_id', 'role'),)
+
+
+@event.listens_for(NovelStaff.__table__, 'after_create')
+def distribute_novel_staff(target, connection, **kw):
+    connection.execute(
+        text(
+            'SELECT create_distributed_table('
+            "'novel_staff', 'novel_id', colocate_with => 'novel')"
         )
     )
