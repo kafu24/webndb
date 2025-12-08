@@ -1,0 +1,11 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AddPage from "@/pages/staff/AddPage";
+
+---
+
+  <BaseLayout>
+    <AddPage client:load />
+  </BaseLayout>

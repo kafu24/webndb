@@ -253,7 +253,7 @@ export default function NovelAddPage() {
           <aside className="w-42 flex-shrink-0 mb-2">
             <span className="text-lg font-bold">DETAILS</span>
             <div className="flex flex-col gap-2 text-sm leading-snug">
-              <div className="space-y-1">
+              <div>
                 <p>
                   <b className="font-semibold">Status:</b>
                 </p>
@@ -290,7 +290,7 @@ export default function NovelAddPage() {
                 </div>
               </div>
               {/* TODO: search db */}
-              <div className="space-y-1">
+              <div>
                 <p>
                   <b className="font-semibold">Publisher:</b>
                 </p>
@@ -299,7 +299,7 @@ export default function NovelAddPage() {
                   value={novel.publisher}
                   placeholder="Publisher"
                   onChange={(e) => handleChange("publisher", e.target.value)}
-                  className="bg-accent border-input px-2 py-1 text-sm w-full h-7 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
+                  className="bg-accent border-input px-2 py-1 text-sm w-full h-7 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20 mb-2"
                 />
                 <p>
                   <b className="font-semibold">Publishing Year:</b>
@@ -352,13 +352,13 @@ export default function NovelAddPage() {
                   )}
                 </div>
               </div>
-              <div className="space-y-1">
+              <div>
                 <div>
                   <b className="font-semibold">Alternative Title(s):</b>
                   {novel.alternative_titles.map((alt, index) => (
                     <div
                       key={index}
-                      className="flex items-center mt-1 gap-1 relative"
+                      className="flex items-center gap-1 relative"
                     >
                       <input
                         type="text"
@@ -371,7 +371,7 @@ export default function NovelAddPage() {
                             e.target.value,
                           )
                         }
-                        className="flex-1 bg-accent border-input px-2 py-1 text-sm w-full h-7 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
+                        className="flex-1 bg-accent border-input px-2 py-1 text-sm w-full h-7 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20 mb-1"
                       />
                       <button
                         onClick={() =>
@@ -385,7 +385,7 @@ export default function NovelAddPage() {
                   ))}
                   <button
                     onClick={() => handleArrayAdd("alternative_titles", "")}
-                    className="w-full flex items-center justify-center gap-1 bg-foreground text-primary-foreground hover:bg-primary/90 transition-colors px-2 py-1 rounded-md text-sm font-semibold mt-1"
+                    className="w-full flex items-center justify-center gap-1 bg-foreground text-primary-foreground hover:bg-primary/90 transition-colors px-2 py-1 rounded-md text-sm font-semibold"
                   >
                     <IconPlus size={14} /> Add Title
                   </button>

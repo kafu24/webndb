@@ -105,7 +105,9 @@ async def callback(
             raise InternalServerException
     request.session['user_id'] = id_token['sub']
     # TODO: consider returning serialized user here
-    return None
+    return Redirect(path="http://localhost:4321")
+
+
 
 
 async def retrieve_user_handler(
@@ -122,6 +124,6 @@ async def retrieve_user_handler(
 
 session_auth = SessionAuth[AuthUser, ServerSideSessionBackend](
     retrieve_user_handler=retrieve_user_handler,
-    session_backend_config=ServerSideSessionConfig(),
+    session_backend_config=ServerSideSessionConfig(samesite='none'),
     exclude=['/login', '/callback', '/schema'],
 )
