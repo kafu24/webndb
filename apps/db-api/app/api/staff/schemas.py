@@ -181,7 +181,6 @@ class StaffExtlinkWriteSchema(BaseStruct):
 
 
 StaffExtlinksMeta = Meta(
-    min_length=1,
     max_length=STAFF_EXTTLINK_MAX,
     title='Staff External Links',
     description='Array of external links for a staff member',
@@ -191,7 +190,7 @@ StaffExtlinksMeta = Meta(
             StaffExtlinkSchema(link='https://en.wikipedia.org/wiki/Rudolf_Lingens'),
         ]
     ],
-    extra_json_schema={'extra': {'minItems': 1, 'maxItems': STAFF_EXTTLINK_MAX}},
+    extra_json_schema={'extra': {'maxItems': STAFF_EXTTLINK_MAX}},
 )
 
 
