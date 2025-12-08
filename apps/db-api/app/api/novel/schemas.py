@@ -4,8 +4,14 @@ from typing import TYPE_CHECKING, Annotated
 from litestar.params import Parameter
 from msgspec import UNSET, Meta
 
-from app.const import NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX, WEBNDB_ID_MAX_LEN
-from app.models import Language, PublicationStatus
+from app.const import (
+    NOVEL_DESCRIPTION_MAX,
+    NOVEL_STAFF_MAX,
+    NOVEL_STAFF_NOTE_MAX,
+    NOVEL_TITLE_MAX,
+    WEBNDB_ID_MAX_LEN,
+)
+from app.models import Language, PublicationStatus, StaffRole
 
 from ..schemas import (
     JSON_NULL,
@@ -17,10 +23,11 @@ from ..schemas import (
     create_sort_pattern,
     string_or_null_extra_json_schema,
 )
+from ..staff.schemas import StaffIDMeta, StaffMainAliasMeta, StaffMainAliasType
 from .meili import filterable_attributes, searchable_attributes, sortable_attributes
 
 if TYPE_CHECKING:
-    from app.models import Novel, NovelTitle
+    from app.models import Novel, NovelStaff, NovelTitle
 
 NovelIDMeta = Meta(
     max_length=WEBNDB_ID_MAX_LEN,
@@ -200,6 +207,80 @@ NovelTitlesMeta = Meta(
 )
 
 
+NovelStaffNoteType = Annotated[
+    str,
+    Meta(
+        max_length=NOVEL_STAFF_NOTE_MAX,
+        title='Note',
+        description='Additional information for this role',
+    ),
+]
+
+
+class NovelStaffSchema(BaseStruct):
+    staff_id: Annotated[str, StaffIDMeta]
+    main_alias: StaffMainAliasType
+    role: StaffRole
+    note: NovelStaffNoteType
+
+
+def to_novel_staff_schema(novel_staff: 'NovelStaff') -> NovelStaffSchema:
+    return NovelStaffSchema(
+        staff_id=str(novel_staff.staff_id),
+        main_alias=novel_staff.staff_main_alias,
+        role=novel_staff.role,
+        note=novel_staff.note,
+    )
+
+
+NovelStaffMeta = Meta(
+    title='Web Novel Staff Members',
+    description='Array of staff members with roles in the web novel',
+    examples=[
+        [
+            NovelStaffSchema(
+                staff_id=StaffIDMeta.examples[0],
+                main_alias=StaffMainAliasMeta.examples[0],
+                role=StaffRole.AUTHOR,
+                note='',
+            ),
+            NovelStaffSchema(
+                staff_id=StaffIDMeta.examples[0],
+                main_alias=StaffMainAliasMeta.examples[0],
+                role=StaffRole.TRANSLATOR,
+                note='Korean translation',
+            ),
+        ]
+    ],
+)
+
+
+class NovelStaffWriteSchema(BaseStruct):
+    staff_id: Annotated[str, StaffIDMeta]
+    role: StaffRole
+    note: NovelStaffNoteType
+
+
+NovelStaffWriteMeta = Meta(
+    max_length=NOVEL_STAFF_MAX,
+    title='Web Novel Staff Members',
+    description='Array of staff members with roles in the web novel',
+    examples=[
+        [
+            NovelStaffWriteSchema(
+                staff_id=StaffIDMeta.examples[0], role=StaffRole.AUTHOR, note=''
+            ),
+            NovelStaffWriteSchema(
+                staff_id=StaffIDMeta.examples[0],
+                role=StaffRole.TRANSLATOR,
+                note='Korean translation',
+            ),
+        ]
+    ],
+    extra_json_schema={'extra': {'maxItems': NOVEL_STAFF_MAX}},
+)
+
+
 class NovelSchema(BaseStruct):
     """Representation of a web novel in responses."""
 
@@ -210,13 +291,18 @@ class NovelSchema(BaseStruct):
     start_release_date: NovelStartReleaseDateType = UNSET
     end_release_date: NovelEndReleaseDateType = UNSET
     titles: Annotated[list[NovelTitleSchema], NovelTitlesMeta] = UNSET
+    staff: Annotated[list[NovelStaffSchema], NovelStaffMeta] = UNSET
 
 
 async def to_novel_schema(
-    novel: 'Novel', titles: list['NovelTitle'] = None
+    novel: 'Novel',
+    titles: list['NovelTitle'] = None,
+    novel_staff: list['NovelStaff'] = None,
 ) -> NovelSchema:
     if titles is None:
         titles = await novel.awaitable_attrs.titles
+    if novel_staff is None:
+        novel_staff = await novel.awaitable_attrs.novel_staff
     return NovelSchema(
         novel_id=str(novel.novel_id),
         original_language=novel.original_language,
@@ -225,6 +311,7 @@ async def to_novel_schema(
         start_release_date=novel.start_release_date,
         end_release_date=novel.end_release_date,
         titles=[to_novel_title_schema(t) for t in titles],
+        staff=[to_novel_staff_schema(s) for s in novel_staff],
     )
 
 
@@ -247,6 +334,7 @@ class NovelCreateSchema(BaseStruct):
     status: NovelStatusType = PublicationStatus.UNKNOWN
     start_release_date: NovelStartReleaseDateType = JSON_NULL
     end_release_date: NovelEndReleaseDateType = JSON_NULL
+    staff: Annotated[list[NovelStaffWriteSchema], NovelStaffWriteMeta] = []
 
     def __post_init__(self):
         if self.original_language is JSON_NULL:
@@ -268,3 +356,4 @@ class NovelUpdateSchema(BaseStruct):
     status: NovelStatusType = UNSET
     start_release_date: NovelStartReleaseDateType = UNSET
     end_release_date: NovelEndReleaseDateType = UNSET
+    staff: Annotated[list[NovelStaffWriteSchema], NovelStaffWriteMeta] = UNSET

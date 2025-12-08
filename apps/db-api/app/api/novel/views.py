@@ -16,8 +16,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.const import INVALID_WEBNDB_ID, NOVEL_DESCRIPTION_MAX, NOVEL_TITLE_MAX
 from app.meili import format_meili_api_error, update_index
+from app.models import StaffRole
 
 from ..problem_details import (
+    ExtraSourceEnum,
+    ProblemDetailsExtraSchema,
     create_400_response_spec,
     create_404_response_spec,
     required_request_body_guard,
@@ -31,6 +34,12 @@ from ..schemas import (
     custom_operation,
     custom_reqbody,
 )
+from ..staff.service import (
+    clear_staff_novel_by_novel_id,
+    insert_staff_novel_by_novel_id,
+    select_multiple_staff,
+    select_nonexistent_staff_id,
+)
 from ..volume.service import insert_initial_volume_ordering
 from .meili import filterable_attributes, searchable_attributes, sortable_attributes
 from .schemas import (
@@ -39,15 +48,18 @@ from .schemas import (
     NovelIDParam,
     NovelQueryRequest,
     NovelSchema,
+    NovelStaffWriteSchema,
     NovelUpdateSchema,
     to_novel_schema,
 )
 from .service import (
+    clear_novel_staff,
     clear_novel_titles,
     find_repeated_lang_titles,
     insert_novel,
     select_novel,
     update_novel,
+    upsert_novel_staff,
     upsert_novel_titles,
 )
 
@@ -172,6 +184,26 @@ async def get_novel(
     return to_novel_schema(novel)
 
 
+def build_staff_id_set(staff: list[NovelStaffWriteSchema]) -> set[str]:
+    seen_set_id: dict[str, set[StaffRole]] = dict()
+    for s, i in zip(staff, range(len(staff))):
+        if s.staff_id in seen_set_id:
+            roles = seen_set_id.get(s.staff_id)
+            if s.role in roles:
+                raise ClientException(
+                    f'`staff_id` {s.staff_id} can only be associated with role'
+                    f" '{s.role}' once",
+                    extra=ProblemDetailsExtraSchema(
+                        key=f'staff[{i}].role',
+                        source=ExtraSourceEnum.BODY,
+                    ),
+                )
+            seen_set_id[s.staff_id] = seen_set_id[s.staff_id] | {s.role}
+        else:
+            seen_set_id[s.staff_id] = {s.role}
+    return seen_set_id
+
+
 @post(
     path='/',
     guards=[required_request_body_guard],
@@ -185,7 +217,11 @@ async def get_novel(
                 f' Titles are limited to {NOVEL_TITLE_MAX} characters.\n'
                 '\n'
                 'A novel must have at least one title.'
-                ' There can only be one title per language.'
+                ' There can only be one title per language.\n'
+                '\n'
+                '`staff` is an array of objects. It must have a `staff_id` that'
+                ' identifies a staff member in WebNDB.'
+                ' Use the `/staff` API to find and create staff members.'
             ),
             required=True,
         )
@@ -195,8 +231,8 @@ async def get_novel(
     responses={
         400: create_400_response_spec(
             description=(
-                'Bad request syntax, validation error, or more than one title'
-                ' per language'
+                'Bad request syntax, validation error, more than one title'
+                ' per language, or staff has same role multiple times'
             ),
             client_error_detail_example=(
                 "Language 'en' is used by more than one title"
@@ -207,7 +243,17 @@ async def get_novel(
             validation_message_example="Invalid enum value 'eng'",
             validation_key_example='titles[0].lang',
             validation_source_example='body',
-        )
+        ),
+        404: create_404_response_spec(
+            description=(
+                '`staff` contains `staff_id` which do not identify a staff member'
+            ),
+            detail_example=(
+                '`extra` contains `staff_id` values from request that do not'
+                ' identify a staff member'
+            ),
+            extra=['0'],
+        ),
     },
 )
 async def create_novel(
@@ -219,6 +265,16 @@ async def create_novel(
             f"Language '{rep_lang}' is used by more than one title"
             ' but only one title per language is allowed'
         )
+
+    staff_ids = build_staff_id_set(data.staff)
+    nonexistent_staff_id = await select_nonexistent_staff_id(transaction, staff_ids)
+    if nonexistent_staff_id:
+        raise NotFoundException(
+            '`extra` contains `staff_id` values from request that do not'
+            ' identify a staff member',
+            extra=nonexistent_staff_id,
+        )
+    orm_staff = await select_multiple_staff(transaction, staff_ids)
 
     try:
         novel = await insert_novel(
@@ -233,7 +289,11 @@ async def create_novel(
         # has a volume_ordering record in application.
         await insert_initial_volume_ordering(transaction, novel.novel_id)
         titles = await upsert_novel_titles(transaction, novel.novel_id, data.titles)
-        res = await to_novel_schema(novel, titles)
+        novel_staff = await upsert_novel_staff(
+            transaction, novel.novel_id, data.staff, orm_staff
+        )
+        await insert_staff_novel_by_novel_id(transaction, novel.novel_id, staff_ids)
+        res = await to_novel_schema(novel, titles, novel_staff)
         await meili_index.add_documents([res])
     except Exception:
         raise InternalServerException
@@ -260,9 +320,14 @@ async def create_novel(
                 'A novel must have at least one title.'
                 ' There can only be one title per language.\n'
                 '\n'
+                '`staff` is an array of objects. It must have a `staff_id` that'
+                ' identifies a staff member in WebNDB.'
+                ' Use the `/staff` API to find and create staff members.\n'
+                '\n'
                 'The value of `titles` replaces the current collection of titles.'
                 ' To update just one title, the `titles` array must include all'
-                ' current titles, or else those titles will be removed.'
+                ' current titles, or else those titles will be removed. The same'
+                ' idea applies to `staff`.'
             ),
             required=False,
         )
@@ -271,8 +336,8 @@ async def create_novel(
     responses={
         400: create_400_response_spec(
             description=(
-                'Bad request syntax, validation error, or more than one title'
-                ' per language'
+                'Bad request syntax, validation error, more than one title'
+                ' per language, or staff has same role multiple times'
             ),
             client_error_detail_example=(
                 "Language 'en' is used by more than one title"
@@ -285,8 +350,16 @@ async def create_novel(
             validation_source_example='body',
         ),
         404: create_404_response_spec(
-            description='Novel ID in path parameter is not associated with a novel',
-            detail_example='Could not find a novel identified by novel ID 0',
+            description=(
+                'Novel ID in path parameter is not associated with a novel'
+                ' or `staff` contains `staff_id` which do not identify a'
+                ' staff member'
+            ),
+            detail_example=(
+                '`extra` contains `staff_id` values from request that do not'
+                ' identify a staff member'
+            ),
+            extra=['0'],
         ),
     },
 )
@@ -312,6 +385,17 @@ async def patch_novel(
                 ' but only one title per language is allowed'
             )
 
+    if data.staff is not UNSET:
+        staff_ids = build_staff_id_set(data.staff)
+        nonexistent_staff_id = await select_nonexistent_staff_id(transaction, staff_ids)
+        if nonexistent_staff_id:
+            raise NotFoundException(
+                '`extra` contains `staff_id` values from request that do not'
+                ' identify a staff member',
+                extra=nonexistent_staff_id,
+            )
+        orm_staff = await select_multiple_staff(transaction, staff_ids)
+
     try:
         novel = await update_novel(
             transaction,
@@ -334,7 +418,14 @@ async def patch_novel(
         if data.titles is not UNSET:
             await clear_novel_titles(transaction, novel_id)
             titles = await upsert_novel_titles(transaction, novel_id, data.titles)
-        res = await to_novel_schema(novel, titles)
+        if data.staff is not UNSET:
+            await clear_novel_staff(transaction, novel_id)
+            await clear_staff_novel_by_novel_id(transaction, novel_id)
+            novel_staff = await upsert_novel_staff(
+                transaction, novel.novel_id, data.staff, orm_staff
+            )
+            await insert_staff_novel_by_novel_id(transaction, novel.novel_id, staff_ids)
+        res = await to_novel_schema(novel, titles, novel_staff)
         await meili_index.update_documents([res])
         await transaction.commit()
     except Exception:
