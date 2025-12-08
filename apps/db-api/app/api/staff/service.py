@@ -1,6 +1,8 @@
+from typing import Sequence
+
 import structlog
-from sqlalchemy import Text, cast, delete, exc, select, update
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import Text, cast, delete, exc, func, select, update
+from sqlalchemy.dialects.postgresql import array, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -11,6 +13,7 @@ from app.models import (
     StaffAlias,
     StaffExtlink,
     StaffLang,
+    StaffNovel,
     StaffType,
 )
 
@@ -33,6 +36,31 @@ async def select_staff(db_session: AsyncSession, staff_id: str) -> Staff:
         )
     )
     return staff
+
+
+async def select_nonexistent_staff_id(
+    db_session: AsyncSession, staff_ids: set[str]
+) -> Sequence[int]:
+    """Returns sequence of staff_id values that aren't associated with
+    a staff record.
+    """
+    unnested = func.unnest(array(staff_ids)).column_valued('t')
+    stmt = (
+        select(unnested)
+        .join(Staff, unnested == cast(Staff.staff_id, Text), isouter=True)
+        .where(Staff.staff_id.is_(None))
+    )
+    return (await db_session.scalars(stmt)).all()
+
+
+async def select_multiple_staff(
+    db_session: AsyncSession, staff_ids: Sequence[str]
+) -> Sequence[Staff]:
+    return (
+        await db_session.scalars(
+            select(Staff).where(cast(Staff.staff_id, Text).in_(staff_ids))
+        )
+    ).all()
 
 
 async def insert_staff(
@@ -208,6 +236,43 @@ async def clear_staff_extlinks(db_session: AsyncSession, staff_id: int):
     try:
         await db_session.execute(
             delete(StaffExtlink).where(StaffExtlink.staff_id == staff_id)
+        )
+    except exc.SQLAlchemyError as e:
+        logger.exception(e._message())
+        raise
+    except Exception:
+        logger.exception('Unexpected error')
+        raise
+
+
+async def insert_staff_novel_by_novel_id(
+    db_session: AsyncSession,
+    novel_id: str,
+    staff_ids: Sequence[str],
+) -> Sequence[StaffNovel]:
+    try:
+        stmt = insert(StaffNovel).values(
+            [{'novel_id': int(novel_id), 'staff_id': int(id)} for id in staff_ids]
+        )
+        staff_novels = (
+            await db_session.scalars(
+                stmt.returning(StaffNovel),
+                execution_options={'populate_existing': True},
+            )
+        ).all()
+    except exc.SQLAlchemyError as e:
+        logger.exception(e._message())
+        raise
+    except Exception:
+        logger.exception('Unexpected error')
+        raise
+    return staff_novels
+
+
+async def clear_staff_novel_by_novel_id(db_session: AsyncSession, novel_id: str):
+    try:
+        await db_session.execute(
+            delete(StaffNovel).where(cast(StaffNovel.novel_id, Text) == novel_id)
         )
     except exc.SQLAlchemyError as e:
         logger.exception(e._message())

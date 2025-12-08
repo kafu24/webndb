@@ -24,6 +24,9 @@ from app.const import (
 )
 from app.meili import format_meili_api_error, update_index
 
+from ..novel.schemas import to_novel_schema
+from ..novel.service import select_novels, update_novel_staff_by_staff_id
+from ..novel.views import get_meili_novel_index
 from ..problem_details import (
     ExtraSourceEnum,
     ProblemDetailsExtraSchema,
@@ -307,6 +310,7 @@ async def create_staff(
 
 @patch(
     path='/{staff_id:str}',
+    dependencies={'meili_novel_index': get_meili_novel_index},
     tags=['staff'],
     summary='Update staff member',
     description='Update the staff member identified by `novel_id`.',
@@ -362,6 +366,7 @@ async def patch_staff(
     transaction: AsyncSession,
     meili_index: AsyncIndex,
     staff_id: Annotated[str, StaffIDParam],
+    meili_novel_index: AsyncIndex,
     data: StaffUpdateSchema = None,
 ) -> StaffSchema:
     if data is None:
@@ -376,6 +381,7 @@ async def patch_staff(
     primary_lang = (
         staff.primary_lang if data.primary_language is UNSET else data.primary_language
     )
+    old_main_alias = staff.main_alias
     main_alias = staff.main_alias if data.main_alias is UNSET else data.main_alias
 
     check_alias_and_primary_lang(
@@ -419,6 +425,17 @@ async def patch_staff(
             )
         res = await to_staff_schema(staff, langs, aliases, extlinks)
         await meili_index.update_documents([res])
+        # This is expensive, so only update index when necessary
+        if data.main_alias is not UNSET and data.main_alias != old_main_alias:
+            await update_novel_staff_by_staff_id(
+                transaction, staff.staff_id, data.main_alias
+            )
+            staff_novels = await staff.awaitable_attrs.staff_novel
+            novel_ids = [sn.novel_id for sn in staff_novels]
+            novels = await select_novels(transaction, novel_ids)
+            await meili_novel_index.update_documents(
+                [await to_novel_schema(n) for n in novels]
+            )
         await transaction.commit()
     except Exception:
         raise InternalServerException
