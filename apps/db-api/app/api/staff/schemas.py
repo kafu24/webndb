@@ -75,6 +75,12 @@ StaffPrimaryLanguageType = Annotated[
         title='Primary Language',
         description='Main language that the staff member uses',
         examples=[Language.EN],
+        # TODO: Updates Language OpenAPI schema. But I think this is flaky.
+        extra_json_schema={
+            'extra': {
+                'default': None
+            }
+        }
     ),
 ]
 
