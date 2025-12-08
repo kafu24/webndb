@@ -206,6 +206,8 @@ async def clear_staff_aliases(db_session: AsyncSession, staff_id: int):
 async def upsert_staff_extlinks(
     db_session: AsyncSession, staff_id: int, extlinks: list[StaffExtlinkWriteSchema]
 ) -> list[StaffExtlink]:
+    if not extlinks:
+        return []
     try:
         stmt = insert(StaffExtlink).values(
             [
