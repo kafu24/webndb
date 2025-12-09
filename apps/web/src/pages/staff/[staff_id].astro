@@ -16,6 +16,9 @@ try {
 } catch (_error) {
   throw new Error('Unable to parse response from backend.');
 }
+if (!staffResponse.ok) {
+  throw staff;
+}
 
 const staffNovelsResponse = await fetch(
   `http://db-api:8000/novels?${new URLSearchParams({
