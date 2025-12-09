@@ -51,23 +51,17 @@ StaffIDResponseType = Annotated[
     ),
 ]
 
-StaffTypeType = Annotated[
-    StaffType,
-    Meta(
-        title='Staff Type',
-        description='Type of the staff member',
-        examples=[StaffType.PERSON],
-    ),
-]
+StaffTypeMeta = Meta(
+    title='Staff Type',
+    description='Type of the staff member',
+    examples=[StaffType.PERSON],
+)
 
-StaffGenderType = Annotated[
-    Gender,
-    Meta(
-        title='Staff Gender',
-        description='Gender of the staff member',
-        examples=[Gender.MALE],
-    ),
-]
+StaffGenderMeta = Meta(
+    title='Staff Gender',
+    description='Gender of the staff member',
+    examples=[Gender.MALE],
+)
 
 StaffPrimaryLanguageType = Annotated[
     Language,
@@ -75,6 +69,12 @@ StaffPrimaryLanguageType = Annotated[
         title='Primary Language',
         description='Main language that the staff member uses',
         examples=[Language.EN],
+        # TODO: Updates Language OpenAPI schema. But I think this is flaky.
+        extra_json_schema={
+            'extra': {
+                'default': None
+            }
+        }
     ),
 ]
 
@@ -175,7 +175,6 @@ class StaffExtlinkWriteSchema(BaseStruct):
 
 
 StaffExtlinksMeta = Meta(
-    min_length=1,
     max_length=STAFF_EXTTLINK_MAX,
     title='Staff External Links',
     description='Array of external links for a staff member',
@@ -185,7 +184,7 @@ StaffExtlinksMeta = Meta(
             StaffExtlinkSchema(link='https://en.wikipedia.org/wiki/Rudolf_Lingens'),
         ]
     ],
-    extra_json_schema={'extra': {'minItems': 1, 'maxItems': STAFF_EXTTLINK_MAX}},
+    extra_json_schema={'extra': {'maxItems': STAFF_EXTTLINK_MAX, 'default': []}},
 )
 
 
@@ -193,8 +192,8 @@ class StaffSchema(BaseStruct):
     """Representation of a staff member in responses."""
 
     staff_id: StaffIDResponseType = UNSET
-    staff_type: StaffTypeType = UNSET
-    gender: StaffGenderType = UNSET
+    staff_type: Annotated[StaffType, StaffTypeMeta] = UNSET
+    gender: Annotated[Gender, StaffGenderMeta] = UNSET
     primary_language: StaffPrimaryLanguageType = UNSET
     main_alias: StaffMainAliasType = UNSET
     description: StaffDescriptionType = UNSET
@@ -244,10 +243,22 @@ class StaffCreateSchema(BaseStruct):
     primary_language: StaffPrimaryLanguageType
     main_alias: StaffMainAliasType
     languages: set[Language]
-    aliases: Annotated[list[StaffAliasSchema], StaffAliasesMeta]
-    extlinks: Annotated[list[StaffExtlinkSchema], StaffExtlinksMeta] = []
-    staff_type: StaffTypeType = StaffType.PERSON
-    gender: StaffGenderType = Gender.UNKNOWN
+    aliases: Annotated[list[StaffAliasWriteSchema], StaffAliasesMeta]
+    extlinks: Annotated[list[StaffExtlinkWriteSchema], StaffExtlinksMeta] = []
+    staff_type: Annotated[StaffType, Parameter(
+        title=StaffTypeMeta.title,
+        description=StaffTypeMeta.description,
+        examples=StaffTypeMeta.examples,
+        default=StaffType.PERSON,
+        schema_component_key='StaffTypeInStaffCreateSchema',
+    )] = StaffType.PERSON
+    gender: Annotated[Gender, Parameter(
+        title=StaffGenderMeta.title,
+        description=StaffGenderMeta.description,
+        examples=StaffGenderMeta.examples,
+        default=Gender.UNKNOWN,
+        schema_component_key='GenderInStaffCreateSchema',
+    )] = Gender.UNKNOWN
     description: StaffDescriptionType = JSON_NULL
 
     def __post_init__(self):
@@ -261,8 +272,8 @@ class StaffUpdateSchema(BaseStruct):
     primary_language: StaffPrimaryLanguageType = UNSET
     main_alias: StaffMainAliasType = UNSET
     languages: set[Language] = UNSET
-    aliases: Annotated[list[StaffAliasSchema], StaffAliasesMeta] = UNSET
-    extlinks: Annotated[list[StaffExtlinkSchema], StaffExtlinksMeta] = UNSET
-    staff_type: StaffTypeType = UNSET
-    gender: StaffGenderType = UNSET
+    aliases: Annotated[list[StaffAliasWriteSchema], StaffAliasesMeta] = UNSET
+    extlinks: Annotated[list[StaffExtlinkWriteSchema], StaffExtlinksMeta] = UNSET
+    staff_type: Annotated[StaffType, StaffTypeMeta] = UNSET
+    gender: Annotated[Gender, StaffGenderMeta] = UNSET
     description: StaffDescriptionType = UNSET

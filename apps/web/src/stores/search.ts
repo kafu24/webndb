@@ -1,9 +1,10 @@
+import { navigate } from "astro:transitions/client";
 import { atom, type PreinitializedWritableAtom } from "nanostores";
-import { type Language } from "@/data/languages";
-import { type Tag, type TagState } from "@/data/tags";
-import { type Status } from "@/data/novels";
-import { type MinMaxState } from "@/data/minMax";
-import { type SortBy } from "@/data/sortBy";
+import { type Language, LANGUAGE_TO_CODE_MAP } from "@/data/languages";
+import type { Tag, TagState } from "@/data/tags";
+import type { Status } from "@/data/novels";
+import type { MinMaxState } from "@/data/minMax";
+import type { SortBy } from "@/data/sortBy";
 
 export const $selectedOriginalLanguages = atom<Language[]>([]);
 export const $selectedAvailableLanguages = atom<Language[]>([]);
@@ -127,4 +128,44 @@ export function resetAllFilters() {
     oldest: undefined,
     latest: undefined,
   });
+}
+
+export function redirectForNovelSearch(query: string = "") {
+  console.log(filterMap);
+  const languageCodes = filterMap.Original.get().map(
+    (l) => LANGUAGE_TO_CODE_MAP[l],
+  );
+  const statuses = $selectedStatuses.get().map((s) => s.toLowerCase());
+  const oldestReleaseDate =
+    $selectedReleaseDates.get().oldest?.toISOString() ?? undefined;
+  const latestReleaseDate =
+    $selectedReleaseDates.get().latest?.toISOString() ?? undefined;
+  const filters = [];
+
+  if (languageCodes.length > 0) {
+    filters.push(`(original_language IN [${languageCodes}])`);
+  }
+
+  if (statuses.length > 0) {
+    filters.push(`(status IN [${statuses}])`);
+  }
+
+  const dateRange = [];
+  // https://stackoverflow.com/a/3269471
+  if (oldestReleaseDate !== undefined) {
+    dateRange.push(`end_release_date >= '${oldestReleaseDate}'`);
+  }
+  if (latestReleaseDate !== undefined) {
+    dateRange.push(`start_release_date <= '${latestReleaseDate}'`);
+  }
+  if (dateRange.length > 0) {
+    filters.push(`(${dateRange.join(" AND ")})`);
+  }
+
+  const filterString = filters.join(" AND ");
+  const searchParams = new URLSearchParams({
+    ...(filterString !== "" && { filter: filterString }),
+    ...(query !== "" && { q: query }),
+  });
+  navigate(`/novels?${searchParams}`);
 }

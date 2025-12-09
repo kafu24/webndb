@@ -1,4 +1,10 @@
-searchable_attributes = ['titles.title', 'titles.latin', 'description']
+searchable_attributes = [
+    'titles.title',
+    'titles.latin',
+    'description',
+    'staff.main_alias',
+    'staff.note',
+]
 filterable_attributes = [
     'novel_id',
     'original_language',
@@ -10,6 +16,10 @@ filterable_attributes = [
     'titles.title',
     'titles.latin',
     'titles.official',
+    'staff.staff_id',
+    'staff.main_alias',
+    'staff.role',
+    'staff.note',
 ]
 sortable_attributes = [
     'novel_id',
@@ -17,4 +27,5 @@ sortable_attributes = [
     'end_release_date',
     'titles.title',
     'titles.latin',
+    'staff.staff_id',
 ]
