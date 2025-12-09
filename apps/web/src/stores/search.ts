@@ -131,7 +131,6 @@ export function resetAllFilters() {
 }
 
 export function redirectForNovelSearch(query: string = "") {
-  console.log(filterMap);
   const languageCodes = filterMap.Original.get().map(
     (l) => LANGUAGE_TO_CODE_MAP[l],
   );
