@@ -164,7 +164,7 @@ class Novel(Base):
         back_populates='novel',
         cascade='all, delete-orphan',
         passive_deletes=True,
-        order_by='NovelTitle.official',
+        order_by='desc(NovelTitle.official)',
     )
     volumes: Mapped[list['Volume']] = relationship(
         back_populates='novel',

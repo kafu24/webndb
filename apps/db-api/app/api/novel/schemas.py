@@ -309,11 +309,9 @@ class NovelSchema(BaseStruct):
 
 async def to_novel_schema(
     novel: 'Novel',
-    titles: list['NovelTitle'] = None,
     novel_staff: list['NovelStaff'] = None,
 ) -> NovelSchema:
-    if titles is None:
-        titles = await novel.awaitable_attrs.titles
+    titles = await novel.awaitable_attrs.titles
     if novel_staff is None:
         novel_staff = await novel.awaitable_attrs.novel_staff
     return NovelSchema(
