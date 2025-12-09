@@ -30,7 +30,6 @@ try {
 } catch (_error) {
   throw new Error('Unable to parse response from backend.');
 }
-console.log(result.items)
 ---
 
 <BaseLayout>
@@ -48,12 +47,16 @@ console.log(result.items)
           class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5"
         />
         <Input
+          id="staff-search-input"
+          value={q}
           size="md"
           placeholder="Search Staff"
           class="pl-10 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
         />
       </div>
-      <Button>Search</Button>
+      <Button id="search-button">
+        Search
+      </Button>
     </div>
     <Button href="/staff/add" class="h-10 mt-2">
       <Icon name="tabler:plus" />Add Staff
@@ -65,5 +68,17 @@ console.log(result.items)
     <Pagination />
   </div>
 </BaseLayout>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+
+  document.addEventListener('astro:page-load', () => {
+    const searchInput = document.getElementById('staff-search-input');
+    const searchButton = document.getElementById('search-button');
+    searchButton?.addEventListener('click', () => navigate(
+      `/staff?${new URLSearchParams({ q: searchInput?.value ?? ''})}`
+    ));
+  })
+</script>
 
 <BackScript />
