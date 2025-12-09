@@ -10,6 +10,14 @@ const SUPPORTED_LANGUAGES = [
 
 type Language = (typeof SUPPORTED_LANGUAGES)[number]["name"];
 
+const CODE_TO_LANGUAGE = {
+  "en": "English",
+  "ja": "Japanese",
+  "ko": "Korean",
+  "zh-Hans": "Simplified Chinese",
+  "zh-Hant": "Traditional Chinese"
+};
+
 const LANGUAGE_TO_CODE_MAP = {
   English: "en",
   Japanese: "ja",
@@ -30,6 +38,7 @@ const IETFBCP47_TO_ALPHA2_MAP = {
 export {
   SUPPORTED_LANGUAGES,
   type Language,
+  CODE_TO_LANGUAGE,
   LANGUAGE_TO_CODE_MAP,
   IETFBCP47_TO_ALPHA2_MAP,
 };
