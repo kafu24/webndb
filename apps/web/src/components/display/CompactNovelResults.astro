@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+import { IETFBCP47_TO_ALPHA2_MAP } from '@/data/languages';
 
 const { novels } = Astro.props;
 ---
@@ -24,7 +25,7 @@ const { novels } = Astro.props;
           </span>
           <div class="pb-0.5 lg:pb-1">
             <Icon
-              name="flag:jp-4x3"
+              name={`flag:${IETFBCP47_TO_ALPHA2_MAP[novel.original_language]}-4x3`}
               class="w-6 lg:w-7 h-auto inline shadow mr-1 mb-1"
             />
             <a

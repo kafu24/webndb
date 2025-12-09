@@ -10,4 +10,26 @@ const SUPPORTED_LANGUAGES = [
 
 type Language = (typeof SUPPORTED_LANGUAGES)[number]["name"];
 
-export { SUPPORTED_LANGUAGES, Language };
+const LANGUAGE_TO_CODE_MAP = {
+  English: "en",
+  Japanese: "ja",
+  Korean: "ko",
+  "Simplified Chinese": "zh-Hans",
+  "Traditional Chinese": "zh-Hant",
+};
+
+// Map IETF language tags to ISO 3166-1 alpha-2 codes
+const IETFBCP47_TO_ALPHA2_MAP = {
+  en: "us",
+  ko: "kr",
+  "zh-Hans": "cn",
+  "zh-Hant": "tw",
+  ja: "jp",
+};
+
+export {
+  SUPPORTED_LANGUAGES,
+  type Language,
+  LANGUAGE_TO_CODE_MAP,
+  IETFBCP47_TO_ALPHA2_MAP,
+};
