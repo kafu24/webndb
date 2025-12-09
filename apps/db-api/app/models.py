@@ -158,6 +158,7 @@ class Novel(Base):
         TIMESTAMP(timezone=True)
     )
     end_release_date: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))
+    image_url: Mapped[str | None] = mapped_column(Text)
 
     titles: Mapped[list['NovelTitle']] = relationship(
         back_populates='novel',

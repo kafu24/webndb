@@ -284,6 +284,7 @@ async def create_novel(
             data.status,
             data.start_release_date,
             data.end_release_date,
+            data.image_url,
         )
         # No triggers on distributed tables, so we need to ensure a novel
         # has a volume_ordering record in application.
@@ -413,6 +414,9 @@ async def patch_novel(
             await novel.awaitable_attrs.end_release_date
             if data.end_release_date is UNSET
             else data.end_release_date,
+            await novel.awaitable_attrs.image_url
+            if data.image_url is UNSET
+            else data.image_url,
         )
         titles = None
         if data.titles is not UNSET:
