@@ -53,6 +53,7 @@ async def insert_novel(
     status: PublicationStatus,
     start_release_date: datetime | None,
     end_release_date: datetime | None,
+    image_url: str | None,
 ) -> Novel:
     """Inserts a record in the `novel` table."""
     try:
@@ -62,6 +63,7 @@ async def insert_novel(
             status=status,
             start_release_date=start_release_date,
             end_release_date=end_release_date,
+            image_url=image_url,
         )
         db_session.add(novel)
         await db_session.flush()
@@ -79,6 +81,7 @@ async def update_novel(
     status: PublicationStatus,
     start_release_date: datetime | None,
     end_release_date: datetime | None,
+    image_url: str | None,
 ) -> Novel:
     """Updates the novel identified by `novel_id`."""
     try:
@@ -91,6 +94,7 @@ async def update_novel(
                 status=status,
                 start_release_date=start_release_date,
                 end_release_date=end_release_date,
+                image_url=image_url,
             )
         )
         novel = await db_session.scalar(
