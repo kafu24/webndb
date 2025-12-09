@@ -12,7 +12,7 @@ const { novels } = Astro.props;
       href={`/novel/${novel.novel_id}`}
       class="relative group overflow-hidden rounded-md"
     >
-      <img src={novel.image} class="aspect-[5/7] w-full object-cover" />
+      <img src={novel.image_url} class="aspect-[5/7] w-full object-cover" />
       <div class="absolute top-1 left-1 text-xs text-white z-10">
         <span class="flex items-center bg-black/60 px-1 py-0.5 gap-0.25 rounded backdrop-blur-sm font-medium text-green-400">
           <Icon name="tabler:circle-dot" class="w-4 h-4" /> {novel.status}
