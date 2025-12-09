@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import { IETFBCP47_TO_ALPHA2_MAP } from '@/data/languages';
+import { SUPPORTED_STATUSES_COLOR } from "@/data/novels";
 
 const { novels } = Astro.props;
 ---
@@ -19,7 +20,7 @@ const { novels } = Astro.props;
           />
         </a>
         <div>
-          <span class="float-right flex items-center gap-0.5 text-green-400 pl-2 bg-accent rounded py-0.5 px-2 text-sm font-semibold shadow ml-2 capitalize">
+          <span class={`float-right flex items-center gap-0.5 ${SUPPORTED_STATUSES_COLOR[novel.status]} pl-2 bg-accent rounded py-0.5 px-2 text-sm font-semibold shadow ml-2 capitalize`}>
             <Icon name="tabler:circle-dot" class="w-4 h-4" />
             {novel.status}
           </span>

@@ -2,6 +2,7 @@
 // TODO: color based on status, flag match
 import { Icon } from "astro-icon/components";
 import { IETFBCP47_TO_ALPHA2_MAP } from '@/data/languages';
+import { SUPPORTED_STATUSES_COLOR } from "@/data/novels";
 
 const { novels } = Astro.props;
 if (!novels || novels.length === 0)
@@ -16,7 +17,7 @@ if (!novels || novels.length === 0)
     >
       <img src={novel.image_url} class="aspect-[5/7] w-full object-cover" />
       <div class="absolute top-1 left-1 text-xs text-white z-10">
-        <span class="flex items-center bg-black/60 px-1 py-0.5 gap-0.25 rounded backdrop-blur-sm font-medium text-green-400 capitalize">
+        <span class={`flex items-center bg-black/60 px-1 py-0.5 gap-0.25 rounded backdrop-blur-sm font-medium ${SUPPORTED_STATUSES_COLOR[novel.status]} capitalize`}>
           <Icon name="tabler:circle-dot" class="w-4 h-4" /> {novel.status}
         </span>
       </div>
@@ -44,7 +45,7 @@ if (!novels || novels.length === 0)
             name={`flag:${IETFBCP47_TO_ALPHA2_MAP[novel.original_language]}-4x3`}
             class="w-5 h-auto inline mr-1"
           />
-          <span class="float-right flex items-center gap-0.25 text-xs font-medium text-green-400 py-0.5 capitalize">
+          <span class={`float-right flex items-center gap-0.25 text-xs font-medium ${SUPPORTED_STATUSES_COLOR[novel.status]} py-0.5 capitalize`}>
             <Icon name="tabler:circle-dot" class="w-3 h-3" />
             {novel.status}
           </span>
