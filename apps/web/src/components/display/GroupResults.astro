@@ -1,6 +1,10 @@
 ---
 const { type, list } = Astro.props;
 import { Icon } from "astro-icon/components";
+import { IETFBCP47_TO_ALPHA2_MAP } from "@/data/languages";
+
+if (!list || list.length === 0)
+  return
 ---
 
 <div
@@ -8,14 +12,14 @@ import { Icon } from "astro-icon/components";
 >
   {
     list.map((group) => (
-      <a href={`/${type === "Staff" ? "staff" : "publishers"}/${group.id}`}>
+      <a href={`/${type === "Staff" ? "staff" : "publishers"}/${group.staff_id}`}>
         <div class="flex flex-col border-2 p-2 rounded-md bg-popover">
           <span class="truncate">
             <Icon
-              name={`flag:${group.primary_language}-4x3`}
+              name={`flag:${IETFBCP47_TO_ALPHA2_MAP[group.primary_language]}-4x3`}
               class="shadow inline mr-1 mb-1"
             />
-            {group.name}
+            {group.aliases[0].name}
           </span>
         </div>
       </a>

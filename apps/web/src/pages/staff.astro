@@ -7,23 +7,30 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import BackScript from "@/utils/BackScript.astro";
 import { Icon } from "astro-icon/components";
 
-const staff = {
-  id: 1234,
-  name: "Yukinobu Tatsu",
-  image:
-    "https://s4.anilist.co/file/anilistcdn/staff/large/n216878-qJ0xkwUz8XmM.png",
-  primary_language: "jp",
-  languages: ["jp", "us"],
-  aliases: ["龍幸伸", "Yukinobu Tatu", "타츠 유키노부"],
-  links: [{ platform: "x", link: "https://x.com/TatuYukinobu" }],
-  gender: "Male",
-  description:
-    "description description description description description description description description description description description description description description description description",
-  roles: [
-    { role: "Original Creator", novel: 1234 },
-    { role: "Original Creator", novel: 1234 },
-  ],
-};
+const searchParams = Astro.url.searchParams;
+const q = searchParams.get('q') ?? '';
+const o = new URLSearchParams({
+  q,
+  offset: searchParams.get('offset') ?? '0',
+  limit: searchParams.get('limit') ?? '20',
+  fields:
+    searchParams.getAll('fields').length === 0
+      ? ['*']
+      : searchParams.getAll('fields'),
+  filter: searchParams.get('filter') ?? '',
+  ...(searchParams.getAll('sort').length !== 0 && {
+    sort: searchParams.getAll('sort'),
+  }),
+});
+
+const response = await fetch(`http://db-api:8000/staff?${o}`);
+let result;
+try {
+  result = await response.json();
+} catch (_error) {
+  throw new Error('Unable to parse response from backend.');
+}
+console.log(result.items)
 ---
 
 <BaseLayout>
@@ -53,7 +60,7 @@ const staff = {
       </Button>
     <GroupResults
       type="Staff"
-      list={Array.from({ length: 5 }, () => ({ ...staff }))}
+      list={result.items}
     />
     <Pagination />
   </div>
