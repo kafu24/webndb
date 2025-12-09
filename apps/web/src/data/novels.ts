@@ -1,12 +1,19 @@
 const SUPPORTED_TAGS = ["Fantasy", "Adventure", "Action"];
 
-const SUPPORTED_STATUSES = ["Ongoing", "Completed", "Hiatus", "Cancelled"];
+const SUPPORTED_STATUSES = [
+  "ongoing",
+  "completed",
+  "hiatus",
+  "cancelled",
+  "unknown",
+];
 
 const SUPPORTED_STATUSES_COLOR = {
-  Ongoing: "text-green-500",
-  Completed: "text-blue-500",
-  Hiatus: "text-yellow-500",
-  Cancelled: "text-red-500",
+  ongoing: "text-green-500",
+  completed: "text-blue-500",
+  hiatus: "text-yellow-500",
+  cancelled: "text-red-500",
+  unknown: "",
 };
 
 type Status = (typeof SUPPORTED_STATUSES)[number];
