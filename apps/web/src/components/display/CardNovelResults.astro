@@ -27,7 +27,7 @@ const { novels } = Astro.props;
                 href={`/novel/${novel.novel_id}`}
                 class="text-lg font-bold hover:underline leading-snug"
               >
-                {novel.title}
+                {novel.titles[0].latin ?? novel.titles[0].title}
               </a>
             </div>
           </div>
