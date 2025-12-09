@@ -12,14 +12,14 @@ if (!list || list.length === 0)
 >
   {
     list.map((group) => (
-      <a href={`/${type === "Staff" ? "staff" : "publishers"}/${group.staff_id}`}>
+      <a href={`/${type === "Staff" ? `staff/${group.staff_id}` : "publishers"}`}>
         <div class="flex flex-col border-2 p-2 rounded-md bg-popover">
           <span class="truncate">
             <Icon
               name={`flag:${IETFBCP47_TO_ALPHA2_MAP[group.primary_language]}-4x3`}
               class="shadow inline mr-1 mb-1"
             />
-            {group.aliases[0].name}
+            {group.main_alias}
           </span>
         </div>
       </a>
