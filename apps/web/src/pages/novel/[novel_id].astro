@@ -47,6 +47,18 @@ const fillerNovel = {
   readers: "10k",
 };
 
+const recommendedNovelsResponse = await fetch(`http://db-api:8000/novels?limit=5`);
+let recommendedNovels = [];
+try {
+  recommendedNovels = (await recommendedNovelsResponse.json()).items;
+} catch (_error) {
+  throw new Error('Unable to parse response from backend.');
+}
+
+while (recommendedNovels.length < 5) {
+  recommendedNovels.push(fillerNovel);
+}
+
 const tags = ["tag1", "tag1", "tag1", "tag1", "tag1", "tag1", "tag1"];
 
 const chapters = [
@@ -509,9 +521,7 @@ const chapters = [
             </button>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <GridNovelResults
-              novels={Array.from({ length: 5 }, () => ({ ...fillerNovel }))}
-            />
+            <GridNovelResults novels={recommendedNovels} />
           </div>
         </div>
       </aside>
@@ -801,9 +811,7 @@ const chapters = [
               <div
                 class="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(144px,1fr))]"
               >
-                <GridNovelResults
-                  novels={Array.from({ length: 5 }, () => ({ ...fillerNovel }))}
-                />
+                <GridNovelResults novels={recommendedNovels} />
               </div>
             </div>
           </div>
