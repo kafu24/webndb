@@ -175,6 +175,7 @@ async def get_volume(
 
 
 @post(
+    exclude_from_auth=True,
     path='/',
     guards=[required_request_body_guard],
     tags=['volumes'],

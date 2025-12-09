@@ -28,8 +28,8 @@ def create_app() -> Litestar:
     alchemy_config = SQLAlchemyAsyncConfig(engine_instance=async_engine)
 
     return Litestar(
-        cors_config=cors_config,
-        csrf_config=csrf_config,
+        # cors_config=cors_config,
+        # csrf_config=csrf_config,
         dependencies={'transaction': provide_transaction},
         openapi_config=openapi_config,
         plugins=[
