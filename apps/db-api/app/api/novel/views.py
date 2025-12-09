@@ -419,6 +419,7 @@ async def patch_novel(
             else data.image_url,
         )
         titles = None
+        novel_staff = None
         if data.titles is not UNSET:
             await clear_novel_titles(transaction, novel_id)
             titles = await upsert_novel_titles(transaction, novel_id, data.titles)
