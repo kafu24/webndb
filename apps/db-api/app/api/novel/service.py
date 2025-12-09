@@ -164,6 +164,8 @@ async def upsert_novel_staff(
     staff: list[NovelStaffWriteSchema],
     orm_staff: list[Staff],
 ) -> Sequence[NovelStaff]:
+    if not staff:
+        return []
     orm_staff_dict: dict[int, Staff] = dict()
     for s in orm_staff:
         orm_staff_dict[s.staff_id] = s
