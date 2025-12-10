@@ -101,7 +101,7 @@ if isinstance(ALLOWED_CORS_ORIGIN, str):
         # Split the string by commas into a list if it is not meant to be a list
         # representation.
         ALLOWED_CORS_ORIGIN = [host.strip() for host in ALLOWED_CORS_ORIGIN.split(',')]
-cors_config = CORSConfig(allow_origins=ALLOWED_CORS_ORIGIN)
+cors_config = CORSConfig(allow_origins=ALLOWED_CORS_ORIGIN, allow_credentials=True)
 
 csrf_config = CSRFConfig(
     secret=SECRET_KEY, cookie_name='XSRF-TOKEN', header_name='X-XSRF-TOKEN'

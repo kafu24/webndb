@@ -125,6 +125,18 @@ NovelStatusType = Annotated[
     ),
 ]
 
+NovelImageUrlType = Annotated[
+    str | None,
+    Meta(
+        title='Image URL',
+        description='Image URL for the cover',
+        examples=[
+            'https://upload.wikimedia.org/wikipedia/commons/a/af/AlicesAdventuresInWonderlandTitlePage.jpg'
+        ],
+    ),
+]
+
+
 NovelTitleType = Annotated[
     str,
     Meta(
@@ -290,17 +302,16 @@ class NovelSchema(BaseStruct):
     status: NovelStatusType = UNSET
     start_release_date: NovelStartReleaseDateType = UNSET
     end_release_date: NovelEndReleaseDateType = UNSET
+    image_url: NovelImageUrlType = UNSET
     titles: Annotated[list[NovelTitleSchema], NovelTitlesMeta] = UNSET
     staff: Annotated[list[NovelStaffSchema], NovelStaffMeta] = UNSET
 
 
 async def to_novel_schema(
     novel: 'Novel',
-    titles: list['NovelTitle'] = None,
     novel_staff: list['NovelStaff'] = None,
 ) -> NovelSchema:
-    if titles is None:
-        titles = await novel.awaitable_attrs.titles
+    titles = await novel.awaitable_attrs.titles
     if novel_staff is None:
         novel_staff = await novel.awaitable_attrs.novel_staff
     return NovelSchema(
@@ -310,6 +321,7 @@ async def to_novel_schema(
         status=novel.status,
         start_release_date=novel.start_release_date,
         end_release_date=novel.end_release_date,
+        image_url=novel.image_url,
         titles=[to_novel_title_schema(t) for t in titles],
         staff=[to_novel_staff_schema(s) for s in novel_staff],
     )
@@ -334,6 +346,7 @@ class NovelCreateSchema(BaseStruct):
     status: NovelStatusType = PublicationStatus.UNKNOWN
     start_release_date: NovelStartReleaseDateType = JSON_NULL
     end_release_date: NovelEndReleaseDateType = JSON_NULL
+    image_url: NovelImageUrlType = JSON_NULL
     staff: Annotated[list[NovelStaffWriteSchema], NovelStaffWriteMeta] = []
 
     def __post_init__(self):
@@ -345,6 +358,8 @@ class NovelCreateSchema(BaseStruct):
             self.start_release_date = None
         if self.end_release_date is JSON_NULL:
             self.end_release_date = None
+        if self.image_url is JSON_NULL:
+            self.image_url = None
 
 
 class NovelUpdateSchema(BaseStruct):
@@ -356,4 +371,5 @@ class NovelUpdateSchema(BaseStruct):
     status: NovelStatusType = UNSET
     start_release_date: NovelStartReleaseDateType = UNSET
     end_release_date: NovelEndReleaseDateType = UNSET
+    image_url: NovelImageUrlType = UNSET
     staff: Annotated[list[NovelStaffWriteSchema], NovelStaffWriteMeta] = UNSET

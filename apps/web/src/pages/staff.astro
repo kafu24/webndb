@@ -1,0 +1,84 @@
+---
+import GroupResults from "@/components/display/GroupResults.astro";
+import Pagination from "@/components/search/SearchPagination.astro";
+import { Button } from "@/components/starwind/button";
+import { Input } from "@/components/starwind/input";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import BackScript from "@/utils/BackScript.astro";
+import { Icon } from "astro-icon/components";
+
+const searchParams = Astro.url.searchParams;
+const q = searchParams.get('q') ?? '';
+const o = new URLSearchParams({
+  q,
+  offset: searchParams.get('offset') ?? '0',
+  limit: searchParams.get('limit') ?? '20',
+  fields:
+    searchParams.getAll('fields').length === 0
+      ? ['*']
+      : searchParams.getAll('fields'),
+  filter: searchParams.get('filter') ?? '',
+  ...(searchParams.getAll('sort').length !== 0 && {
+    sort: searchParams.getAll('sort'),
+  }),
+});
+
+const response = await fetch(`http://db-api:8000/staff?${o}`);
+let result;
+try {
+  result = await response.json();
+} catch (_error) {
+  throw new Error('Unable to parse response from backend.');
+}
+---
+
+<BaseLayout>
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
+        <Icon name="tabler:arrow-narrow-left" />
+      </Button>
+      <h1 class="text-4xl font-semibold">Staff</h1>
+    </div>
+    <div class="flex gap-2">
+      <div class="flex flex-1 relative mb-2">
+        <Icon
+          name="tabler:search"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5"
+        />
+        <Input
+          id="staff-search-input"
+          value={q}
+          size="md"
+          placeholder="Search Staff"
+          class="pl-10 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
+        />
+      </div>
+      <Button id="search-button">
+        Search
+      </Button>
+    </div>
+    <Button href="/staff/add" class="h-10 mt-2">
+      <Icon name="tabler:plus" />Add Staff
+      </Button>
+    <GroupResults
+      type="Staff"
+      list={result.items}
+    />
+    <Pagination />
+  </div>
+</BaseLayout>
+
+<script>
+  import { navigate } from "astro:transitions/client";
+
+  document.addEventListener('astro:page-load', () => {
+    const searchInput = document.getElementById('staff-search-input');
+    const searchButton = document.getElementById('search-button');
+    searchButton?.addEventListener('click', () => navigate(
+      `/staff?${new URLSearchParams({ q: searchInput?.value ?? ''})}`
+    ));
+  })
+</script>
+
+<BackScript />

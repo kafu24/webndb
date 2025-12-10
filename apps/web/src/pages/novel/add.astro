@@ -1,0 +1,34 @@
+---
+export const prerender = false;
+
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import AddPage from "@/pages/novel/AddPage";
+
+const xsrfToken = Astro.cookies.get("XSRF-TOKEN")?.value;
+const cookies = Astro.request.headers.get("cookie");
+
+try {
+  const response = await fetch("http://db-api:8000/user", {
+    headers: {
+      "X-XSRF-TOKEN": xsrfToken || "",
+      "Cookie": cookies || "",
+    },
+  });
+
+  if (!response.ok) {
+    return Astro.redirect("/login");
+  }
+} catch (e) {
+  return Astro.redirect("/login");
+}
+
+---
+
+<div class="relative">
+  <div class="absolute top-0 left-0 w-full h-64 bg-card border-b border-border">
+  </div>
+
+  <BaseLayout>
+    <AddPage client:load />
+  </BaseLayout>
+</div>

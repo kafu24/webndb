@@ -284,16 +284,17 @@ async def create_novel(
             data.status,
             data.start_release_date,
             data.end_release_date,
+            data.image_url,
         )
         # No triggers on distributed tables, so we need to ensure a novel
         # has a volume_ordering record in application.
         await insert_initial_volume_ordering(transaction, novel.novel_id)
-        titles = await upsert_novel_titles(transaction, novel.novel_id, data.titles)
+        await upsert_novel_titles(transaction, novel.novel_id, data.titles)
         novel_staff = await upsert_novel_staff(
             transaction, novel.novel_id, data.staff, orm_staff
         )
         await insert_staff_novel_by_novel_id(transaction, novel.novel_id, staff_ids)
-        res = await to_novel_schema(novel, titles, novel_staff)
+        res = await to_novel_schema(novel, novel_staff)
         await meili_index.add_documents([res])
     except Exception:
         raise InternalServerException
@@ -413,11 +414,14 @@ async def patch_novel(
             await novel.awaitable_attrs.end_release_date
             if data.end_release_date is UNSET
             else data.end_release_date,
+            await novel.awaitable_attrs.image_url
+            if data.image_url is UNSET
+            else data.image_url,
         )
-        titles = None
+        novel_staff = None
         if data.titles is not UNSET:
             await clear_novel_titles(transaction, novel_id)
-            titles = await upsert_novel_titles(transaction, novel_id, data.titles)
+            await upsert_novel_titles(transaction, novel_id, data.titles)
         if data.staff is not UNSET:
             await clear_novel_staff(transaction, novel_id)
             await clear_staff_novel_by_novel_id(transaction, novel_id)
@@ -425,7 +429,7 @@ async def patch_novel(
                 transaction, novel.novel_id, data.staff, orm_staff
             )
             await insert_staff_novel_by_novel_id(transaction, novel.novel_id, staff_ids)
-        res = await to_novel_schema(novel, titles, novel_staff)
+        res = await to_novel_schema(novel, novel_staff)
         await meili_index.update_documents([res])
         await transaction.commit()
     except Exception:

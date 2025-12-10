@@ -1,0 +1,92 @@
+---
+export const prerender = false;
+import NovelResults from '@/components/display/NovelResults.astro';
+import SearchFilter from '@/components/search/SearchFilter';
+import Pagination from '@/components/search/SearchPagination.astro';
+import { Button } from '@/components/starwind/button';
+import { Input } from '@/components/starwind/input';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import BackScript from '@/utils/BackScript.astro';
+import { Icon } from 'astro-icon/components';
+
+const searchParams = Astro.url.searchParams;
+const q = searchParams.get('q') ?? '';
+const o = new URLSearchParams({
+  q,
+  offset: searchParams.get('offset') ?? '0',
+  limit: searchParams.get('limit') ?? '20',
+  fields:
+    searchParams.getAll('fields').length === 0
+      ? ['*']
+      : searchParams.getAll('fields'),
+  filter: searchParams.get('filter') ?? '',
+  ...(searchParams.getAll('sort').length !== 0 && {
+    sort: searchParams.getAll('sort'),
+  }),
+});
+
+const response = await fetch(`http://db-api:8000/novels?${o}`);
+let result;
+try {
+  result = await response.json();
+} catch (_error) {
+  throw new Error('Unable to parse response from backend.');
+}
+---
+
+<BaseLayout>
+  <div>
+    <div class="flex items-center gap-2 mb-4">
+      <Button id="back-btn" variant="ghost" class="p-2 [&_svg]:size-5">
+        <Icon name="tabler:arrow-narrow-left" />
+      </Button>
+      <h1 class="text-4xl font-semibold">Novels</h1>
+    </div>
+    <div class="flex gap-2">
+      <div class="flex flex-1 relative">
+        <Icon
+          name="tabler:search"
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5"
+        />
+        <Input
+          id="novel-search-input"
+          value={q}
+          size="md"
+          placeholder="Search Novels"
+          class="pl-10 bg-accent focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus:outline-background/20"
+        />
+      </div>
+      <Button id="search-button">
+        Search
+      </Button>
+      <Button id="search-filter-toggle" class="flex">
+        <span id="search-filter-toggle-text"> Show Filters </span>
+        <Icon
+          name="tabler:chevron-down"
+          id="search-filter-toggle-icon"
+          class="transition-transform duration-150"
+        />
+      </Button>
+    </div>
+    <SearchFilter client:load />
+    <NovelResults novels={result.items} />
+    <!-- TODO: fallback loading -->
+
+    <Pagination />
+  </div>
+</BaseLayout>
+
+<script>
+  import { redirectForNovelSearch } from "@/stores/search";
+
+  document.addEventListener('astro:page-load', () => {
+    const searchInput = document.getElementById('novel-search-input');
+    const searchButton = document.getElementById('search-button');
+    searchButton?.addEventListener(
+      'click',
+      () => redirectForNovelSearch(searchInput?.value ?? '')
+    );
+  })
+</script>
+
+<BackScript />

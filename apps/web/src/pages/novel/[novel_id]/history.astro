@@ -1,0 +1,81 @@
+---
+export const prerender = false;
+
+import { Button } from "@/components/starwind/button";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import HistoryPage from "@/pages/novel/[novel_id]/HistoryPage";
+import BackScript from "@/utils/BackScript.astro";
+import FitText from "@/utils/FitText.astro";
+import { Icon } from "astro-icon/components";
+
+const { novel_id } = Astro.params;
+
+const novel = {
+  novel_id: "0123",
+  title: "title1 title1 title1 title1 title1 title1title1title1",
+  description:
+    "description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description description",
+  original_language: "jp",
+  image:
+    "https://mangadex.org/covers/b0b721ff-c388-4486-aa0f-c2b0bb321512/f6fb40bf-f4e5-4163-a2c7-f103200873c3.jpg.512.jpg",
+  status: "Ongoing",
+  tags: ["tag1", "tag1", "tag1", "tag1", "tag1", "tag1", "tag1"],
+  rating: "9.2",
+  num_ratings: "520",
+  num_reviews: "102",
+  readers: "10k",
+};
+---
+
+<div class="relative">
+  <div
+    class="flex flex-col justify-between absolute h-64 w-full bg-size-[110%] bg-position-[center_50%]"
+    style={`background-image:url("${novel.image}")`}
+  >
+  </div>
+
+  <div class="absolute top-0 left-0 w-full bg-black/40 backdrop-blur-sm h-64">
+  </div>
+
+  <BaseLayout>
+    <div class="flex gap-4 w-full relative">
+      <img
+        src={novel.image}
+        class="aspect-[5/7] object-cover rounded-md z-20 :w-21 h-30 border-border border"
+      />
+      <div class="flex flex-col w-full">
+        <div class="flex flex-col justify-between h-42 w-full">
+          <span
+            id="novel-title"
+            class="font-bold h-30 block break-words leading-[1.1] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white invisible"
+          >
+            <Icon name="flag:jp-4x3" class="inline shadow mr-1 mb-1" />
+            {novel.title}
+          </span>
+          <div class="flex items-end mb-1 z-25">
+            <span
+              class="text-lg line-clamp-2 leading-[1.05] drop-shadow-[1px_2px_4px_rgba(0,0,0,0.3)] text-white absolute left-0 w-[calc(100%-176px)]"
+            >
+              by Author Author AuthorAuthor Author Author
+            </span>
+            <div class="ml-auto">
+              <Button size="sm"> <Icon name="tabler:edit" /> </Button>
+              <Button href={`/novel/${novel_id}`} size="sm"
+                ><Icon name="tabler:book" /></Button
+              >
+              <Button size="sm">
+                <Icon name="tabler:exclamation-circle" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pt-4">
+      <HistoryPage client:load />
+    </div>
+  </BaseLayout>
+</div>
+
+<FitText textId="novel-title" minSize={20} maxSize={64} />
+<BackScript />
