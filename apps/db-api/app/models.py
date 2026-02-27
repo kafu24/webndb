@@ -31,6 +31,9 @@ from .const import (
     STAFF_ALIASES_MAX,
     STAFF_DESCRIPTION_MAX,
     STAFF_EXTTLINK_MAX,
+    TAG_ALIAS_MAX,
+    TAG_DESCRIPTION_MAX,
+    TAG_NAME_MAX,    
     VOLUME_ORDER_MAX,
     VOLUME_TITLE_MAX,
 )
@@ -84,6 +87,14 @@ class StaffRole(StrEnum):
     STAFF = 'staff'
 
 
+class TagType(StrEnum):
+    """The type of category the tag falls under."""
+    
+    DEMOGRAPHIC = 'demographic'
+    GENRE = 'genre'
+    TAG = 'tag'
+
+
 class Base(AsyncAttrs, DeclarativeBase):
     metadata = MetaData(
         naming_convention={
@@ -112,6 +123,9 @@ class Base(AsyncAttrs, DeclarativeBase):
         StaffRole: Enum(
             StaffRole, name='staff_role', values_callable=lambda x: [e.value for e in x]
         ),
+        TagType: Enum(
+            TagType, name='tag_type', values_callable=lambda x: [e.value for e in x]
+        )
     }
 
     def __repr__(self):
@@ -164,7 +178,7 @@ class Novel(Base):
         back_populates='novel',
         cascade='all, delete-orphan',
         passive_deletes=True,
-        order_by='desc(NovelTitle.official)',
+        order_by='NovelTitle.official',
     )
     volumes: Mapped[list['Volume']] = relationship(
         back_populates='novel',
@@ -178,6 +192,9 @@ class Novel(Base):
     )
     novel_staff: Mapped[list['NovelStaff']] = relationship(
         back_populates='novel', passive_deletes='all', order_by='NovelStaff.order_pos'
+    )
+    tags: Mapped[list['Tag']] = relationship(
+        secondary='novel_tag'
     )
 
 
@@ -711,3 +728,54 @@ def distribute_novel_staff(target, connection, **kw):
             "'novel_staff', 'novel_id', colocate_with => 'novel')"
         )
     )
+
+
+class Tag(Base):
+    __tablename__ = 'tag'
+
+    tag_id: Mapped[int] = mapped_column(
+        Integer, Identity(always=True), primary_key=True
+    )
+    tag_type: Mapped[TagType]
+    name: Mapped[str] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'char_length(name) <= {TAG_NAME_MAX}', name='tag_name_length'
+        ),
+        unique=True,
+    )
+    alias: Mapped[str | None] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'alias IS NULL OR char_length(alias) <= {TAG_ALIAS_MAX}',
+            name='tag_alias_length',
+        ),
+    )
+    description: Mapped[str | None] = mapped_column(
+        Text,
+        CheckConstraint(
+            f'description IS NULL OR char_length(description) <= {TAG_DESCRIPTION_MAX}',
+            name='tag_description_length',
+        ),
+    )
+
+
+@event.listens_for(Tag.__table__, 'after_create')
+def reference_tag(target, connection, **kw):
+    connection.execute(text("SELECT create_reference_table('tag')"))
+
+
+class NovelTag(Base):
+    __tablename__ = "novel_tag"
+
+    novel_id: Mapped[int] = mapped_column(
+        ForeignKey('novel.novel_id', ondelete='CASCADE'),
+        primary_key=True,
+    )
+    tag_id: Mapped[int] = mapped_column(
+        ForeignKey('tag.tag_id', ondelete='CASCADE'),
+        primary_key=True,
+    )
+
+    novel: Mapped[Novel] = relationship(back_populates='novel_tag')
+    tag: Mapped[Tag] = relationship(back_populates='novel_tag')

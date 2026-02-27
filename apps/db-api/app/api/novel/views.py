@@ -205,6 +205,7 @@ def build_staff_id_set(staff: list[NovelStaffWriteSchema]) -> set[str]:
 
 
 @post(
+    exclude_from_auth=True,
     path='/',
     guards=[required_request_body_guard],
     tags=['novels'],

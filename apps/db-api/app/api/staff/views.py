@@ -233,6 +233,7 @@ def check_duplicate_alias(data: StaffCreateSchema | StaffUpdateSchema):
 
 
 @post(
+    exclude_from_auth=True,
     path='/',
     guards=[required_request_body_guard],
     tags=['staff'],
